@@ -47,9 +47,9 @@ export const KEPLER_GL_WEBSITE = 'http://kepler.gl/';
 
 export const DIMENSIONS = {
   sidePanel: {
-    width: 300,
+    width: 325,
     margin: {top: 20, left: 20, bottom: 30, right: 20},
-    headerHeight: 96
+    headerHeight: 80
   },
   mapControl: {
     width: 204,
@@ -60,14 +60,14 @@ export const DIMENSIONS = {
 export const PANELS = [
   {
     id: 'layer',
-    label: 'Layers',
+    label: 'Scores',
     iconComponent: Layers
   },
   {
     id: 'filter',
     label: 'Filters',
     iconComponent: FilterFunnel
-  },
+  }/*,
   {
     id: 'interaction',
     label: 'Interactions',
@@ -77,7 +77,7 @@ export const PANELS = [
     id: 'map',
     label: 'Base map',
     iconComponent: Settings
-  }
+  }*/
 ];
 
 export const PANELS_FOOTER = [
