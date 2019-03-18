@@ -29,6 +29,7 @@ import FilterManagerFactory from './side-panel/filter-manager';
 import InteractionManagerFactory from './side-panel/interaction-manager';
 import MapManagerFactory from './side-panel/map-manager';
 import PanelToggleFactory from './side-panel/panel-toggle';
+import ChangeCityButton from './side-panel/ChangeCityButton';
 
 import {
   ADD_DATA_ID,
@@ -43,7 +44,7 @@ import {
 const SidePanelContent = styled.div`
   ${props => props.theme.sidePanelScrollBar};
   flex-grow: 1;
-  padding: 16px;
+  padding: 1.5em;
   overflow-y: scroll;
   overflow-x: hidden;
   color: ${props => props.theme.titleTextColor};
@@ -51,28 +52,39 @@ const SidePanelContent = styled.div`
 
 export const PanelTitleFactory = () => styled.div`
   color: ${props => props.theme.titleTextColor};
-  font-size: 20px;
+  font-size: 2em;
   font-weight: 400;
   letter-spacing: 1.25px;
-  margin-bottom: 14px;
+  margin-bottom: 3vh;
+  display: block;
 `;
 
 const Score = styled.div`
-margin: auto;
-background-color: #1a1a1a;
-font-size: 20px;
+/*margin: auto;*/
+/*background-color: #1a1a1a;*/
+font-size: 2em;
 border-radius : 100%;
-width: 60px;
-height: 60px;
-line-height: 60px;
+/*width: 60px;
+height: 60px;*/
+/*line-height: 60px;*/
 `;
 
 const Indicator = styled.div`
-
+  align-content: center;
+  justify-content: center;
   display: block;
   text-align: center;
   margin: 2px;
   min-width: 85px;
+  font-size: .8em;
+  background-color: #29323C;
+  padding: 10px;
+  border-radius: 10%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+  :hover {
+    color: #ffffff;
+  }
 `;
 
 const Row = styled.div`
@@ -108,6 +120,11 @@ export default function SidePanelFactory(
 ) {
 
   return class SidePanel extends Component {
+    /*constructor(props) {
+      super(props)
+      this.state = { isChangeState: true }
+    }*/
+
     static propTypes = {
       filters: PropTypes.arrayOf(PropTypes.any).isRequired,
       interactionConfig: PropTypes.object.isRequired,
@@ -152,6 +169,16 @@ export default function SidePanelFactory(
     _onExportData = () => this.props.uiStateActions.toggleModal(EXPORT_DATA_ID);
 
     _onExportConfig = () => this.props.uiStateActions.toggleModal(EXPORT_CONFIG_ID);
+
+    _onChangeCity = () => this.props.uiStateActions.toggleModal(ADD_DATA_ID);
+
+
+    //NOT YET FUNCTIONAL
+    _toggleBottomPanel = () => {
+      this.props.uiStateActions.toggleModal(EXPORT_CONFIG_ID)
+    };
+
+    //UNTIL HERE
 
     render() {
       const {
@@ -228,23 +255,43 @@ export default function SidePanelFactory(
               onExportConfig={this._onExportConfig}
               onSaveMap={this.props.onSaveMap}
             />
-            <PanelToggle
+
+            
+
+            {/*<PanelToggle
               panels={PANELS}
               activePanel={activeSidePanel}
               togglePanel={uiStateActions.toggleSidePanel}
-            />
+            />*/}
             <SidePanelContent className="side-panel__content">
             <PanelTitle className="side-panel__content__title">
-              Baguio City
-                </PanelTitle>
+              Baguio City 
+          </PanelTitle>
+            <button onClick={this._onChangeCity} 
+                    style={{position: 'relative', 
+                            left: '60%', 
+                            backgroundColor: '#d3d8e0',
+                            borderRadius: '10%'}}>Change City</button>
+          <div style={{padding:'10px'}}></div>
+            {/*
+            <div>
+            <ChangeCityButton changeCity = {this.triggerChangeCity}/>
+            {this.state.isChangeState && <LoadDataModal />}
+            </div>
+            */}
+                Transport Desirability Score
+                <div style={{padding:'5px'}}></div>
                 <Row>
                   <Indicator>
                     <Score>0.75</Score>
                     Transport Desirability
                   </Indicator>
                 </Row>
+                <br/>
                 <hr/>
-                Non Government Perspective
+                <div style={{padding:'5px'}}></div>
+               Non-transport Mode Indicators
+                <div style={{padding:'5px'}}></div>
                 <Row>
                   <Indicator>
                     <Score>0.63</Score>
@@ -264,6 +311,14 @@ export default function SidePanelFactory(
                     <Score>0.67</Score>
                     Physical
                   </Indicator>
+                  
+                </Row>
+                <br/>
+                <hr/>
+                <div style={{padding:'5px'}}></div>
+                Transport Mode Indicators
+                <div style={{padding:'5px'}}></div>
+                <Row>
                   <Indicator>
                     <Score>0.78</Score>
                     Psychological
@@ -273,8 +328,6 @@ export default function SidePanelFactory(
                     Physiological
                   </Indicator>
                 </Row>
-                <hr/>
-                Government Perspective
                 <Row>
                   <Indicator>
                     <Score>0.69</Score>
@@ -326,6 +379,7 @@ export default function SidePanelFactory(
                 )}
               </div> */}
             </SidePanelContent>
+            <div style={{padding:'10px'}}></div>
           </Sidebar>
         </div>
       );
