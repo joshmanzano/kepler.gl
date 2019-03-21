@@ -63,6 +63,8 @@ import {
 import {Layer, LayerClasses} from 'layers';
 import {processFileToLoad} from '/utils/file-utils';
 
+import {INDICATORS} from 'constants/default-settings'
+
 // react-palm
 // disable capture exception for react-palm call to withTask
 disableStackCapturing();
@@ -109,7 +111,10 @@ export const INITIAL_VIS_STATE = {
   ],
 
   // defaults layer classes
-  layerClasses: LayerClasses
+  layerClasses: LayerClasses,
+
+  // PLEXUS
+  plexus: undefined
 };
 
 function updateStateWithLayerAndData(state, {layerData, layer, idx}) {
@@ -961,6 +966,49 @@ export const loadFilesUpdater = (state, action) => {
     },
     loadFileTasks
   );
+};
+
+// PLEXUS
+export const processDataUpdater = (state, action) => {
+  console.error("PROCESS DATA");
+  console.error(state);
+  
+  const {allData, fields} = state.datasets.barangays;
+  var scores = {};
+  var indicatorData = {};
+  console.error(INDICATORS);
+  // for(var indicator in INDICATORS) {
+  //   console.error(indicator);
+  //   const field = fields.find(op => op.id === indicator.id);
+  //   const column = field.tableFieldIndex - 1;
+  //   // scores.push({})
+  //   scores[indicator.id] = allData.reduce((p, c) => p + c[column], 0) / allData.length;
+  // }
+  INDICATORS.map((indicator, i) => {
+    // Compute scores
+    const field = fields.find(op => op.id === indicator.id);
+    const column = field.tableFieldIndex - 1;
+    scores[indicator.id] = allData.reduce((p, c) => p + c[column], 0) / allData.length;
+    scores[indicator.id] = Math.round(scores[indicator.id] * 10000)/100;
+
+    // Get top 10 and bottom 10
+    var arr = allData.sort(function(a,b) {
+      return a[column] - b[column];
+    });
+
+    indicatorData[indicator.id] = {top: arr.slice(0, 10), bottom: arr.slice((arr.length - 10), arr.length)};
+  });
+  console.error(scores);
+
+  // 
+  // arr.reduce((p, c) => p + c[col], 0) / arr.length;
+  return {
+    ...state,
+    plexus: {
+      scores,
+      indicatorData
+    }
+  }
 };
 
 export const loadFilesErrUpdater = (state, {error}) => ({

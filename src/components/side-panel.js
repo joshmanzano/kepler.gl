@@ -18,238 +18,687 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import keyMirror from 'keymirror';
 
-import SidebarFactory from './side-panel/side-bar';
-import PanelHeaderFactory from './side-panel/panel-header';
-import LayerManagerFactory from './side-panel/layer-manager';
-import FilterManagerFactory from './side-panel/filter-manager';
-import InteractionManagerFactory from './side-panel/interaction-manager';
-import MapManagerFactory from './side-panel/map-manager';
-import PanelToggleFactory from './side-panel/panel-toggle';
+export const ACTION_PREFIX = '@@kepler.gl/';
+export const CLOUDFRONT = 'https://d1a3f4spazzrp4.cloudfront.net/kepler.gl';
+export const ICON_PREFIX = `${CLOUDFRONT}/geodude`;
+
+// Modal Ids
+export const LAYER_CONFIG_ID = 'copyConfig';
+export const DATA_TABLE_ID = 'dataTable';
+export const DELETE_DATA_ID = 'deleteData';
+export const ADD_DATA_ID = 'addData';
+export const EXPORT_IMAGE_ID = 'exportImage';
+export const EXPORT_DATA_ID = 'exportData';
+export const EXPORT_CONFIG_ID = 'exportConfig';
+export const ADD_MAP_STYLE_ID = 'addMapStyle';
 
 import {
-  ADD_DATA_ID,
-  ADD_MAP_STYLE_ID,
-  DATA_TABLE_ID,
-  EXPORT_IMAGE_ID,
-  EXPORT_DATA_ID,
-  EXPORT_CONFIG_ID,
-  PANELS
-} from 'constants/default-settings';
+  Layers,
+  FilterFunnel,
+  Settings,
+  CursorClick
+} from 'components/common/icons';
 
-const SidePanelContent = styled.div`
-  ${props => props.theme.sidePanelScrollBar};
-  flex-grow: 1;
-  padding: 16px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-`;
+export const KEPLER_GL_NAME = 'PLEXUS';
+export const KEPLER_GL_VERSION = 'v1.0';
+export const KEPLER_GL_WEBSITE = 'http://kepler.gl/';
 
-export const PanelTitleFactory = () => styled.div`
-  color: ${props => props.theme.titleTextColor};
-  font-size: 20px;
-  font-weight: 400;
-  letter-spacing: 1.25px;
-  margin-bottom: 14px;
-`;
+export const DIMENSIONS = {
+  sidePanel: {
+    width: 300,
+    margin: {top: 20, left: 20, bottom: 30, right: 20},
+    headerHeight: 80
+  },
+  mapControl: {
+    width: 204,
+    padding: 12
+  }
+};
 
-SidePanelFactory.deps = [
-  SidebarFactory,
-  PanelHeaderFactory,
-  PanelToggleFactory,
-  PanelTitleFactory,
-  LayerManagerFactory,
-  FilterManagerFactory,
-  InteractionManagerFactory,
-  MapManagerFactory
+export const PANELS = [
+  {
+    id: 'layer',
+    label: 'Scores',
+    iconComponent: Layers
+  },
+  {
+    id: 'filter',
+    label: 'Filters',
+    iconComponent: FilterFunnel
+  }/*,
+  {
+    id: 'interaction',
+    label: 'Interactions',
+    iconComponent: CursorClick
+  },
+  {
+    id: 'map',
+    label: 'Base map',
+    iconComponent: Settings
+  }*/
 ];
 
+export const PANELS_FOOTER = [
+  {
+    id: LAYER_CONFIG_ID,
+    label: 'Copy Config',
+    icon: 'clipboard'
+  }
+];
+
+// MAP STYLES
+
+export const DEFAULT_LAYER_GROUPS = [
+  {
+    slug: 'label',
+    filter: ({id}) => id.match(/(?=(label|place-|poi-))/),
+    defaultVisibility: true
+  },
+  {
+    slug: 'road',
+    filter: ({id}) => id.match(/(?=(road|railway|tunnel|street|bridge))(?!.*label)/),
+    defaultVisibility: true
+  },
+  {
+    slug: 'border',
+    filter: ({id}) => id.match(/border|boundaries/),
+    defaultVisibility: false
+  },
+  {
+    slug: 'building',
+    filter: ({id}) => id.match(/building/),
+    defaultVisibility: true
+  },
+  {
+    slug: 'water',
+    filter: ({id}) => id.match(/(?=(water|stream|ferry))/),
+    defaultVisibility: true
+  },
+  {
+    slug: 'land',
+    filter: ({id}) => id.match(/(?=(parks|landcover|industrial|sand|hillshade))/),
+    defaultVisibility: true
+  },
+  {
+    slug: '3d building',
+    filter: () => false,
+    defaultVisibility: false
+  }
+];
+
+export const DEFAULT_MAP_STYLES = [
+  {
+    id: 'dark',
+    label: 'Dark',
+    url: 'mapbox://styles/uberdata/cjoqbbf6l9k302sl96tyvka09',
+    icon: `${ICON_PREFIX}/UBER_DARK_V2.png`,
+    layerGroups: DEFAULT_LAYER_GROUPS
+  },
+  {
+    id: 'light',
+    label: 'Light',
+    url: 'mapbox://styles/uberdata/cjoqb9j339k1f2sl9t5ic5bn4',
+    icon: `${ICON_PREFIX}/UBER_LIGHT_V2.png`,
+    layerGroups: DEFAULT_LAYER_GROUPS
+  },
+  {
+    id: 'muted',
+    label: 'Muted Light',
+    url: 'mapbox://styles/uberdata/cjfyl03kp1tul2smf5v2tbdd4',
+    icon: `${ICON_PREFIX}/UBER_MUTED_LIGHT.png`,
+    layerGroups: DEFAULT_LAYER_GROUPS
+  },
+  {
+    id: 'muted_night',
+    label: 'Muted Night',
+    url: 'mapbox://styles/uberdata/cjfxhlikmaj1b2soyzevnywgs',
+    icon: `${ICON_PREFIX}/UBER_MUTED_NIGHT.png`,
+    layerGroups: DEFAULT_LAYER_GROUPS
+  }
+];
+
+export const GEOJSON_FIELDS = {
+  geojson: ['_geojson', 'all_points', 'geojson']
+};
+
+export const ICON_FIELDS = {
+  icon: ['icon']
+};
+
+export const TRIP_POINT_FIELDS = [
+  ['lat', 'lng'],
+  ['lat', 'lon'],
+  ['latitude', 'longitude']
+];
+
+export const TRIP_ARC_FIELDS = {
+  lat0: 'begintrip',
+  lng0: 'begintrip',
+  lat1: 'dropoff',
+  lng1: 'dropoff'
+};
+
+export const SCALE_TYPES = keyMirror({
+  ordinal: null,
+  quantile: null,
+  quantize: null,
+  linear: null,
+
+  // for radius
+  sqrt: null,
+  // ordinal domain to linear range
+  point: null
+});
+
+export const SCALE_FUNC = {
+  linear: require('d3-scale').scaleLinear,
+  quantize: require('d3-scale').scaleQuantize,
+  quantile: require('d3-scale').scaleQuantile,
+  ordinal: require('d3-scale').scaleOrdinal,
+  sqrt: require('d3-scale').scaleSqrt,
+  point: require('d3-scale').scalePoint
+};
+
+export const ALL_FIELD_TYPES = keyMirror({
+  boolean: null,
+  date: null,
+  geojson: null,
+  integer: null,
+  real: null,
+  string: null,
+  timestamp: null,
+  point: null
+});
+
+const ORANGE = '248, 194, 28';
+const PINK = '231, 189, 194';
+const PURPLE = '160, 106, 206';
+const BLUE = '140, 210, 205';
+const BLUE2 = '106, 160, 206';
+const BLUE3 = '0, 172, 237';
+const GREEN = '106, 160, 56';
+const RED = '237, 88, 106';
+
+export const FIELD_COLORS = {
+  default: RED
+};
+
+export const FILED_TYPE_DISPLAY = {
+  [ALL_FIELD_TYPES.boolean]: {
+    label: 'bool',
+    color: PINK
+  },
+  [ALL_FIELD_TYPES.date]: {
+    label: 'date',
+    color: PURPLE
+  },
+  [ALL_FIELD_TYPES.geojson]: {
+    label: 'geo',
+    color: BLUE2
+  },
+  [ALL_FIELD_TYPES.integer]: {
+    label: 'int',
+    color: ORANGE
+  },
+  [ALL_FIELD_TYPES.real]: {
+    label: 'float',
+    color: ORANGE
+  },
+  [ALL_FIELD_TYPES.string]: {
+    label: 'string',
+    color: BLUE
+  },
+  [ALL_FIELD_TYPES.timestamp]: {
+    label: 'time',
+    color: GREEN
+  },
+  // field pairs
+  [ALL_FIELD_TYPES.point]: {
+    label: 'point',
+    color: BLUE3
+  }
+};
+
+export const defaultFormat = d => d;
+
+export const FIELD_DISPLAY_FORMAT = {
+  [ALL_FIELD_TYPES.string]: defaultFormat,
+  [ALL_FIELD_TYPES.timestamp]: defaultFormat,
+  [ALL_FIELD_TYPES.integer]: defaultFormat,
+  [ALL_FIELD_TYPES.boolean]: d => String(d),
+  [ALL_FIELD_TYPES.date]: defaultFormat,
+  [ALL_FIELD_TYPES.geojson]: defaultFormat
+};
+
+export const CHANNEL_SCALES = keyMirror({
+  color: null,
+  radius: null,
+  size: null,
+  colorAggr: null,
+  sizeAggr: null
+});
+
+export const AGGREGATION_TYPES = {
+  // default
+  count: 'count',
+  // linear
+  average: 'average',
+  maximum: 'maximum',
+  minimum: 'minimum',
+  median: 'median',
+  sum: 'sum',
+  // ordinal
+  mode: 'mode',
+  countUnique: 'count unique'
+};
+
+export const linearFieldScaleFunctions = {
+  [CHANNEL_SCALES.color]: [SCALE_TYPES.quantize, SCALE_TYPES.quantile],
+  [CHANNEL_SCALES.radius]: [SCALE_TYPES.sqrt],
+  [CHANNEL_SCALES.size]: [SCALE_TYPES.linear]
+};
+
+export const linearFieldAggrScaleFunctions = {
+  [CHANNEL_SCALES.colorAggr]: {
+    [AGGREGATION_TYPES.average]: [SCALE_TYPES.quantize, SCALE_TYPES.quantile],
+    [AGGREGATION_TYPES.maximum]: [SCALE_TYPES.quantize, SCALE_TYPES.quantile],
+    [AGGREGATION_TYPES.minimum]: [SCALE_TYPES.quantize, SCALE_TYPES.quantile],
+    [AGGREGATION_TYPES.median]: [SCALE_TYPES.quantize, SCALE_TYPES.quantile],
+    [AGGREGATION_TYPES.sum]: [SCALE_TYPES.quantize, SCALE_TYPES.quantile]
+  },
+
+  [CHANNEL_SCALES.sizeAggr]: {
+    [AGGREGATION_TYPES.average]: [SCALE_TYPES.linear],
+    [AGGREGATION_TYPES.maximum]: [SCALE_TYPES.linear],
+    [AGGREGATION_TYPES.minimum]: [SCALE_TYPES.linear],
+    [AGGREGATION_TYPES.median]: [SCALE_TYPES.linear],
+    [AGGREGATION_TYPES.sum]: [SCALE_TYPES.linear]
+  }
+};
+
+export const ordinalFieldScaleFunctions = {
+  [CHANNEL_SCALES.color]: [SCALE_TYPES.ordinal],
+  [CHANNEL_SCALES.radius]: [SCALE_TYPES.point],
+  [CHANNEL_SCALES.size]: [SCALE_TYPES.point]
+};
+
+export const ordinalFieldAggrScaleFunctions = {
+  // [CHANNEL_SCALES.colorAggr]: [SCALE_TYPES.ordinal, SCALE_TYPES.linear],
+  [CHANNEL_SCALES.colorAggr]: {
+    [AGGREGATION_TYPES.mode]: [SCALE_TYPES.ordinal],
+    [AGGREGATION_TYPES.countUnique]: [SCALE_TYPES.quantize, SCALE_TYPES.quantile]
+  },
+
+  // Currently doesn't support yet
+  [CHANNEL_SCALES.sizeAggr]: {}
+};
+
+export const notSupportedScaleOpts = {
+  [CHANNEL_SCALES.color]: [],
+  [CHANNEL_SCALES.radius]: [],
+  [CHANNEL_SCALES.size]: []
+};
+
+export const  notSupportAggrOpts = {
+  [CHANNEL_SCALES.colorAggr]: {},
+  [CHANNEL_SCALES.sizeAggr]: {}
+};
+
 /**
- *
- * Vertical sidebar containing input components for the rendering layers
+ * Default aggregation are based on ocunt
  */
-export default function SidePanelFactory(
-  Sidebar,
-  PanelHeader,
-  PanelToggle,
-  PanelTitle,
-  LayerManager,
-  FilterManager,
-  InteractionManager,
-  MapManager
-) {
+export const DEFAULT_AGGREGATION = {
+  [CHANNEL_SCALES.colorAggr]: {
+    [AGGREGATION_TYPES.count]: [SCALE_TYPES.quantize, SCALE_TYPES.quantile]
+  },
+  [CHANNEL_SCALES.sizeAggr]: {
+    [AGGREGATION_TYPES.count]: [SCALE_TYPES.linear]
+  }
+};
 
-  return class SidePanel extends Component {
-    static propTypes = {
-      filters: PropTypes.arrayOf(PropTypes.any).isRequired,
-      interactionConfig: PropTypes.object.isRequired,
-      layerBlending: PropTypes.string.isRequired,
-      layers: PropTypes.arrayOf(PropTypes.any).isRequired,
-      layerClasses: PropTypes.object.isRequired,
-      mapStyle: PropTypes.object.isRequired,
-      width: PropTypes.number.isRequired,
-      datasets: PropTypes.object.isRequired,
-      visStateActions: PropTypes.object.isRequired,
-      mapStyleActions: PropTypes.object.isRequired
-    };
-
-    /* component private functions */
-    _onOpenOrClose = () => {
-      this.props.uiStateActions.toggleSidePanel(
-        this.props.uiState.activeSidePanel ? null : 'layer'
-      );
-    };
-
-    _showDatasetTable = dataId => {
-      // this will open data table modal
-      this.props.visStateActions.showDatasetTable(dataId);
-      this.props.uiStateActions.toggleModal(DATA_TABLE_ID);
-    };
-
-    _showAddDataModal = () => {
-      this.props.uiStateActions.toggleModal(ADD_DATA_ID);
-    };
-
-    _showAddMapStyleModal = () => {
-      this.props.uiStateActions.toggleModal(ADD_MAP_STYLE_ID);
-    };
-
-    _removeDataset = key => {
-      // this will show the modal dialog to confirm deletion
-      this.props.uiStateActions.openDeleteModal(key);
-    };
-
-    _onExportImage = () => this.props.uiStateActions.toggleModal(EXPORT_IMAGE_ID);
-
-    _onExportData = () => this.props.uiStateActions.toggleModal(EXPORT_DATA_ID);
-
-    _onExportConfig = () => this.props.uiStateActions.toggleModal(EXPORT_CONFIG_ID);
-
-    render() {
-      const {
-        appName,
-        version,
-        datasets,
-        filters,
-        layers,
-        layerBlending,
-        layerClasses,
-        uiState,
-        layerOrder,
-        interactionConfig,
-        visStateActions,
-        mapStyleActions,
-        uiStateActions
-      } = this.props;
-
-      const {activeSidePanel} = uiState;
-      const isOpen = Boolean(activeSidePanel);
-
-      const layerManagerActions = {
-        addLayer: visStateActions.addLayer,
-        layerConfigChange: visStateActions.layerConfigChange,
-        layerVisualChannelConfigChange:
-        visStateActions.layerVisualChannelConfigChange,
-        layerTypeChange: visStateActions.layerTypeChange,
-        layerVisConfigChange: visStateActions.layerVisConfigChange,
-        updateLayerBlending: visStateActions.updateLayerBlending,
-        updateLayerOrder: visStateActions.reorderLayer,
-        showDatasetTable: this._showDatasetTable,
-        showAddDataModal: this._showAddDataModal,
-        removeLayer: visStateActions.removeLayer,
-        removeDataset: this._removeDataset
-      };
-
-      const filterManagerActions = {
-        addFilter: visStateActions.addFilter,
-        removeFilter: visStateActions.removeFilter,
-        setFilter: visStateActions.setFilter,
-        showDatasetTable: this._showDatasetTable,
-        showAddDataModal: this._showAddDataModal,
-        toggleAnimation: visStateActions.toggleAnimation,
-        enlargeFilter: visStateActions.enlargeFilter
-      };
-
-      const interactionManagerActions = {
-        onConfigChange: visStateActions.interactionConfigChange
-      };
-
-      const mapManagerActions = {
-        addMapStyleUrl: mapStyleActions.addMapStyleUrl,
-        onConfigChange: mapStyleActions.mapConfigChange,
-        onStyleChange: mapStyleActions.mapStyleChange,
-        onBuildingChange: mapStyleActions.mapBuildingChange,
-        showAddMapStyleModal: this._showAddMapStyleModal
-      };
-
-      return (
-        <div>
-          <Sidebar
-            width={this.props.width}
-            isOpen={isOpen}
-            minifiedWidth={0}
-            onOpenOrClose={this._onOpenOrClose}
-          >
-            <PanelHeader
-              appName={appName}
-              version={version}
-              onExportImage={this._onExportImage}
-              onExportData={this._onExportData}
-              visibleDropdown={uiState.visibleDropdown}
-              showExportDropdown={uiStateActions.showExportDropdown}
-              hideExportDropdown={uiStateActions.hideExportDropdown}
-              onExportConfig={this._onExportConfig}
-              onSaveMap={this.props.onSaveMap}
-            />
-            {/* <PanelToggle
-              panels={PANELS}
-              activePanel={activeSidePanel}
-              togglePanel={uiStateActions.toggleSidePanel}
-            />
-            <SidePanelContent className="side-panel__content">
-              <div>
-                <PanelTitle className="side-panel__content__title">
-                  {(PANELS.find(({id}) => id === activeSidePanel) || {}).label}
-                </PanelTitle>
-                {activeSidePanel === 'layer' && (
-                  <LayerManager
-                    {...layerManagerActions}
-                    datasets={datasets}
-                    layers={layers}
-                    layerClasses={layerClasses}
-                    layerOrder={layerOrder}
-                    layerBlending={layerBlending}
-                    openModal={uiStateActions.toggleModal}
-                  />
-                )}
-                {activeSidePanel === 'filter' && (
-                  <FilterManager
-                    {...filterManagerActions}
-                    datasets={datasets}
-                    filters={filters}
-                  />
-                )}
-                {activeSidePanel === 'interaction' && (
-                  <InteractionManager
-                    {...interactionManagerActions}
-                    datasets={datasets}
-                    interactionConfig={interactionConfig}
-                  />
-                )}
-                {activeSidePanel === 'map' && (
-                  <MapManager
-                    {...mapManagerActions}
-                    mapStyle={this.props.mapStyle}
-                  />
-                )}
-              </div>
-            </SidePanelContent> */}
-          </Sidebar>
-        </div>
-      );
+/**
+ * Define what type of scale operation is allowed on each type of fields
+ */
+export const FIELD_OPTS = {
+  string: {
+    type: 'categorical',
+    scale: {
+      ...ordinalFieldScaleFunctions,
+      ...ordinalFieldAggrScaleFunctions
+    },
+    format: {
+      legend: d => d
     }
-  };
+  },
+  real: {
+    type: 'numerical',
+    scale: {
+      ...linearFieldScaleFunctions,
+      ...linearFieldAggrScaleFunctions
+    },
+    format: {
+      legend: d => d
+    }
+  },
+  timestamp: {
+    type: 'time',
+    scale: {
+      ...linearFieldScaleFunctions,
+      ...notSupportAggrOpts
+    },
+    format: {
+      legend: d => d
+    }
+  },
+  integer: {
+    type: 'numerical',
+    scale: {
+      ...linearFieldScaleFunctions,
+      ...linearFieldAggrScaleFunctions
+    },
+    format: {
+      legend: d => d
+    }
+  },
+  boolean: {
+    type: 'boolean',
+    scale: {
+      ...ordinalFieldScaleFunctions,
+      ...ordinalFieldAggrScaleFunctions
+    },
+    format: {
+      legend: d => d
+    }
+  },
+  date: {
+    scale: {
+      ...ordinalFieldScaleFunctions,
+      ...ordinalFieldAggrScaleFunctions
+    },
+    format: {
+      legend: d => d
+    }
+  },
+  geojson: {
+    type: 'geometry',
+    scale: {
+      ...notSupportedScaleOpts,
+      ...notSupportAggrOpts
+    },
+    format: {
+      legend: d => '...'
+    }
+  }
+};
+
+export const CHANNEL_SCALE_SUPPORTED_FIELDS = Object.keys(
+  CHANNEL_SCALES
+).reduce(
+  (accu, key) => ({
+    ...accu,
+    [key]: Object.keys(FIELD_OPTS).filter(
+      ft => Object.keys(FIELD_OPTS[ft].scale[key]).length
+    )
+  }),
+  {}
+);
+
+// TODO: shan delete use of LAYER_TYPES
+export const LAYER_TYPES = keyMirror({
+  point: null,
+  arc: null,
+  cluster: null,
+  line: null,
+  grid: null,
+  geojson: null,
+  icon: null,
+  heatmap: null,
+  hexagon: null
+});
+
+export const DEFAULT_LAYER_COLOR = {
+  tripArc: '#9226C6',
+  begintrip_lat: '#1E96BE',
+  dropoff_lat: '#FF991F',
+  request_lat: '#52A353'
+};
+
+// let user pass in default tooltip fields
+export const DEFAULT_TOOLTIP_FIELDS = [];
+
+export const DEFAULT_LIGHT_SETTINGS = {
+  lightsPosition: [-122.45, 37.66, 8000, -122.0, 38.0, 8000],
+  ambientRatio: 0.4,
+  diffuseRatio: 0.6,
+  specularRatio: 0.3,
+  lightsStrength: [0.9, 0.0, 0.8, 0.0],
+  numberOfLights: 2
+};
+
+export const NO_VALUE_COLOR = [147, 147, 147];
+
+export const LAYER_BLENDINGS = {
+  additive: {
+    blendFunc: ['SRC_ALPHA', 'DST_ALPHA'],
+    blendEquation: 'FUNC_ADD'
+  },
+  normal: {
+    // reference to
+    // https://limnu.com/webgl-blending-youre-probably-wrong/
+    blendFunc: [
+      'SRC_ALPHA',
+      'ONE_MINUS_SRC_ALPHA',
+      'ONE',
+      'ONE_MINUS_SRC_ALPHA'
+    ],
+    blendEquation: ['FUNC_ADD', 'FUNC_ADD']
+  },
+  subtractive: {
+    blendFunc: ['ONE', 'ONE_MINUS_DST_COLOR', 'SRC_ALPHA', 'DST_ALPHA'],
+    blendEquation: ['FUNC_SUBTRACT', 'FUNC_ADD']
+  }
+};
+
+export const MAX_DEFAULT_TOOLTIPS = 5;
+
+export const RESOLUTIONS = keyMirror({
+  ONE_X: null,
+  TWO_X: null
+});
+
+export const RATIOS = keyMirror({
+  SCREEN: null,
+  FOUR_BY_THREE: null,
+  SIXTEEN_BY_NINE: null
+});
+
+export const RATIO_OPTIONS = [{
+  id: RATIOS.SCREEN,
+  label: 'Original Screen',
+  getSize: (screenW, screenH) => ({width: screenW, height: screenH})
+}, {
+  id: RATIOS.FOUR_BY_THREE,
+  label: '4:3',
+  getSize: (screenW, screenH) => ({width: screenW, height: Math.round(screenW * 0.75)})
+}, {
+  id: RATIOS.SIXTEEN_BY_NINE,
+  label: '16:9',
+  getSize: (screenW, screenH) => ({width: screenW, height: Math.round(screenW * 0.5625)})
+}];
+
+export const RESOLUTION_OPTIONS = [{
+  id: RESOLUTIONS.ONE_X,
+  label: '1x',
+  available: true,
+  scale: 1,
+  zoomOffset: Math.log2(1),
+  getSize: (screenW, screenH) => ({
+    width: screenW,
+    height: screenH
+  })
+}, {
+  id: RESOLUTIONS.TWO_X,
+  label: '2x',
+  available: true,
+  scale: 2,
+  zoomOffset: Math.log2(2),
+  getSize: (screenW, screenH) => ({
+    width: screenW * 2,
+    height: screenH * 2
+  })
+}];
+
+export const DEFAULT_EXPORT_IMAGE_NAME = 'kepler-gl.png';
+
+export const EXPORT_DATA_TYPE = keyMirror({
+  CSV: null
+  // SHAPEFILE: null,
+  // JSON: null,
+  // GEOJSON: null,
+  // TOPOJSON: null
+});
+
+export const EXPORT_DATA_TYPE_OPTIONS = [
+  {
+    id: EXPORT_DATA_TYPE.CSV,
+    label: 'csv',
+    available: true
+  }
+  // {
+  //   id: EXPORT_DATA_TYPE.SHAPEFILE,
+  //   label: 'shapefile',
+  //   available: false
+  // },
+  // {
+  //   id: EXPORT_DATA_TYPE.JSON,
+  //   label: 'json',
+  //   available: false
+  // },
+  // {
+  //   id: EXPORT_DATA_TYPE.GEOJSON,
+  //   label: 'geojson',
+  //   available: false
+  // },
+  // {
+  //   id: EXPORT_DATA_TYPE.TOPOJSON,
+  //   label: 'topojson',
+  //   available: false
+  // }
+];
+
+export const DEFAULT_UUID_COUNT = 6;
+
+export const DEFAULT_NOTIFICATION_MESSAGE = 'MESSAGE_NOT_PROVIDED';
+
+export const DEFAULT_NOTIFICATION_TYPES = keyMirror({
+  info: null,
+  error: null,
+  warning: null,
+  success: null
+});
+
+export const DEFAULT_NOTIFICATION_TOPICS = keyMirror({
+  global: null,
+  file: null
+});
+
+// PLEXUS
+
+export const INDICATORS = [
+  // Desirability
+  {
+    id: 'desirability',
+    label: 'Transport Desirability'
+  },
+
+  // Non transport mode
+  {
+    id: 'spatial',
+    label: 'Spatial'
+  },
+  {
+    id: 'temporal',
+    label: 'Temporal'
+  },
+  {
+    id: 'economic',
+    label: 'Economic'
+  },
+  {
+    id: 'physical',
+    label: 'Physical'
+  },
+
+  // Transport indicator
+  {
+    id: 'psychological',
+    label: 'Psychological'
+  },
+  {
+    id: 'physiological',
+    label: 'Physiological'
+  },
+  {
+    id: 'sustainability',
+    label: 'Sustainability'
+  },
+  {
+    id: 'performance',
+    label: 'Performance'
+  },
+  {
+    id: 'fairness',
+    label: 'Fairness'
+  }
+]
+
+export const TRANSPORT_DESIRABILITY = {
+  label: 'Transport Desirability Score',
+  indicators: [
+    INDICATORS[0]
+  ]
+}
+
+export const NON_TRANSPORT_MODE = {
+  label: 'Non-Transport Mode Indicators',
+  indicator: [
+    INDICATORS[1],
+    INDICATORS[2],
+    INDICATORS[3],
+    INDICATORS[4]
+  ]
+}
+
+export const TRANSPORT_MODE = {
+  label: 'Transport Mode Indicators',
+  indicator: [
+    INDICATORS[5],
+    INDICATORS[6],
+    INDICATORS[7],
+    INDICATORS[8],
+    INDICATORS[9]
+  ]
+}
+
+export const NON_GOVERNMENT_MODE = {
+  label: 'Non-Government Mode Indicators',
+  indicator: [
+    INDICATORS[1],
+    INDICATORS[2],
+    INDICATORS[3],
+    INDICATORS[4],
+    INDICATORS[5],
+    INDICATORS[6]
+  ]
+}
+
+export const GOVERNMENT_MODE = {
+  label: 'Government Mode Indicators',
+  indicator: [
+    INDICATORS[7],
+    INDICATORS[8],
+    INDICATORS[9]
+  ]
 }

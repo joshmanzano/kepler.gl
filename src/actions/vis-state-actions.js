@@ -234,3 +234,10 @@ export function loadFilesErr(error) {
     error
   };
 }
+
+// PLEXUS
+export function processData() {
+  return {
+    type: ActionTypes.PROCESS_DATA
+  };
+}
