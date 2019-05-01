@@ -54,7 +54,6 @@ const DataTableModalStyle = css`
   width: 90%;
   top: 80px;
   padding: 32px 0 0 0;
-  max-width: unset;
 `;
 
 const DeleteDatasetModalStyled = css`
@@ -63,7 +62,13 @@ const DeleteDatasetModalStyled = css`
 `;
 
 const LoadDataModalStyle = css`
-  top: 60px;
+  top: 30px;
+  width:1000px;
+  //max-height: 500px;
+  margin:10px;
+  overflow:visible;
+  color:#ffffff;
+  background-color:#161616;
 `;
 
 ModalContainerFactory.deps = [
@@ -259,7 +264,7 @@ export default function ModalContainerFactory(
               />
             );
             modalProps = {
-              title: 'What city do you want to explore?',
+              title: 'Hi! What city do you want to explore?',
               cssStyle: LoadDataModalStyle,
               footer: false,
               onConfirm: this._closeModal

@@ -49,7 +49,8 @@ const ModalContentWrapper = styled.div`
 
 const CloseButton = styled.div`
   color: ${props => props.theme.titleColorLT};
-  display: flex;
+  //display: flex;
+  display:none;
   justify-content: flex-end;
   z-index: 10005;
 
@@ -60,7 +61,8 @@ const CloseButton = styled.div`
 
 export const ModalTitle = styled.div`
   font-size: ${props => props.theme.modalTitleFontSize};
-  color: ${props => props.theme.modalTitleColor};
+  // color: ${props => props.theme.modalTitleColor};
+  color: #FEFEFE;
   margin-bottom: 10px;
   position: relative;
   z-index: 10003;
@@ -152,7 +154,7 @@ class ModalDialog extends Component {
         ariaHideApp={false}
         style={{
           overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 1)',
+            backgroundColor: '#161616',
             zIndex: 10000,
             overflowY: 'auto',
             position: 'absolute',
