@@ -73,8 +73,8 @@ const ArrowSvg = () => (
     viewBox="0 0 22 15"
   >
     <g transform="translate(11, -3) rotate(45.000000)">
-      <rect fill="#535C6C" x="0" y="5" width="10" height="10" />
       <rect fill="#1FBAD6" x="5" y="0" width="10" height="10" />
+      <rect fill="#25282F" x="2" y="3" width="10" height="10" />
     </g>
   </svg>
 );
