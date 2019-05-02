@@ -23,35 +23,50 @@ import styled from 'styled-components';
 import {Tooltip} from 'components/common/styled-components';
 
 const Score = styled.div`
+  font-family: ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-serif;
+  margin-right:10px;
   /*margin: auto;*/
   /*background-color: #1a1a1a;*/
-  font-size: 1.7em;
-  border-radius: 100%;
+  font-size: 1.3em;
   /*width: 60px;
-height: 60px;*/
+  height: 100px;
   /*line-height: 60px;*/
+  flex:20%;
+  text-align:center;
+  background-color:#23282E;
+  padding:5px;
 `;
-const Label = styled.div``;
+
+const Label = styled.div`
+  font-family: ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-serif;
+  font-size: 1.3em;
+  margin: 0 10px 0 10px;
+  flex:80%;
+  padding:5px;
+`;
 
 const Style = styled.button`
+  font-family: ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-serif;
   color: #ffffff;
   border-width: 0;
   cursor: pointer;
   outline: 0;
-  align-content: center;
-  justify-content: center;
-  display: block;
-  text-align: center;
-  margin: 2px;
-  min-width: 85px;
+  // align-content: center;
+  // justify-content: center;
+  display: flex;
+  flex-direction:row;
+  text-align: left;
+  margin: 10px;
+  //min-width: 85px;
+  width:95%;
   font-size: 0.8em;
   background-color: #29323c;
   padding: 10px 5px;
-  border-radius: 10%;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  //border-radius: 10%;
+  //box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   :hover {
-    color: #000000;
-    background-color: #ffffff;
+    // color: #000000;
+    background-color: #3a4b5e;
   }
 `;
 
@@ -62,7 +77,7 @@ const StyleMessage = styled.span`
 `;
 const StyledIndicator=styled.div`
   .selected {
-    background-color: #000000;
+    background-color: #476587;
     color: #ffffff;
   }
 `;
@@ -75,8 +90,8 @@ function IndicatorFactory() {
         data-for={`${label}_indicator`}
         className={selected ? "selected" : ""}
       >
-        <Score>{score}%</Score>
         <Label>{label}</Label>
+        <Score>{score}%</Score>
       </Style>
       {description ? (
         <Tooltip id={`${label}_indicator`} place="right" effect="solid">

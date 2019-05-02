@@ -29,6 +29,7 @@ import PanelHeaderFactory from './side-panel/panel-header';
 import PanelHeadingFactory from './side-panel/panel-heading';
 import LayerManagerFactory from './side-panel/layer-manager';
 import FilterManagerFactory from './side-panel/filter-manager';
+import OverviewManagerFactory from './side-panel/overview-manager';
 import InteractionManagerFactory from './side-panel/interaction-manager';
 import MapManagerFactory from './side-panel/map-manager';
 import IndicatorManagerFactory from './side-panel/indicator-manager';
@@ -84,7 +85,8 @@ SidePanelFactory.deps = [
 
   // PLEXUS
   IndicatorManagerFactory,
-  PanelHeadingFactory
+  PanelHeadingFactory,
+  OverviewManagerFactory
 ];
 
 /**
@@ -101,7 +103,8 @@ export default function SidePanelFactory(
   InteractionManager,
   MapManager,
   IndicatorManager,
-  PanelHeading
+  PanelHeading,
+  OverviewManager
 ) {
   return class SidePanel extends Component {
     static propTypes = {
@@ -276,6 +279,13 @@ export default function SidePanelFactory(
               </PanelTitle> */}
               {selectedCity ? (
                 <div>
+                  {activeSidePanel === 'overview' && (
+                    <OverviewManager
+                      {...indicatorManagerActions}
+                      scores={scores}
+                      selectedIndicator={selectedIndicator}
+                    />
+                  )}
                   {activeSidePanel === 'indicators' && (
                     <IndicatorManager
                       {...indicatorManagerActions}

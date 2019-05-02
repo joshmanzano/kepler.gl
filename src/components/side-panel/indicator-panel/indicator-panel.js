@@ -47,10 +47,10 @@ const StyledIndicatorSection = styled.div`
 `;
 
 const StyledIndicatorContent = styled.div`
-  display: flex;
-  flex-direction: row;
-  text-align: center;
-  flex-wrap: wrap;
+  display: block;
+  // flex-direction: row;
+  // text-align: center;
+  // flex-wrap: wrap;
   width: 100%;
 `;
 
