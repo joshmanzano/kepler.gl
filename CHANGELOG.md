@@ -14,6 +14,62 @@ Each version should:
   Security to invite users to upgrade in case of vulnerabilities.
 Ref: http://keepachangelog.com/en/0.3.0/
 -->
+
+#### [1.0.0-2] - May 2 2019
+- [Bug] Fix missing default map styles after loading custom map style from saved json (#490)
+- [Bug] Fix `fix radius` in point layer unclickable (#491)
+- [Bug] fix image export doesnt get called when map rendered (#494)
+- [Enhancement] Merge export config and map into one interaction (#488)
+
+#### [1.0.0-1] - Apr 23 2019
+- [Bug] Fix point layer brushing and highlight (#487)
+- [Feat] Add a light theme to KeplerGl Prop (#489)
+- [Bug] Fix browse for file upload (#486)
+- [Enhancement] Cleanup load map style tasks (#472)
+- [Enhancement] load svg icons from aws, add bundle analyzer, reduce bundle size -1mb (#479)
+- [Bug] upgrade kepler.gl version in examples
+- [Docs] Fixed link to addDataToMap (#459)
+- [Enhancement] expand bottom widget to full length if in read only mode(#465)
+
+#### [1.0.0-0] - Apr 2 2019
+- [Enhancement] Replace react anything sortable with React-Sortable-Hoc
+- [Enhancement] Replaced DI object storage with an actual Map
+- [Feat] Able to overwrite custom theme 
+- [Chore] Upgraded waypoint library to support react16
+- [Chore] Dropbox UI enhancements 
+- [Bug] Fix points disappear while panning across 180th meridian
+- [Chore] Tweak save and export documentation
+- [Chore] Add oss header and middleware.js
+- [Chore] Added file header for user-guide.js
+- [Feat] Single map page export
+- [Chore] Upgraded libraries: react, styled-components
+
+##### BREAKING CHANGES
+- React 15 is no longer supported
+- Style components v4+ is now required because is now a peer dependency
+ 
+#### [0.2.4] - Mar 13 2019
+- [Enhancement] Slider: use clientX to calculate delta to support windows IE and Tableau kepler.gl (#431)
+- [Bug] Range slider: correctly setting ranch brush selection when mount (#433)
+- [Feat] Add getMapboxRef prop (#372)
+- [Enhancement] Automatically loading custom dependencies when inject custom component factor (#430)
+- [Bug] Range brush width change should not trigger onBrush callback (#432)
+- [Bug] fix processor export, support previous  (#428)
+
+#### [0.2.3] - Mar 3 2019
+- [Docs] Export processors and Add Docs (#421)
+- [Docs] Add docs for actions and updaters (#368)
+- [Bug] Fix image export component failed to render (#418)
+
+#### [0.2.2] - Feb 26 2019
+- (HEAD -> master, origin/master, origin/HEAD) [Bug] Fixed web doc link (#369)
+- [Bug]: Fixed example dependencies (#362)
+- [Bug] Fix missing 3d building layer in image export (#361)
+- [Bug] fix 3d building layer missing mapbox token, fix image export (#360)
+- [Docs] Add API Docs (#279)
+- [Feature] UMD module in unpkg (#349)
+- Disabled banner (#352)
+
 #### [0.2.1] - Feb 6 2019
 - (HEAD -> master, origin/master) [Feature] Collapsible layer group (#350)
 - [Enhancement] Added default feature flags to disable dropbox (#338)

@@ -185,6 +185,7 @@ export const modalTitleColor = '#3A414C';
 export const modalTitleFontSize = '24px';
 export const modalFooterBgd = '#F8F8F9';
 export const modalImagePlaceHolder = '#DDDFE3';
+export const modalPadding = '10px 0';
 
 // Modal Dialog (Dark)
 export const modalDialogBgd = '#3A414C';
@@ -767,6 +768,7 @@ export const theme = {
   selectFontSize,
   selectFontWeight,
   selectColorLT,
+  selectFontWeightBold,
 
   // Input
   inputBgd,
@@ -849,6 +851,7 @@ export const theme = {
   modalTitleFontSize,
   modalFooterBgd,
   modalImagePlaceHolder,
+  modalPadding,
 
   modalDialogBgd,
   modalDialogColor,
@@ -918,7 +921,29 @@ export const themeLT = {
 
   // template
   input: inputLT,
-  panelActiveBg: panelActiveBgLT,
   textColor: textColorLT,
-  textColorHl: textColorHlLT
+  sidePanelBg: '#ffffff',
+  titleTextColor: '#000000',
+  sidePanelHeaderBg: '#f7f7F7',
+  subtextColorActive: '#2473bd',
+  tooltipBg: '#1869b5',
+  tooltipColor: '#ffffff',
+  dropdownListBgd: '#ffffff',
+  textColorHl: '#2473bd',
+  inputBgd: '#f7f7f7',
+  inputBgdHover: '#ffffff',
+  inputBgdActive: '#ffffff',
+  dropdownListHighlightBg: '#f0f0f0',
+  panelBackground: '#f7f7F7',
+  panelBackgroundHover: '#f7f7F7',
+  panelBorderColor: '#D3D8E0',
+  secondaryInputBgd: '#f7f7F7',
+  secondaryInputBgdActive: '#f7f7F7',
+  secondaryInputBgdHover: '#ffffff',
+  panelActiveBg: '#f7f7F7',
+  mapPanelBackgroundColor: '#ffffff',
+  mapPanelHeaderBackgroundColor: '#f7f7F7',
+  sliderBarBgd: '#D3D8E0',
+  secondarySwitchBtnBgd: '#D3D8E0',
+  switchTrackBgd: '#D3D8E0'
 };

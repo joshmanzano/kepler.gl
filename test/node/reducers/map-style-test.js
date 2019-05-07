@@ -19,14 +19,13 @@
 // THE SOFTWARE.
 
 import test from 'tape';
+import {drainTasksForTesting, succeedTaskWithValues} from 'react-palm/tasks';
 
 import reducer from 'reducers/map-style';
-import {INITIAL_MAP_STYLE} from 'reducers/map-style-updaters';
+import {INITIAL_MAP_STYLE, getMapStyles} from 'reducers/map-style-updaters';
 import {keplerGlInit, receiveMapConfig} from 'actions/actions';
 import SchemaManager from 'schemas';
-import {
-  drainTasksForTesting
-} from 'react-palm/tasks';
+import {DEFAULT_MAP_STYLES} from 'constants/default-settings';
 
 // helpers
 import {StateWCustomMapStyle} from 'test/helpers/mock-state';
@@ -36,28 +35,42 @@ const InitialMapStyle = reducer(undefined, {});
 test('#mapStyleReducer', t => {
   const newState = reducer(undefined, {});
 
-  t.deepEqual(newState, {
-    ...INITIAL_MAP_STYLE,
-    initialState: {}
-    }, 'should return the initial map style');
+  t.deepEqual(
+    newState,
+    {
+      ...INITIAL_MAP_STYLE,
+      initialState: {}
+    },
+    'should return the initial map style'
+  );
 
   t.end();
 });
 
 test('#mapStyleReducer -> INIT', t => {
-  const newState = reducer(InitialMapStyle, keplerGlInit({mapboxApiAccessToken: 'smoothies_secret_token'}));
+  const newState = reducer(
+    InitialMapStyle,
+    keplerGlInit({mapboxApiAccessToken: 'smoothies_secret_token'})
+  );
 
-  t.deepEqual(newState, {
-    ...INITIAL_MAP_STYLE,
-    initialState: {},
-    mapboxApiAccessToken: 'smoothies_secret_token'
-  }, 'initialie map style with mapboxApiAccessToken');
+  t.deepEqual(
+    newState,
+    {
+      ...INITIAL_MAP_STYLE,
+      initialState: {},
+      mapboxApiAccessToken: 'smoothies_secret_token'
+    },
+    'initialie map style with mapboxApiAccessToken'
+  );
 
   t.end();
 });
 
 test('#mapStyleReducer -> RECEIVE_MAP_CONFIG', t => {
-  const stateWithToken = reducer(InitialMapStyle, keplerGlInit({mapboxApiAccessToken: 'smoothies_secret_token'}));
+  const stateWithToken = reducer(
+    InitialMapStyle,
+    keplerGlInit({mapboxApiAccessToken: 'smoothies_secret_token'})
+  );
 
   const stateToSave = StateWCustomMapStyle.toJS();
   // save state
@@ -65,17 +78,135 @@ test('#mapStyleReducer -> RECEIVE_MAP_CONFIG', t => {
 
   // load state
   const stateLoaded = SchemaManager.parseSavedConfig(savedState);
-  console.log(stateLoaded);
 
   const stateWithConfig = reducer(
     stateWithToken,
     receiveMapConfig(stateLoaded)
   );
+
+  const defaultMapStyles = DEFAULT_MAP_STYLES.reduce(
+    (accu, st) => ({
+      ...accu,
+      [st.id]: st
+    }),
+    {}
+  );
+
+  const expectedStateWithConfig = {
+    styleType: 'smoothie_the_cat',
+    visibleLayerGroups: {label: true, road: true},
+    topLayerGroups: {},
+    mapStyles: {
+      smoothie_the_cat: {
+        accessToken: 'secret_token',
+        custom: true,
+        icon: 'data:image/png;base64,xyz',
+        id: 'smoothie_the_cat',
+        label: 'Smoothie the Cat',
+        url: 'mapbox://styles/shanhe/smoothie.the.cat'
+      },
+      ...defaultMapStyles
+    },
+    mapboxApiAccessToken: 'smoothies_secret_token',
+    inputStyle: {
+      accessToken: null,
+      error: false,
+      isValid: false,
+      label: null,
+      style: null,
+      url: null,
+      custom: true
+    },
+    threeDBuildingColor: [209, 206, 199],
+    initialState: {}
+  };
+
+  t.deepEqual(
+    stateWithConfig,
+    expectedStateWithConfig,
+    'should load saved map style config'
+  );
+
   const [task1, ...more] = drainTasksForTesting();
 
   t.equal(more.length, 0, 'should return 1 task');
 
-  // TODO: ask btford how to test Task.all
+  const expectedTask = {
+    payload: [
+      {
+        id: 'smoothie_the_cat',
+        url:
+          'https://api.mapbox.com/styles/v1/shanhe/smoothie.the.cat?pluginName=Keplergl&access_token=secret_token'
+      }
+    ]
+  };
+
+  t.deepEqual(
+    task1.payload,
+    expectedTask.payload,
+    'should create task to load map styles'
+  );
+
+  const resultState1 = reducer(
+    stateWithConfig,
+    succeedTaskWithValues(task1, [
+      {id: 'smoothie_the_cat', style: {layers: [], name: 'smoothie_the_cat'}}
+    ])
+  );
+
+  const expectedMapStyles = {
+    smoothie_the_cat: {
+      accessToken: 'secret_token',
+      custom: true,
+      icon: 'data:image/png;base64,xyz',
+      id: 'smoothie_the_cat',
+      label: 'Smoothie the Cat',
+      url: 'mapbox://styles/shanhe/smoothie.the.cat',
+      style: {layers: [], name: 'smoothie_the_cat'},
+      layerGroups: []
+    },
+    ...defaultMapStyles
+  };
+
+  const expectedMapStyleState = {
+    styleType: 'smoothie_the_cat',
+    visibleLayerGroups: {},
+    topLayerGroups: {},
+    mapStyles: expectedMapStyles,
+    mapboxApiAccessToken: 'smoothies_secret_token',
+    inputStyle: {
+      accessToken: null,
+      error: false,
+      isValid: false,
+      label: null,
+      style: null,
+      url: null,
+      custom: true
+    },
+    threeDBuildingColor: [
+      194.6103322548211,
+      191.81688250953655,
+      185.2988331038727
+    ],
+    initialState: {},
+    bottomMapStyle: {layers: [], name: 'smoothie_the_cat'},
+    topMapStyle: null,
+    editable: 0
+  };
+
+  t.deepEqual(
+    Object.keys(resultState1).sort(),
+    Object.keys(expectedMapStyleState).sort(),
+    'mapStyle state should have same keys'
+  );
+
+  Object.keys(resultState1).forEach(key => {
+    t.deepEqual(
+      resultState1[key],
+      expectedMapStyleState[key],
+      `should update state,${key} with loaded map styles`
+    );
+  });
 
   t.end();
 });

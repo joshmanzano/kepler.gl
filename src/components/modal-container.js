@@ -34,9 +34,11 @@ import DataTableModalFactory from './modals/data-table-modal';
 import LoadDataModalFactory from './modals/load-data-modal';
 import ExportImageModalFactory from './modals/export-image-modal';
 import ExportDataModalFactory from './modals/export-data-modal';
-import ExportConfigModalFactory from './modals/export-config-modal';
+import ExportMapModalFactory from './modals/export-map-modal';
 import AddMapStyleModalFactory from './modals/add-map-style-modal';
 
+// Template
+import {exportMapToHTML} from 'templates/export-map';
 import {
   ADD_DATA_ID,
   DATA_TABLE_ID,
@@ -45,9 +47,10 @@ import {
   EXPORT_DATA_ID,
   EXPORT_DATA_TYPE,
   EXPORT_IMAGE_ID,
-  EXPORT_CONFIG_ID,
+  EXPORT_MAP_ID,
   ADD_MAP_STYLE_ID
 } from 'constants/default-settings';
+import {EXPORT_MAP_FORMAT} from '../constants/default-settings';
 
 const DataTableModalStyle = css`
   height: 85%;
@@ -72,7 +75,7 @@ ModalContainerFactory.deps = [
   LoadDataModalFactory,
   ExportImageModalFactory,
   ExportDataModalFactory,
-  ExportConfigModalFactory,
+  ExportMapModalFactory,
   AddMapStyleModalFactory
 ];
 
@@ -82,7 +85,7 @@ export default function ModalContainerFactory(
   LoadDataModal,
   ExportImageModal,
   ExportDataModal,
-  ExportConfigModal,
+  ExportMapModal,
   AddMapStyleModal
 ) {
   class ModalWrapper extends Component {
@@ -166,20 +169,51 @@ export default function ModalContainerFactory(
       this._closeModal();
     };
 
-    _onExportConfig = () => {
-      const {data} = this.props.uiState.exportData;
+    _onExportJSONMap = () => {
+      const {uiState} = this.props;
+      const {hasData} = uiState.exportMap[EXPORT_MAP_FORMAT.JSON];
 
       // we pass all props because we avoid to create new variables
-      const dump = data ? KeplerGlSchema.save(this.props)
+      const data = hasData ? KeplerGlSchema.save(this.props)
         : KeplerGlSchema.getConfigToSave(this.props);
 
       this._downloadFile(
-        JSON.stringify(dump, null, 2),
+        JSON.stringify(data, null, 2),
         'application/json',
         'keplergl.json'
       );
 
       this._closeModal();
+    };
+
+    _onExportHTMLMap = () => {
+      const {uiState} = this.props;
+      const {userMapboxToken, exportMapboxAccessToken} = uiState.exportMap[EXPORT_MAP_FORMAT.HTML];
+
+      const data = {
+        ...KeplerGlSchema.save(this.props),
+        mapboxApiAccessToken: (userMapboxToken || '') !== '' ? userMapboxToken : exportMapboxAccessToken
+      };
+
+      this._downloadFile(
+        exportMapToHTML(data),
+        'text/html',
+        'kepler.gl.html'
+      );
+
+      this._closeModal();
+    };
+
+    _onExportMap = () => {
+      const {uiState} = this.props;
+      const {format} = uiState.exportMap;
+
+      const downloader = {
+        [EXPORT_MAP_FORMAT.HTML]: this._onExportHTMLMap,
+        [EXPORT_MAP_FORMAT.JSON]: this._onExportJSONMap
+      }[format];
+
+      downloader && downloader();
     };
 
     /* eslint-disable complexity */
@@ -258,7 +292,6 @@ export default function ModalContainerFactory(
               onConfirm: this._closeModal
             };
             break;
-
           case EXPORT_IMAGE_ID:
             const { ratio, legend, resolution, exporting, imageDataUri } = uiState.exportImage;
             template = (
@@ -288,9 +321,7 @@ export default function ModalContainerFactory(
               }
             };
             break;
-
           case EXPORT_DATA_ID:
-
             template = (
               <ExportDataModal
                 {...uiState.exportData}
@@ -313,32 +344,30 @@ export default function ModalContainerFactory(
               }
             };
             break;
-
-          case EXPORT_CONFIG_ID:
+          case EXPORT_MAP_ID:
             const keplerGlConfig = KeplerGlSchema.getConfigToSave(
               { mapStyle, visState, mapState, uiState }
             );
             template = (
-              <ExportConfigModal
+              <ExportMapModal
                 config={keplerGlConfig}
-                data={uiState.exportData.data}
-                onClose={this._closeModal}
-                onChangeExportData={this.props.uiStateActions.setExportData}
+                options={uiState.exportMap}
+                onChangeExportMapFormat={this.props.uiStateActions.setExportMapFormat}
+                onEditUserMapboxAccessToken={this.props.uiStateActions.setUserMapboxAccessToken}
               />
             );
             modalProps = {
               close: false,
-              title: 'Export Config',
+              title: 'Export Map',
               footer: true,
               onCancel: this._closeModal,
-              onConfirm: this._onExportConfig,
+              onConfirm: this._onExportMap,
               confirmButton: {
                 large: true,
                 children: 'Export'
               }
             };
             break;
-
           case ADD_MAP_STYLE_ID:
             template = (
               <AddMapStyleModal
@@ -363,8 +392,6 @@ export default function ModalContainerFactory(
             };
             break;
 
-          // TODO: add this options once we merge dropbox onto kepelr.gl core
-          // case SAVE_TO_CLOUD_ID
           default:
             break;
         }

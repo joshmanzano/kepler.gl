@@ -20,15 +20,27 @@
 
 // DROPBOX
 import {Dropbox} from 'dropbox';
+import window from 'global/window';
 import {parseQueryString} from '../url';
-import window from 'global/window'
 import DropboxIcon from '../../components/icons/dropbox-icon';
 
-const DROPBOX_CLIEND_ID = process.env.DropboxClientId;
 const NAME = 'dropbox';
 const DOMAIN = 'www.dropbox.com';
+const APP_NAME= 'Kepler.gl%20(managed%20by%20Uber%20Technologies%2C%20Inc.)';
+const KEPLER_DROPBOX_FOLDER_LINK = `//${DOMAIN}/home/Apps/${APP_NAME}`;
 const CORS_FREE_DOMAIN = 'dl.dropboxusercontent.com';
-const dropbox = new Dropbox({clientId: DROPBOX_CLIEND_ID});
+const dropbox = new Dropbox();
+
+/**
+ * Set the auth toke to be used with dropbox client
+ * @param authToken
+ */
+function setAuthToken(authToken) {
+  if (dropbox.getClientId()) {
+    return;
+  }
+  dropbox.setClientId(authToken);
+}
 
 /**
  * Generate auth link url to open to be used to handle OAuth2
@@ -65,7 +77,7 @@ function getAccessTokenFromLocation(location) {
  */
 function uploadFile({blob, name, isPublic = true}) {
   const promise = dropbox.filesUpload({
-    path: `/keplergl/${blob.name || name}`,
+    path: blob.name || name,
     contents: blob
   });
 
@@ -86,6 +98,7 @@ function shareFile(metadata) {
     // can share dropbox urls with users without the dropbox account (publish on twitter, facebook)
     result => ({
       ...result,
+      folder_link: KEPLER_DROPBOX_FOLDER_LINK,
       url: overrideUrl(result.url)
     })
   );
@@ -112,7 +125,7 @@ function overrideUrl(url) {
  */
 function handleLogin(onCloudLoginSuccess) {
   const link = authLink();
-  const authWindow = window.open(link, '_blank', 'width=800,height=600');
+  const authWindow = window.open(link, '_blank', 'width=1024,height=716');
   const handleToken = e => {
     // TODO: add security step to validate which domain the message is coming from
     authWindow.close();
@@ -150,9 +163,10 @@ function getAccessToken() {
 // All cloud-providers providers must implement the following properties
 export default {
   name: NAME,
+  getAccessToken,
   getAccessTokenFromLocation,
   handleLogin,
-  uploadFile,
-  getAccessToken,
-  icon: DropboxIcon
+  icon: DropboxIcon,
+  setAuthToken,
+  uploadFile
 };

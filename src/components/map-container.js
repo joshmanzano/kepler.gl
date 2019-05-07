@@ -23,23 +23,18 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import MapboxGLMap from 'react-map-gl';
 import DeckGL from 'deck.gl';
-import GL from 'luma.gl/constants';
-import {registerShaderModules, setParameters} from 'luma.gl';
-import pickingModule from 'shaderlib/picking-module';
-import brushingModule from 'shaderlib/brushing-module';
 
 // components
 import MapPopoverFactory from 'components/map/map-popover';
 import MapControlFactory from 'components/map/map-control';
 import {StyledMapContainer} from 'components/common/styled-components';
 
-// Overlay type
+// utils
 import {generateMapboxLayers, updateMapboxLayers} from '../layers/mapbox-utils';
-
+import {onWebGLInitialized, setLayerBlending} from 'utils/gl-utils';
 import {transformRequest} from 'utils/map-style-utils/mapbox-utils';
 
 // default-settings
-import {LAYER_BLENDINGS} from 'constants/default-settings';
 import ThreeDBuildingLayer from '../deckgl-layers/3d-building-layer/3d-building-layer';
 
 const MAP_STYLE = {
@@ -52,9 +47,8 @@ const MAP_STYLE = {
   }
 };
 
-const getGlConst = d => GL[d];
-
 const MAPBOXGL_STYLE_UPDATE = 'style.load';
+const MAPBOXGL_RENDER = 'render';
 const TRANSITION_DURATION = 0;
 
 MapContainerFactory.deps = [
@@ -86,7 +80,8 @@ export default function MapContainerFactory(MapPopover, MapControl) {
       mapLayers: PropTypes.object,
       onMapToggleLayer: PropTypes.func,
       onMapStyleLoaded: PropTypes.func,
-      onMapRender: PropTypes.func
+      onMapRender: PropTypes.func,
+      getMapboxRef: PropTypes.func
     };
 
     static defaultProps = {
@@ -107,6 +102,7 @@ export default function MapContainerFactory(MapPopover, MapControl) {
       // unbind mapboxgl event listener
       if (this._map) {
         this._map.off(MAPBOXGL_STYLE_UPDATE);
+        this._map.off(MAPBOXGL_RENDER);
       }
     }
 
@@ -122,11 +118,7 @@ export default function MapContainerFactory(MapPopover, MapControl) {
     };
 
     _onWebGLInitialized = gl => {
-      registerShaderModules(
-        [pickingModule, brushingModule], {
-          ignoreMultipleRegistrations: true
-      });
-
+      onWebGLInitialized(gl);
       // allow Uint32 indices in building layer
       // gl.getExtension('OES_element_index_uint');
     };
@@ -146,49 +138,51 @@ export default function MapContainerFactory(MapPopover, MapControl) {
       visStateActions.toggleLayerForMap(mapIndex, layerId);
     };
 
-    _setMapboxMap = (mapbox) => {
+    _onMapboxStyleUpdate = () => {
+      // force refresh mapboxgl layers
+
+      updateMapboxLayers(
+        this._map,
+        this._renderMapboxLayers(),
+        this.previousLayers,
+        this.props.mapLayers,
+        {force: true}
+      );
+
+      if (typeof this.props.onMapStyleLoaded === 'function') {
+        this.props.onMapStyleLoaded(this._map);
+      }
+    };
+
+    _setMapboxMap = mapbox => {
       if (!this._map && mapbox) {
+
         this._map = mapbox.getMap();
+        // i noticed in certain context we don't access the actual map element
+        if (!this._map) {
+          return;
+        }
         // bind mapboxgl event listener
-        this._map.on(MAPBOXGL_STYLE_UPDATE, () => {
-          // force refresh mapboxgl layers
+        this._map.on(MAPBOXGL_STYLE_UPDATE, this._onMapboxStyleUpdate);
 
-          updateMapboxLayers(
-            this._map,
-            this._renderMapboxLayers(),
-            this.previousLayers,
-            this.props.mapLayers,
-            {force: true}
-          );
+        this._map.on(MAPBOXGL_RENDER, () => {
 
-          if (typeof this.props.onMapStyleLoaded === 'function') {
-            this.props.onMapStyleLoaded(this._map);
-          }
-        });
-
-        this._map.on('render', () => {
           if (typeof this.props.onMapRender === 'function') {
             this.props.onMapRender(this._map);
           }
         });
       }
-    }
 
-    _onBeforeRender = ({gl}) => {
-      this._setlayerBlending(gl);
+      if (this.props.getMapboxRef) {
+        // The parent component can gain access to our MapboxGlMap by
+        // providing this callback. Note that 'mapbox' will be null when the
+        // ref is unset (e.g. when a split map is closed).
+        this.props.getMapboxRef(mapbox, this.props.index);
+      }
     };
 
-    _setlayerBlending = gl => {
-      const blending = LAYER_BLENDINGS[this.props.layerBlending];
-      const {blendFunc, blendEquation} = blending;
-
-      setParameters(gl, {
-        [GL.BLEND]: true,
-        ...(blendFunc ? {
-          blendFunc: blendFunc.map(getGlConst),
-          blendEquation: Array.isArray(blendEquation) ? blendEquation.map(getGlConst) : getGlConst(blendEquation)
-        } : {})
-      });
+    _onBeforeRender = ({gl}) => {
+      setLayerBlending(gl, this.props.layerBlending);
     };
 
     /* component render functions */
@@ -289,7 +283,8 @@ export default function MapContainerFactory(MapPopover, MapControl) {
       const data = layerData[idx];
 
       const layerInteraction = {
-        mousePosition
+        mousePosition,
+        wrapLongitude: true
       };
 
       const objectHovered = clicked || hoverInfo;
@@ -328,7 +323,8 @@ export default function MapContainerFactory(MapPopover, MapControl) {
         mapStyle,
         layerData,
         layerOrder,
-        visStateActions
+        visStateActions,
+        mapboxApiAccessToken
       } = this.props;
 
       let deckGlLayers = [];
@@ -341,9 +337,13 @@ export default function MapContainerFactory(MapPopover, MapControl) {
           .reverse()
           .reduce(this._renderLayer, []);
       }
-      const threeDBuildingLayerId = '_keplergl_3d-building';
+
       if (mapStyle.visibleLayerGroups['3d building']) {
-        deckGlLayers.push(new ThreeDBuildingLayer({id: threeDBuildingLayerId, threeDBuildingColor: mapStyle.threeDBuildingColor}));
+        deckGlLayers.push(new ThreeDBuildingLayer({
+          id: '_keplergl_3d-building',
+          mapboxApiAccessToken,
+          threeDBuildingColor: mapStyle.threeDBuildingColor
+        }));
       }
 
       return (
@@ -424,7 +424,6 @@ export default function MapContainerFactory(MapPopover, MapControl) {
             onTogglePerspective={mapStateActions.togglePerspective}
             onToggleSplitMap={mapStateActions.toggleSplitMap}
             onMapToggleLayer={this._handleMapToggleLayer}
-            onToggleFullScreen={mapStateActions.toggleFullScreen}
             onToggleMapControl={toggleMapControl}
           />
           <MapComponent

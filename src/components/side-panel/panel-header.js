@@ -23,7 +23,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import {Tooltip} from 'components/common/styled-components';
 import KeplerGlLogo from 'components/common/logo';
-import {CodeAlt, Save, Files, Share, Picture} from 'components/common/icons';
+import {Save, Files, Share, Picture, Map} from 'components/common/icons';
 import ClickOutsideCloseDropdown from 'components/side-panel/panel-dropdown';
 
 const StyledPanelHeader = styled.div.attrs({
@@ -83,6 +83,7 @@ const StyledPanelDropdown = styled.div`
   font-size: 11px;
   padding: 16px 0;
   position: absolute;
+  left: 64px;
   transition: ${props => props.theme.transitionSlow};
   display: flex;
   margin-top: ${props => props.show ? '6px' : '20px'};
@@ -150,64 +151,113 @@ const PanelItem = ({onClose, onClickHandler, label, icon}) => (
   </div>
 );
 
-export const SaveExportDropdown = ({
-  onExportImage,
-  onExportData,
-  onExportConfig,
-  onSaveMap,
-  show,
-  onClose
-}) => {
-  return (
-    <StyledPanelDropdown show={show} className="save-export-dropdown">
-      <ClickOutsideCloseDropdown className="save-export-dropdown__inner"
-        show={show}
-        onClose={onClose}>
-        <PanelItem
-          label="Export Image"
-          onClickHandler={onExportImage}
-          onClose={onClose}
-          icon={(<Picture height="16px" />)}
-        />
-
-        <PanelItem
-          label="Export Data"
-          onClickHandler={onExportData}
-          onClose={onClose}
-          icon={(<Files height="16px" />)}
-        />
-
-        <PanelItem
-          label="Export Config"
-          onClickHandler={onExportConfig}
-          onClose={onClose}
-          icon={(<CodeAlt height="16px" />)}
-        />
-
-        {onSaveMap ? (
-          <PanelItem
-            label="Save Map Url"
-            onClickHandler={onSaveMap}
-            onClose={onClose}
-            icon={(<Share height="16px" />)}
-          />
-        ) : null}
-      </ClickOutsideCloseDropdown>
-    </StyledPanelDropdown>
+export const ExportImageFactory = () => {
+  const ExportImage = (props) => (
+    <PanelItem {...props}/>
   );
+  ExportImage.defaultProps = {
+    label: 'Export Image',
+    icon: <Picture />
+  };
+
+  return ExportImage;
 };
 
-const defaultActionItems = [
-  {
-    id: 'save',
-    iconComponent: Save,
-    onClick: () => {},
-    label: 'Share',
-    dropdownComponent: SaveExportDropdown
-  }
+export const ExportDataFactory = () => {
+  const ExportData = (props) => (
+    <PanelItem {...props}/>
+  );
+  ExportData.defaultProps = {
+    label: 'Export Data',
+    icon: <Files />
+  };
+
+  return ExportData;
+};
+
+export const ExportMapFactory = () => {
+  const ExportMap = (props) => (
+    <PanelItem {...props}/>
+  );
+  ExportMap.defaultProps = {
+    label: 'Export Map',
+    icon: <Map />
+  };
+
+  return ExportMap;
+};
+
+export const SaveMapFactory = () => {
+  const SaveMap = (props) => (
+    <PanelItem {...props}/>
+  );
+  SaveMap.defaultProps = {
+    label: 'Save Map',
+    icon: <Share />
+  };
+
+  return SaveMap;
+};
+
+export const SaveExportDropdownFactory = (
+  ExportImage,
+  ExportData,
+  ExportMap,
+  SaveMap) => {
+  const SaveExportDropdown = ({
+    onExportImage,
+    onExportData,
+    onExportConfig,
+    onExportMap,
+    onSaveMap,
+    show,
+    onClose
+  }) => {
+    return (
+      <StyledPanelDropdown show={show} className="save-export-dropdown">
+        <ClickOutsideCloseDropdown className="save-export-dropdown__inner"
+          show={show}
+          onClose={onClose}>
+          <ExportImage
+            onClickHandler={onExportImage}
+            onClose={onClose}
+          />
+          <ExportData
+            onClickHandler={onExportData}
+            onClose={onClose}
+          />
+          <ExportMap
+            onClickHandler={onExportMap}
+            onClose={onClose}
+          />
+          {onSaveMap ? (
+            <SaveMap
+              onClickHandler={onSaveMap}
+              onClose={onClose}
+            />
+          ) : null}
+        </ClickOutsideCloseDropdown>
+      </StyledPanelDropdown>
+    );
+  };
+
+  return SaveExportDropdown;
+};
+
+SaveExportDropdownFactory.deps = [
+  ExportImageFactory,
+  ExportDataFactory,
+  ExportMapFactory,
+  SaveMapFactory
 ];
 
-function PanelHeaderFactory() {
+PanelHeaderFactory.deps = [
+  SaveExportDropdownFactory
+];
+
+function PanelHeaderFactory(
+  SaveExportDropdown
+) {
   return class PanelHeader extends Component {
     static propTypes = {
       appName: PropTypes.string,
@@ -220,7 +270,13 @@ function PanelHeaderFactory() {
 
     static defaultProps = {
       logoComponent: KeplerGlLogo,
-      actionItems: defaultActionItems
+      actionItems: [{
+        id: 'save',
+        iconComponent: Save,
+        onClick: () => {},
+        label: 'Share',
+        dropdownComponent: SaveExportDropdown
+      }]
     };
 
     render() {
@@ -232,6 +288,7 @@ function PanelHeaderFactory() {
         onExportImage,
         onExportData,
         onExportConfig,
+        onExportMap,
         visibleDropdown,
         showExportDropdown,
         hideExportDropdown
@@ -262,6 +319,7 @@ function PanelHeaderFactory() {
                       onExportData={onExportData}
                       onExportImage={onExportImage}
                       onExportConfig={onExportConfig}
+                      onExportMap={onExportMap}
                     />
                   ) : null}
                 </div>

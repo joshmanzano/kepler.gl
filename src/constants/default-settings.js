@@ -25,14 +25,55 @@ export const CLOUDFRONT = 'https://d1a3f4spazzrp4.cloudfront.net/kepler.gl';
 export const ICON_PREFIX = `${CLOUDFRONT}/geodude`;
 
 // Modal Ids
-export const LAYER_CONFIG_ID = 'copyConfig';
+/**
+ * Modal id: data table
+ * @constant
+ * @type {string}
+ * @public
+ */
 export const DATA_TABLE_ID = 'dataTable';
+/**
+ * Modal id: delete dataset confirm dialog
+ * @constant
+ * @type {string}
+ * @public
+ */
 export const DELETE_DATA_ID = 'deleteData';
+/**
+ * Modal id: add data modal
+ * @constant
+ * @type {string}
+ * @public
+ */
 export const ADD_DATA_ID = 'addData';
+/**
+ * Modal id: export image modal
+ * @constant
+ * @type {string}
+ * @public
+ */
 export const EXPORT_IMAGE_ID = 'exportImage';
+/**
+ * Modal id: export data modal
+ * @constant
+ * @type {string}
+ * @public
+ */
 export const EXPORT_DATA_ID = 'exportData';
-export const EXPORT_CONFIG_ID = 'exportConfig';
+/**
+ * Modal id: add custom map style modal
+ * @constant
+ * @type {string}
+ * @public
+ */
 export const ADD_MAP_STYLE_ID = 'addMapStyle';
+/**
+ * Modal id: export map modal
+ * @constant
+ * @type {string}
+ * @public
+ */
+export const EXPORT_MAP_ID = 'exportMap';
 
 import {
   Layers,
@@ -42,7 +83,12 @@ import {
 } from 'components/common/icons';
 
 export const KEPLER_GL_NAME = 'kepler.gl';
-export const KEPLER_GL_VERSION = 'v1.0';
+
+// __PACKAGE_VERSION__ is automatically injected by Babel/Webpack during the building process
+// Since we are injecting this during the build process with babel
+// while developing VERSION is not defined, we capture the exception and return
+// an empty string which will allow us to retrieve the latest umd version
+export const KEPLER_GL_VERSION = "__PACKAGE_VERSION__";
 export const KEPLER_GL_WEBSITE = 'http://kepler.gl/';
 
 export const DIMENSIONS = {
@@ -56,6 +102,22 @@ export const DIMENSIONS = {
     padding: 12
   }
 };
+
+/**
+ * Theme name that can be passed to `KeplerGl` `prop.theme`.
+ * Available themes are `Theme.light` and `Theme.dark`. Default theme is `Theme.dark`
+ * @constant
+ * @type {string}
+ * @public
+ * @example
+ * ```js
+ * const Map = () => <KeplerGl theme={THEME.light} id="map"/>
+ * ```
+ */
+export const THEME = keyMirror({
+  light: null,
+  dark: null
+});
 
 export const PANELS = [
   {
@@ -77,14 +139,6 @@ export const PANELS = [
     id: 'map',
     label: 'Base map',
     iconComponent: Settings
-  }
-];
-
-export const PANELS_FOOTER = [
-  {
-    id: LAYER_CONFIG_ID,
-    label: 'Copy Config',
-    icon: 'clipboard'
   }
 ];
 
@@ -563,7 +617,7 @@ export const EXPORT_DATA_TYPE = keyMirror({
 export const EXPORT_DATA_TYPE_OPTIONS = [
   {
     id: EXPORT_DATA_TYPE.CSV,
-    label: 'csv',
+    label: EXPORT_DATA_TYPE.CSV.toLowerCase(),
     available: true
   }
   // {
@@ -588,6 +642,20 @@ export const EXPORT_DATA_TYPE_OPTIONS = [
   // }
 ];
 
+// Export map types
+export const EXPORT_MAP_FORMAT = keyMirror({
+  HTML: null,
+  JSON: null
+});
+
+// Export map options
+export const EXPORT_MAP_FORMAT_OPTIONS = Object.entries(EXPORT_MAP_FORMAT)
+  .map(entry => ({
+    id: entry[0],
+    label: entry[1].toLowerCase(),
+    available: true
+  }));
+
 export const DEFAULT_UUID_COUNT = 6;
 
 export const DEFAULT_NOTIFICATION_MESSAGE = 'MESSAGE_NOT_PROVIDED';
@@ -603,3 +671,7 @@ export const DEFAULT_NOTIFICATION_TOPICS = keyMirror({
   global: null,
   file: null
 });
+
+export const TOKEN_MISUSE_WARNING = '* If you do not provide your own token, the map may fail to display at any time when we replace ours to avoid misuse. ';
+export const DISCLAIMER = 'You can change the Mapbox token later using the following instructions: ';
+export const MAP_CONFIG_DESCRIPTION = 'Map config will be included in the Json file. If you are using kepler.gl in your own app. You can copy this config and pass it to ';

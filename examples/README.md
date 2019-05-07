@@ -16,8 +16,21 @@ yarn --ignore-engines && yarn start
   Open kepler.gl in a modal.
 
 - ### [custom-reducer][custom-reducer]
-  Cutomize kepler.gl reducer initial state, adding more actions using plugin.
+  Customize kepler.gl reducer initial state, adding more actions using plugin.
+
+- ### [umd-client][umd-client]
+  A single html file loading kepler.gl
+
+- ### [replace-component][replace-component]
+  Example showing how to replace kepler.gl default components using `injectComponents` method.
+  
+- ### [custom-theme][custom-theme]
+  Customize kepler.gl theme by override current style properties.
+
 
 [custom-reducer]: custom-reducer
 [demo-app]: demo-app
 [open-modal]: open-modal
+[umd-client]: umd-client
+[replace-component]: replace-component
+[custom-reducer]: custom-theme

@@ -21,13 +21,6 @@
 import ActionTypes from 'constants/action-types';
 import {createAction} from 'redux-actions';
 
-// kepler.gl actions accessible outside component
-export * from './vis-state-actions';
-export * from './ui-state-actions';
-export * from './map-state-actions';
-export * from './map-style-actions';
-export * from './identity-actions';
-
   /**
    * Add data to kepler.gl reducer, prepare map with preset configuration if config is passed.
    * Kepler.gl provides a handy set of utils to parse data from different format to the `data` object required in dataset. You rarely need to manually format the data obejct.
@@ -36,64 +29,74 @@ export * from './identity-actions';
    * The config object value will always have higher precedence than the options properties.
    *
    * Kepler.gl uses `dataId` in the config to match with loaded dataset. If you pass a config object, you need
-   * to match the `info.id` of your dataset to the `dataId` in eath `layer`, `filter` and `interactionConfig.tooltips.fieldsToShow`
+   * to match the `info.id` of your dataset to the `dataId` in each `layer`, `filter` and `interactionConfig.tooltips.fieldsToShow`
    *
-   * @param {Array<Object>|Object} datasets - ***required** datasets can be a dataset or an array of datasets
+   * @memberof main
+   * @param {Object} data
+   * @param {Array<Object>|Object} data.datasets - ***required** datasets can be a dataset or an array of datasets
    * Each dataset object needs to have `info` and `data` property.
-   * @param {Object} datasets.info -info of a dataset
-   * @param {string} datasets.info.id - id of this dataset. If config is defined, `id` should matches the `dataId` in config.
-   * @param {string} datasets.info.label - A display name of this dataset
-   * @param {Object} datasets.data - ***required** The data object, in a tabular format with 2 properties `fields` and `rows`
-   * @param {Array<Object>} datasets.data.fields - ***required** Array of fields,
-   * @param {string} datasets.data.fields.name - ***required** Name of the field,
-   * @param {Array<Array>} datasets.data.rows - ***required** Array of rows, in a tabular format with `fields` and `rows`
+   * @param {Object} data.datasets.info -info of a dataset
+   * @param {string} data.datasets.info.id - id of this dataset. If config is defined, `id` should matches the `dataId` in config.
+   * @param {string} data.datasets.info.label - A display name of this dataset
+   * @param {Object} data.datasets.data - ***required** The data object, in a tabular format with 2 properties `fields` and `rows`
+   * @param {Array<Object>} data.datasets.data.fields - ***required** Array of fields,
+   * @param {string} data.datasets.data.fields.name - ***required** Name of the field,
+   * @param {Array<Array>} data.datasets.data.rows - ***required** Array of rows, in a tabular format with `fields` and `rows`
    *
-   * @param {Object} options
-   * @param {boolean} options.centerMap `default: true` if `centerMap` is set to `true` kepler.gl will
+   * @param {Object} data.options
+   * @param {boolean} data.options.centerMap `default: true` if `centerMap` is set to `true` kepler.gl will
    * place the map view within the data points boundaries
-   * @param {boolean} options.readOnly `default: false` if `readOnly` is set to `true`
+   * @param {boolean} data.options.readOnly `default: false` if `readOnly` is set to `true`
    * the left setting panel will be hidden
-   * @param {Object} config this object will contain the full kepler.gl instance configuration {mapState, mapStyle, visState}
+   * @param {Object} data.config this object will contain the full kepler.gl instance configuration {mapState, mapStyle, visState}
    * @public
    * @example
+   *
+   * // app.js
    * import {addDataToMap} from 'kepler.gl/actions';
    *
+   * const sampleTripData = {
+   *  fields: [
+   *    {name: 'tpep_pickup_datetime', format: 'YYYY-M-D H:m:s', type: 'timestamp'},
+   *    {name: 'pickup_longitude', format: '', type: 'real'},
+   *    {name: 'pickup_latitude', format: '', type: 'real'}
+   *  ],
+   *  rows: [
+   *    ['2015-01-15 19:05:39 +00:00', -73.99389648, 40.75011063],
+   *    ['2015-01-15 19:05:39 +00:00', -73.97642517, 40.73981094],
+   *    ['2015-01-15 19:05:40 +00:00', -73.96870422, 40.75424576],
+   *  ]
+   * };
+   *
+   * const sampleConfig = {
+   *   visState: {
+   *     filters: [
+   *       {
+   *         id: 'me',
+   *         dataId: 'test_trip_data',
+   *         name: 'tpep_pickup_datetime',
+   *         type: 'timeRange',
+   *         enlarged: true
+   *       }
+   *     ]
+   *   }
+   * }
+   *
    * this.props.dispatch(
-   *   addDataToMap(
-   *     // datasets
-   *     {
+   *   addDataToMap({
+   *     datasets: {
    *       info: {
    *         label: 'Sample Taxi Trips in New York City',
    *         id: 'test_trip_data'
    *       },
-   *       data: {
-   *         fields: [{
-   *           name: 'begintrip_lat',
-   *           type: 'real',
-   *           format: ''
-   *         }, {
-   *           name: 'begintrip_lng',
-   *           type: 'real',
-   *           format: ''
-   *         }],
-   *         rows: [
-   *          [37.1234, -121.20292],
-   *          [34.1223, -121.98234]
-   *         ]
-   *       }
+   *       data: sampleTripData
    *     },
-   *     // option
-   *     {
+   *     option: {
    *       centerMap: true,
    *       readOnly: false
    *     },
-   *     // config
-   *     {
-   *       mapStyle: {
-   *        styleType: 'light'
-   *       }
-   *     }
-   *   )
+   *     config: sampleConfig
+   *   })
    * );
    */
 export const addDataToMap = createAction(
@@ -103,6 +106,7 @@ export const addDataToMap = createAction(
 
 /**
  * Reset all sub-reducers to its initial state. This can be used to clear out all configuration in the reducer.
+ * @memberof main
  * @public
  */
 export const resetMapConfig = createAction(
@@ -115,12 +119,12 @@ export const resetMapConfig = createAction(
  *
  * You can call `receiveMapConfig` before passing in any data. The reducer will store layer and filter config, waiting for
  * data to come in. When data arrives, you can call `addDataToMap` without passing any config, and the reducer will try to match
- * preloaded configs. This behavior is designed to allow asynchronic data loading.
+ * preloaded configs. This behavior is designed to allow asynchronous data loading.
  *
  * It is also useful when you want to prepare the kepler.gl instance with some preset layer and filter settings.
- * **Note** Sequence is important, `receiveMapConfig` needs to be called __before__ data is loaded. Currently kepler.gl doesn't allow callling `receiveMapConfig` after data is loaded.
+ * **Note** Sequence is important, `receiveMapConfig` needs to be called __before__ data is loaded. Currently kepler.gl doesn't allow calling `receiveMapConfig` after data is loaded.
  * It will reset current configuration first then apply config to it.
- *
+ * @memberof main
  * @param {Object} config - ***required** The Config Object
  * @public
  * @example
@@ -137,6 +141,7 @@ export const receiveMapConfig = createAction(
 
 /**
  * Initialize kepler.gl reducer. It is used to pass in `mapboxApiAccessToken` to `mapStyle` reducer.
+ * @memberof main
  * @param {Object} payload
  * @param {string} payload.mapboxApiAccessToken - mapboxApiAccessToken to be saved to mapStyle reducer
  * @public
@@ -145,3 +150,15 @@ export const keplerGlInit =  createAction(
   ActionTypes.INIT,
   ({mapboxApiAccessToken} = {}) => ({mapboxApiAccessToken})
 );
+
+/**
+ * This declaration is needed to group actions in docs
+ */
+/**
+ * Main kepler.gl actions, these actions handles loading data and config into kepler.gl reducer. These actions
+ * is listened by all subreducers,
+ * @public
+ */
+/* eslint-disable no-unused-vars */
+const main = null;
+/* eslint-enable no-unused-vars */

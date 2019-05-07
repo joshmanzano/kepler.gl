@@ -64,7 +64,7 @@ const StyledDropdownSelect = styled.div`
 
 const DropdownSelectValue = styled.span`
   color: ${props =>
-    props.placeholder
+    props.hasPlaceholder
       ? props.theme.selectColorPlaceHolder
       : props.theme.selectColor};
   overflow: hidden;
@@ -76,7 +76,6 @@ const DropdownSelectErase = styled.div`
 `;
 
 const DropdownWrapper = styled.div`
-  background: ${props => props.theme.dropdownBgd};
   border: 0;
   width: 100%;
   left: 0;
@@ -278,7 +277,7 @@ class ItemSelector extends Component {
             />
           ) : (
             <StyledDropdownSelect {...dropdownSelectProps}>
-              <DropdownSelectValue placeholder={!hasValue}>
+              <DropdownSelectValue hasPlaceholder={!hasValue}>
                 {hasValue ? (
                   <this.props.DropDownLineItemRenderComponent
                     displayOption={displayOption}

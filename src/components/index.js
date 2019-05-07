@@ -30,8 +30,17 @@ export {default as ModalContainerFactory} from './modal-container';
 export {default as PlotContainerFactory} from './plot-container';
 
 // // side panel factories
-export {default as PanelHeaderFactory} from './side-panel/panel-header'
+export {
+  default as PanelHeaderFactory,
+  SaveExportDropdownFactory,
+  ExportImageFactory,
+  ExportDataFactory,
+  ExportConfigFactory,
+  ExportMapFactory,
+  SaveMapFactory
+} from './side-panel/panel-header'
 export {CollapseButtonFactory, default as SidebarFactory} from './side-panel/side-bar';
+export {default as PanelToggleFactory} from './side-panel/panel-toggle';
 
 export {AddDataButtonFactory, default as LayerManagerFactory} from './side-panel/layer-manager';
 export {default as LayerPanelFactory} from './side-panel/layer-panel/layer-panel';
@@ -58,7 +67,6 @@ export {default as DataTableModalFactory} from './modals/data-table-modal';
 export {default as LoadDataModalFactory} from './modals/load-data-modal';
 export {default as ExportImageModalFactory} from './modals/export-image-modal';
 export {default as ExportDataModalFactory} from './modals/export-data-modal';
-export {default as ExportConfigModalFactory} from './modals/export-config-modal';
 export {default as AddMapStyleModalFactory} from './modals/add-map-style-modal';
 
 // // Bottom widget factory

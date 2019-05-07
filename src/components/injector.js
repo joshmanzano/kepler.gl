@@ -29,13 +29,14 @@ export const errorMsg = {
   noDep: (fac, parent) =>
     `${fac.name} is required as a dependency of ${parent.name}, ` +
     `but is not provided to injectComponents. It will not be rendered`,
-  notFunc: '`factory and its replacment should be a function`'
+  notFunc: '`factory and its replacement should be a function`'
 };
 
-export function injector(map = {}) {
-  const cache = {}; // map<factory, factory -> ?>
+export function injector(map = new Map()) {
+  const cache = new Map(); // map<factory, factory -> ?>
   const get = (fac, parent) => {
-    const factory = map[fac];
+    const factory = map.get(fac);
+
     // factory is not injected
     if (!factory) {
       Console.error(errorMsg.noDep(fac, parent));
@@ -43,12 +44,12 @@ export function injector(map = {}) {
     }
 
     const instances =
-      cache[factory] ||
+      cache.get(factory) ||
       factory(
         ...(factory.deps ? factory.deps.map(dep => get(dep, factory)) : [])
       );
 
-    cache[fac] = instances;
+    cache.set(fac, instances);
     return instances;
   };
 
@@ -56,11 +57,17 @@ export function injector(map = {}) {
   // it will be override: 2018-02-05
   return {
     provide: (factory, replacement) => {
-      if (typeof factory !== 'function' || typeof replacement !== 'function') {
+      if (typeof factory !== 'function') {
+        Console.error('Error injecting factory: ', factory);
+        Console.error(errorMsg.notFunc);
+        return injector(map);
+      } else if (typeof replacement !== 'function') {
+        Console.error('Error injecting replacement for: ', factory);
         Console.error(errorMsg.notFunc);
         return injector(map);
       }
-      return injector({...map, [factory]: replacement});
+
+      return injector((new Map(map)).set(factory, replacement));
     },
     get
   };
@@ -94,5 +101,3 @@ export function withState(lenses, mapStateToProps = identity, actions = {}) {
     )(WrappedComponent);
   }
 }
-
-// Helpter to add actionCreator to custom component

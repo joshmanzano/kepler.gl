@@ -107,7 +107,7 @@ const StyledMapControlPanelHeader = styled.div`
   height: 32px;
   padding: 6px 12px;
   font-size: 11px;
-  color: ${props => props.theme.secondaryBtnColor};
+  color: ${props => props.theme.titleTextColor};
 
   button {
     width: 18px;
@@ -169,7 +169,6 @@ export class MapControl extends Component {
     layers: PropTypes.arrayOf(PropTypes.object),
     mapIndex: PropTypes.number.isRequired,
     mapControls: PropTypes.object.isRequired,
-    onToggleFullScreen: PropTypes.func.isRequired,
     onTogglePerspective: PropTypes.func.isRequired,
     onToggleSplitMap: PropTypes.func.isRequired,
     onToggleMapControl: PropTypes.func.isRequired,

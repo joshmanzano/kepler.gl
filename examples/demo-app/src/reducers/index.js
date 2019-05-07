@@ -21,9 +21,10 @@
 import {combineReducers} from 'redux';
 import {handleActions} from 'redux-actions';
 
-import keplerGlReducer, {combineUpdaters} from 'kepler.gl/reducers';
-import Processor from 'kepler.gl/processors';
+import keplerGlReducer, {combinedUpdaters} from 'kepler.gl/reducers';
+import {processGeojson, processCsvData} from 'kepler.gl/processors';
 import KeplerGlSchema from 'kepler.gl/schemas';
+import {EXPORT_MAP_FORMAT} from 'kepler.gl/constants';
 
 import sharingReducer from './sharing';
 
@@ -35,7 +36,12 @@ import {
   SET_SAMPLE_LOADING_STATUS
 } from '../actions';
 
-import {DEFAULT_FEATURE_FLAGS, DEFAULT_LOADING_METHOD, LOADING_METHODS} from '../constants/default-settings';
+import {
+  AUTH_TOKENS,
+  DEFAULT_FEATURE_FLAGS,
+  DEFAULT_LOADING_METHOD,
+  LOADING_METHODS
+} from '../constants/default-settings';
 import {generateHashId} from '../utils/strings';
 
 // INITIAL_APP_STATE
@@ -82,7 +88,23 @@ export const appReducer = handleActions({
 // to mimic the reducer state of kepler.gl website
 const demoReducer = combineReducers({
   // mount keplerGl reducer
-  keplerGl: keplerGlReducer,
+  keplerGl: keplerGlReducer.initialState({
+    // In order to provide single file export functionality
+    // we are going to set the mapbox access token to be used
+    // in the exported file
+    uiState: {
+      exportMap: {
+        format: EXPORT_MAP_FORMAT.HTML,
+        [EXPORT_MAP_FORMAT.JSON]: {
+          hasData: true
+        },
+        [EXPORT_MAP_FORMAT.HTML]: {
+          exportMapboxAccessToken: AUTH_TOKENS.EXPORT_MAPBOX_TOKEN,
+          userMapboxToken: ''
+        }
+      }
+    }
+  }),
   app: appReducer,
   sharing: sharingReducer
 });
@@ -98,10 +120,10 @@ export const loadRemoteResourceSuccess = (state, action) => {
   // TODO: replace generate with a different function
   const datasetId = action.options.id || generateHashId(6);
   const {dataUrl} = action.options;
-  let processorMethod = Processor.processCsvData;
+  let processorMethod = processCsvData;
   // TODO: create helper to determine file ext eligibility
   if (dataUrl.includes('.json') || dataUrl.includes('.geojson')) {
-    processorMethod = Processor.processGeojson;
+    processorMethod = processGeojson;
   }
 
   const datasets = {
@@ -114,7 +136,7 @@ export const loadRemoteResourceSuccess = (state, action) => {
   const config = action.config ?
     KeplerGlSchema.parseSavedConfig(action.config) : null;
 
-  const keplerGlInstance = combineUpdaters.addDataToMapComposed(
+  const keplerGlInstance = combinedUpdaters.addDataToMapUpdater(
     state.keplerGl.map, // "map" is the id of your kepler.gl instance
     {
       payload: {

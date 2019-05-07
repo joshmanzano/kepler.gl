@@ -28,9 +28,10 @@ import {
   RATIOS,
   RESOLUTION_OPTIONS
 } from 'constants/default-settings';
-import LoadingSpinner from 'components/common/loading-spinner';
-import {StyledModalContent} from 'components/common/styled-components';
+
+import {StyledModalContent, SelectionButton} from 'components/common/styled-components';
 import Switch from 'components/common/switch';
+import LoadingSpinner from 'components/common/loading-spinner';
 
 const ImageOptionList = styled.div`
   display: flex;
@@ -95,21 +96,6 @@ const PreviewImageSection = styled.div`
   }
 `;
 
-const Button = styled.div`
-  border-radius: 2px;
-  border: 1px solid ${props => props.selected ? props.theme.primaryBtnBgd : props.theme.selectBorderColorLT};
-  color: ${props => props.selected ? props.theme.primaryBtnBgd : props.theme.selectBorderColorLT};
-  cursor: pointer;
-  font-weight: 500;
-  margin-right: 6px;
-  padding: 6px 10px;
-
-  :hover {
-    color: ${props => props.available && props.theme.primaryBtnBgd};
-    border: 1px solid ${props => props.available && props.theme.primaryBtnBgd};
-  }
-`;
-
 class ExportImageModal extends Component {
 
   static propTypes = {
@@ -145,59 +131,60 @@ class ExportImageModal extends Component {
     });
 
     return (
-      <div className="export-image-modal">
-        <StyledModalContent>
-          <ImageOptionList>
-            <div className="image-option-section">
-              <div className="image-option-section-title">Ratio</div>
+      <StyledModalContent className="export-image-modal">
+        <ImageOptionList>
+          <div className="image-option-section">
+            <div className="image-option-section-title">Ratio</div>
               Choose the ratio for various usages.
-              <div className="button-list">
-                {RATIO_OPTIONS.map(op =>
-                  <Button
-                    key={op.id}
-                    selected={ratio === op.id}
-                    onClick={() => onChangeRatio({ratio: op.id})}
-                  >
-                    {op.label}
-                  </Button>
-                )}
-              </div>
+            <div className="button-list">
+              {RATIO_OPTIONS.map(op =>
+                <SelectionButton
+                  key={op.id}
+                  selected={ratio === op.id}
+                  onClick={() => onChangeRatio({ratio: op.id})}
+                >
+                  {op.label}
+                </SelectionButton>
+              )}
             </div>
-            <div className="image-option-section">
-              <div className="image-option-section-title">Resolution</div>
-              High resolution is better for prints.
-              <div className="button-list">
-                {RESOLUTION_OPTIONS.map(op =>
-                  <Button
+          </div>
+          <div className="image-option-section">
+            <div className="image-option-section-title">Resolution</div>
+            High resolution is better for prints.
+            <div className="button-list">
+              {
+                RESOLUTION_OPTIONS.map(op =>
+                  <SelectionButton
                     key={op.id}
                     selected={resolution === op.id}
-                    onClick={() => op.available && onChangeResolution({resolution: op.id})}
-                  >
+                    onClick={() => op.available && onChangeResolution({resolution: op.id})}>
                     {op.label}
-                  </Button>
-                )}
-              </div>
-            </div>
-            <div className="image-option-section">
-              <div className="image-option-section-title">Map Legend</div>
-              <Switch type="checkbox"
-                      id="add-map-legend"
-                      checked={legend}
-                      label="Add legend on map"
-                      onChange={onToggleLegend}/>
-            </div>
-          </ImageOptionList>
-          <PreviewImageSection ratio={ratio} width={width} height={height}>
-            <div className="dimension">{`${exportImageSize.width} x ${exportImageSize.height}`}</div>
-            <div className="preview-image">
-              {exporting ?
-                <div className="preview-image-spinner"><LoadingSpinner /></div> :
-                <img className="preview-image-placeholder" src={imageDataUri} />
+                  </SelectionButton>
+                )
               }
             </div>
-          </PreviewImageSection>
-        </StyledModalContent>
-      </div>
+          </div>
+          <div className="image-option-section">
+            <div className="image-option-section-title">Map Legend</div>
+            <Switch type="checkbox"
+                    id="add-map-legend"
+                    checked={legend}
+                    label="Add legend on map"
+                    onChange={onToggleLegend}/>
+          </div>
+        </ImageOptionList>
+        <PreviewImageSection ratio={ratio} width={width} height={height}>
+          <div className="dimension">{`${exportImageSize.width} x ${exportImageSize.height}`}</div>
+          <div className="preview-image">
+            {exporting ?
+              <div className="preview-image-spinner">
+                <LoadingSpinner />
+              </div> :
+              <img className="preview-image-placeholder" src={imageDataUri} />
+            }
+          </div>
+        </PreviewImageSection>
+      </StyledModalContent>
     );
   }
 }

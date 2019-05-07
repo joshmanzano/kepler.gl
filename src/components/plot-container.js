@@ -76,6 +76,7 @@ export default function PlotContainerFactory(MapContainer) {
       this.mapStyleSelector,
       this.resolutionSelector,
       (mapStyle, resolution) => ({
+        ...mapStyle,
         bottomMapStyle: scaleMapStyleByResolution(
           mapStyle.bottomMapStyle,
           resolution
@@ -99,7 +100,7 @@ export default function PlotContainerFactory(MapContainer) {
 
         this.props.startExportingImage();
         convertToPng(this.plottingAreaRef).then(dataUri => {
-          this.props.setExportImageDataUri({dataUri});
+          this.props.setExportImageDataUri(dataUri);
           window.devicePixelRatio = savedDevicePixelRatio;
         });
       }

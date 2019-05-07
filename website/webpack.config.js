@@ -21,8 +21,12 @@
 const {resolve, join} = require('path');
 const webpack = require('webpack');
 
+const KeplerPackage = require('../package');
+
 const rootDir = join(__dirname, '..');
 const libSources = join(rootDir, 'src');
+
+const console = require('global/console');
 
 const BABEL_CONFIG = {
   presets: [
@@ -30,43 +34,51 @@ const BABEL_CONFIG = {
     '@babel/preset-react'
   ],
   plugins: [
-    ["@babel/plugin-proposal-decorators", { "legacy": true }],
-    "@babel/plugin-proposal-class-properties",
-    ["@babel/transform-runtime", {
-      "regenerator": true
+    ['@babel/plugin-proposal-decorators', {legacy: true }],
+    '@babel/plugin-proposal-class-properties',
+    ['@babel/transform-runtime', {
+      regenerator: true
     }],
-    "@babel/plugin-syntax-dynamic-import",
-    "@babel/plugin-syntax-import-meta",
-    "@babel/plugin-proposal-json-strings",
-    "@babel/plugin-proposal-function-sent",
-    "@babel/plugin-proposal-export-namespace-from",
-    "@babel/plugin-proposal-numeric-separator",
-    "@babel/plugin-proposal-throw-expressions",
-    "@babel/plugin-proposal-export-default-from",
-    "@babel/plugin-proposal-logical-assignment-operators",
-    "@babel/plugin-proposal-optional-chaining",
+    '@babel/plugin-syntax-dynamic-import',
+    '@babel/plugin-syntax-import-meta',
+    '@babel/plugin-proposal-json-strings',
+    '@babel/plugin-proposal-function-sent',
+    '@babel/plugin-proposal-export-namespace-from',
+    '@babel/plugin-proposal-numeric-separator',
+    '@babel/plugin-proposal-throw-expressions',
+    '@babel/plugin-proposal-export-default-from',
+    '@babel/plugin-proposal-logical-assignment-operators',
+    '@babel/plugin-proposal-optional-chaining',
     [
-      "@babel/plugin-proposal-pipeline-operator",
+      '@babel/plugin-proposal-pipeline-operator',
       {
-        "proposal": "minimal"
+        proposal: 'minimal'
       }
     ],
-    "@babel/plugin-proposal-nullish-coalescing-operator",
-    "@babel/plugin-proposal-do-expressions",
-    "@babel/plugin-proposal-function-bind",
-    "@babel/plugin-transform-modules-commonjs",
-    ["inline-json-import", {}],
+    '@babel/plugin-proposal-nullish-coalescing-operator',
+    '@babel/plugin-proposal-do-expressions',
+    '@babel/plugin-proposal-function-bind',
+    '@babel/plugin-transform-modules-commonjs',
+    ['inline-json-import', {}],
     [
-      "module-resolver",
+      'module-resolver',
       {
-        "root": [
-          "../src"
+        root: [
+          '../src'
         ],
-        "alias": {
-          "test": "../test"
+        alias: {
+          test: '../test'
         }
       }
-    ]
+    ],
+    ['search-and-replace', {
+      rules: [
+        {
+          search: '__PACKAGE_VERSION__',
+          replace: KeplerPackage.version
+        }
+      ]
+    }]
   ]
 };
 
@@ -75,9 +87,9 @@ const COMMON_CONFIG = {
     './src/main'
   ],
   output: {
-    path: resolve(__dirname, "build"),
-    filename: "bundle.js",
-    publicPath: "/"
+    path: resolve(__dirname, 'build'),
+    filename: 'bundle.js',
+    publicPath: '/'
   },
 
   resolve: {
@@ -122,7 +134,11 @@ const COMMON_CONFIG = {
 
   // Optional: Enables reading mapbox token from environment variable
   plugins: [
-    new webpack.EnvironmentPlugin(['MapboxAccessToken', 'DropboxClientId'])
+    new webpack.EnvironmentPlugin([
+      'MapboxAccessToken',
+      'DropboxClientId',
+      'MapboxExportToken'
+    ])
   ]
 };
 
@@ -177,6 +193,18 @@ module.exports = env => {
       logInstruction(`Make sure to run "export MapboxAccessToken=<token>" before deploy the website`);
       logInstruction('You can get the token at https://www.mapbox.com/help/how-access-tokens-work/');
       throw new Error('Missing Mapbox Access token');
+    }
+    if (!process.env.DropboxClientId) {
+      logError('Error! DropboxClientId is not defined');
+      logInstruction(`Make sure to run "export MapboxExportToken=<token>" before deploy the website`);
+      logInstruction('You can get the token at https://www.dropbox.com/developers');
+      throw new Error('Missing Export DropboxClientId Access token');
+    }
+    if (!process.env.MapboxExportToken) {
+      logError('Error! MapboxExportToken is not defined');
+      logInstruction(`Make sure to run "export MapboxExportToken=<token>" before deploy the website`);
+      logInstruction('You can get the token at https://www.mapbox.com/help/how-access-tokens-work/');
+      throw new Error('Missing Export Mapbox Access token, used to generate the single map file');
     }
     config = addProdConfig(config);
   }

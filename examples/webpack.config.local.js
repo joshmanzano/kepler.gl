@@ -27,11 +27,11 @@
 
 // avoid destructuring for older Node version support
 const resolve = require('path').resolve;
-const join = require('path').join;
 const webpack = require('webpack');
-const path = require('path');
 const LIB_DIR = resolve(__dirname, '..');
 const SRC_DIR = resolve(LIB_DIR, './src');
+
+const KeplerPackage = require('../package');
 
 // Support for hot reloading changes to the deck.gl library:
 function makeLocalDevConfig(EXAMPLE_DIR = LIB_DIR) {
@@ -69,7 +69,11 @@ function makeLocalDevConfig(EXAMPLE_DIR = LIB_DIR) {
     },
     // Optional: Enables reading mapbox token from environment variable
     plugins: [
-      new webpack.EnvironmentPlugin(['MapboxAccessToken', 'DropboxClientId'])
+      new webpack.EnvironmentPlugin([
+        'MapboxAccessToken',
+        'DropboxClientId',
+        'MapboxExportToken'
+      ])
     ]
   };
 }
@@ -114,7 +118,6 @@ const BABEL_RULE = {
             '@babel/plugin-proposal-do-expressions',
             '@babel/plugin-proposal-function-bind',
             '@babel/plugin-transform-modules-commonjs',
-            ['inline-json-import', {}],
             [
               'module-resolver',
               {
@@ -122,7 +125,15 @@ const BABEL_RULE = {
                   SRC_DIR
                 ]
               }
-            ]
+            ],
+            ['search-and-replace', {
+              rules: [
+                {
+                  search: '__PACKAGE_VERSION__',
+                  replace: KeplerPackage.version
+                }
+              ]
+            }]
           ]
         }
       }
@@ -130,32 +141,45 @@ const BABEL_RULE = {
   }
 };
 
-function addLocalDevSettings(config, exampleDir) {
+function addLocalDevSettings(sourceConfig, exampleDir) {
   const LOCAL_DEV_CONFIG = makeLocalDevConfig(exampleDir);
-  config = Object.assign({}, LOCAL_DEV_CONFIG, config);
-  config.resolve = config.resolve || {};
-  config.resolve.alias = config.resolve.alias || {};
-  Object.assign(config.resolve.alias, LOCAL_DEV_CONFIG.resolve.alias);
+  const config = {...LOCAL_DEV_CONFIG, ...sourceConfig};
 
-  config.module = config.module || {};
-  Object.assign(config.module, {
-    rules: (config.module.rules || []).concat(LOCAL_DEV_CONFIG.module.rules)
-  });
+  config.resolve = config.resolve || {};
+  config.resolve = {
+    ...config.resolve,
+    alias: {
+      ...(config.resolve ? config.resolve.alias : null),
+      ...LOCAL_DEV_CONFIG.resolve.alias
+    }
+  };
+
+  config.module = {
+    ...config.module,
+    rules: [
+      ...(config.module ? config.module.rules : null),
+      ...LOCAL_DEV_CONFIG.module.rules
+    ]
+  };
+
   return config;
 }
 
 function addBableSettings(config) {
-  config.module = config.module || {};
-  Object.assign(config.module, {
-    rules: (config.module.rules || []).concat(BABEL_RULE.module.rules)
-  });
-  return config;
+  return {
+    ...config,
+    module: {
+      ...config.module,
+      rules: [
+        ...config.module.rules,
+        ...BABEL_RULE.module.rules
+      ]
+    }
+  };
 }
 
 module.exports = (config, exampleDir) => env => {
-
   config = addLocalDevSettings(config, exampleDir);
   config = addBableSettings(config);
-
   return config;
 };

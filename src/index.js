@@ -42,5 +42,8 @@ export * from './layers';
 // Styles
 export * from './styles';
 
+// Middleware
+export * from './middleware';
+
 // Default export
 export {default} from './components';
