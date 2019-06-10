@@ -127,6 +127,7 @@ function updateStateWithLayerAndData(state, {layerData, layer, idx}) {
  *
  */
 export function layerConfigChangeUpdater(state, action) {
+  console.log(action); console.log("layerConfigChangeUpdater");
   const {oldLayer} = action;
   const idx = state.layers.findIndex(l => l.id === oldLayer.id);
   const props = Object.keys(action.newConfig);
@@ -155,6 +156,7 @@ export function layerConfigChangeUpdater(state, action) {
 }
 
 export function layerTypeChangeUpdater(state, action) {
+  console.log(action); console.log("layerTypeChangeUpdater");
   const {oldLayer, newType} = action;
   const oldId = oldLayer.id;
   const idx = state.layers.findIndex(l => l.id === oldId);
@@ -200,7 +202,7 @@ export function layerTypeChangeUpdater(state, action) {
   return updateStateWithLayerAndData(newState, {layerData, layer, idx});
 }
 
-export function layerVisualChannelChangeUpdater(state, action) {
+export function layerVisualChannelChangeUpdater(state, action) { console.log(action); console.log("layerVisualChannelChangeUpdater");
   const {oldLayer, newConfig, channel} = action;
   const dataset = state.datasets[oldLayer.config.dataId];
 
@@ -217,7 +219,7 @@ export function layerVisualChannelChangeUpdater(state, action) {
   return updateStateWithLayerAndData(state, {layerData, layer, idx});
 }
 
-export function layerVisConfigChangeUpdater(state, action) {
+export function layerVisConfigChangeUpdater(state, action) { console.log(action); console.log("layerVisConfigChangeUpdater");
   const {oldLayer} = action;
   const idx = state.layers.findIndex(l => l.id === oldLayer.id);
   const props = Object.keys(action.newVisConfig);
@@ -245,7 +247,7 @@ export function layerVisConfigChangeUpdater(state, action) {
 
 /* eslint-enable max-statements */
 
-export function interactionConfigChangeUpdater(state, action) {
+export function interactionConfigChangeUpdater(state, action) { console.log(action); console.log("interactionConfigChangeUpdater");
   const {config} = action;
 
   const interactionConfig = {
@@ -268,7 +270,7 @@ export function interactionConfigChangeUpdater(state, action) {
   };
 }
 
-export function setFilterUpdater(state, action) {
+export function setFilterUpdater(state, action) { console.log(action); console.log("setFilterUpdater");
   const {idx, prop, value} = action;
   let newState = state;
   let newFilter = {
@@ -401,7 +403,7 @@ export const updateAnimationSpeedUpdater = (state, action) => ({
   )
 });
 
-export const enlargeFilterUpdater = (state, action) => {
+export const enlargeFilterUpdater = (state, action) => { console.log(action); console.log("enlargeFilterUpdater");
   const isEnlarged = state.filters[action.idx].enlarged;
 
   return {
@@ -413,7 +415,7 @@ export const enlargeFilterUpdater = (state, action) => {
   };
 };
 
-export const removeFilterUpdater = (state, action) => {
+export const removeFilterUpdater = (state, action) => { console.log(action); console.log("removeFilterUpdater");
   const {idx} = action;
   const {dataId} = state.filters[idx];
 
@@ -437,7 +439,7 @@ export const removeFilterUpdater = (state, action) => {
   return updateAllLayerDomainData(newState, dataId);
 };
 
-export const addLayerUpdater = (state, action) => {
+export const addLayerUpdater = (state, action) => { console.log(action); console.log("addLayerUpdater");
   const defaultDataset = Object.keys(state.datasets)[0];
   const newLayer = new Layer({
     isVisible: true,
@@ -481,7 +483,7 @@ export const reorderLayerUpdater = (state, {order}) => ({
   layerOrder: order
 });
 
-export const removeDatasetUpdater = (state, action) => {
+export const removeDatasetUpdater = (state, action) => { console.log(action); console.log("removeDatasetUpdater");
   // extract dataset key
   const {key: datasetKey} = action;
   const {datasets} = state;
@@ -541,7 +543,7 @@ export const updateLayerBlendingUpdater = (state, action) => ({
   layerBlending: action.mode
 });
 
-export const showDatasetTableUpdater = (state, action) => {
+export const showDatasetTableUpdater = (state, action) => { console.log(action); console.log("showDatasetTableUpdater");
   return {
     ...state,
     editingDataset: action.dataId
@@ -560,7 +562,7 @@ export const resetMapConfigVisStateUpdater = (state, action) => ({
  * @param action
  * @returns {*}
  */
-export const receiveMapConfigUpdater = (state, action) => {
+export const receiveMapConfigUpdater = (state, action) => { console.log(action); console.log("receiveMapConfigUpdater");
   if (!action.payload.visState) {
     return state;
   }
@@ -620,7 +622,7 @@ export const toggleSplitMapUpdater = (state, action) =>
  * @param state
  * @param action
  */
-export const setVisibleLayersForMapUpdater = (state, action) => {
+export const setVisibleLayersForMapUpdater = (state, action) => { console.log(action); console.log("setVisibleLayersForMapUpdater");
   const {mapIndex, layerIds} = action;
   if (!layerIds) {
     return state;
@@ -665,7 +667,7 @@ export const setVisibleLayersForMapUpdater = (state, action) => {
   };
 };
 
-export const toggleLayerForMapUpdater = (state, action) => {
+export const toggleLayerForMapUpdater = (state, action) => { console.log(action); console.log("toggleLayerForMapUpdater");
   if (!state.splitMaps[action.mapIndex]) {
     return state;
   }
@@ -702,7 +704,7 @@ export const toggleLayerForMapUpdater = (state, action) => {
 };
 
 /* eslint-disable max-statements */
-export const updateVisDataUpdater = (state, action) => {
+export const updateVisDataUpdater = (state, action) => { console.log(action); console.log("updateVisDataUpdater");
   // datasets can be a single data entries or an array of multiple data entries
   const datasets = Array.isArray(action.datasets)
     ? action.datasets
@@ -894,7 +896,7 @@ function toggleLayerFromSplitMaps(state, layer) {
  * @param action
  * @returns {*}
  */
-function closeSpecificMapAtIndex(state, action) {
+function closeSpecificMapAtIndex(state, action) { console.log(action); console.log("closeSpecificMapAtIndex");
   // retrieve layers meta data from the remaining map that we need to keep
   const indexToRetrieve = 1 - action.payload;
 
@@ -929,7 +931,7 @@ function closeSpecificMapAtIndex(state, action) {
 }
 
 // TODO: redo write handler to not use tasks
-export const loadFilesUpdater = (state, action) => {
+export const loadFilesUpdater = (state, action) => { console.log(action); console.log("loadFilesUpdater");
   const {files} = action;
 
   const filesToLoad = files.map(fileBlob => processFileToLoad(fileBlob));
