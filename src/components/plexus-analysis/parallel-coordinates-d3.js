@@ -104,10 +104,6 @@ export class ParallelCoordinatesD3 extends Component {
       });
     }, domainStructure);
 
-    console.log('pk domains');
-    console.log(domains);
-    console.log(this.state.data);
-
     let dimensions = {};
     domains.forEach(d => {
       if (
@@ -146,9 +142,6 @@ export class ParallelCoordinatesD3 extends Component {
       }
     });
 
-    console.log('createddim');
-    console.log(dimensions);
-
     // linear color scale
     var colorScale = d3
       .scaleLinear()
@@ -165,7 +158,7 @@ export class ParallelCoordinatesD3 extends Component {
       // })
       .dimensions(dimensions)
       .width(1106)
-      .hideAxis(['name'])
+      .hideAxis(['name', 'population', 'income', 'desirability', 'id'])
       .margin({
         top: 40,
         right: 0,
@@ -186,7 +179,7 @@ export class ParallelCoordinatesD3 extends Component {
       .datum(this.state.data)
       .call(grid);
 
-    // // update data table on brush event
+    // update data table on brush event
     chart.on('brush', function(d) {
       d3.select('#grid')
         .datum(d)
@@ -208,6 +201,7 @@ export class ParallelCoordinatesD3 extends Component {
       });
     });
 
+    // add highlight line on row hover
     var rows = d3.select('#grid').selectAll('.row');
       rows.on('mouseover', function(d) {
         chart.highlight([d]);
@@ -219,7 +213,6 @@ export class ParallelCoordinatesD3 extends Component {
     this.setState({
       pc: chart,
       table: grid,
-      visible: !this.state.visible
     });
 
     console.log('DIDMOUNT');
@@ -252,7 +245,12 @@ export class ParallelCoordinatesD3 extends Component {
         .shadows()
         .render();
 
-       
+      // update table on filter
+      var grid = divgrid();
+        d3.select('#grid')
+          // .datum(this.state.data.slice(0, 10))
+          .datum(data)
+          .call(grid); 
     
       // add mouse events on grid rows
       // var rows = d3.select('#grid').selectAll('.row');
@@ -291,7 +289,7 @@ export class ParallelCoordinatesD3 extends Component {
         }}
       >
         {/* TODO move to parent */}
-        <ControlPanel>
+        {/* <ControlPanel>
           <div className="control-panel-item">
             <p className="control-panel__title">Parallel Coordinates</p>
           </div>
@@ -305,23 +303,8 @@ export class ParallelCoordinatesD3 extends Component {
                 this.setState({visible: !this.state.visible});
               }} />
             </IconRoundSmall>
-            {/* <ControlBtn
-              onClick={() => {
-                console.log('close');
-                this.setState({visible: !this.state.visible});
-              }}
-            >
-              {this.state.visible ? 'Hide' : 'Show'}
-            </ControlBtn> */}
           </div>
-        </ControlPanel>
-        {/* <div style={{width: '1106px', display: 'flex', justifyContent: 'space-between'}}>  
-          <p>Parallel Coordinates</p>
-          <button onClick={()=>{
-            console.log('close');
-            this.setState({visible: !this.state.visible});
-            }}>Close</button>
-        </div> */}
+        </ControlPanel> */}
         <div
           id="example"
           className="parcoords ex"

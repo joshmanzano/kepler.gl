@@ -161,8 +161,8 @@ export default function SidePanelFactory(
       this.props.uiStateActions.toggleModal(EXPORT_CONFIG_ID);
 
     render() {
-      console.log('SIDE PANEL');
-      console.log(this.props);
+      // console.error('SIDE PANEL');
+      // console.log(this.props);
 
       const {
         appName,
@@ -173,6 +173,7 @@ export default function SidePanelFactory(
         layerBlending,
         layerClasses,
         uiState,
+        visState,
         layerOrder,
         interactionConfig,
         visStateActions,
@@ -182,7 +183,8 @@ export default function SidePanelFactory(
         selectedCity,
         activeCities,
         scores,
-        selectedIndicator
+        selectedIndicator,
+        legends
       } = this.props;
 
       const {activeSidePanel} = uiState;
@@ -224,6 +226,11 @@ export default function SidePanelFactory(
       };
 
       const overviewManagerActions = {
+        onConfigChange: visStateActions.setSelectedIndicator,
+        onChangeCity: this._onChangeCity,
+        setFilter: visStateActions.setFilter,
+        paginationFunc: visStateActions.changeTDRankPage,
+        reverseFunc: visStateActions.sortTDReverse,
       };
 
       const mapManagerActions = {
@@ -284,11 +291,22 @@ export default function SidePanelFactory(
               </PanelTitle> */}
               {selectedCity ? (
                 <div>
+                  {/* {console.error('OVERVIEW MANAGER')} */}
+                  {/* {console.error(legends)} */}
                   {activeSidePanel === 'overview' && (
                     <OverviewManager
                       {...overviewManagerActions}
+                      scores={scores}
+                      selectedIndicator={selectedIndicator}
+                      filters={filters}
+                      datasets={datasets}
+                      rankingReverse={visState.tdRankingReverse}
+                      rankingPage={visState.tdRankingPage}
+                      legends={legends}
                     />
+                    // <div/>
                   )}
+                  {/* {console.error('INDICATOR MANAGER')} */}
                   {activeSidePanel === 'indicators' && (
                     <IndicatorManager
                       {...indicatorManagerActions}
@@ -297,6 +315,7 @@ export default function SidePanelFactory(
                       filters={filters}
                     />
                   )}
+                  {/* {console.error('FILTER MANAGER')}                   */}
                   {activeSidePanel === 'qualities' && (
                     <FilterManager
                       {...filterManagerActions}
