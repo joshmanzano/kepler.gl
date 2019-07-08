@@ -35,11 +35,12 @@ import BarChartFactory from './plexus-analysis/bar-chart';
 import ParallelCoordinatesKFactory from './plexus-analysis/parallel-coordinates';
 import DonutChartFactory from './plexus-analysis/donut-chart';
 
+import {INDICATORS as INDICATORS_DESC} from 'constants/default-settings';
+
 import {
   RadialChart
 } from 'react-vis';
 import { SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER } from 'constants';
-
 
 const innerPdSide = 32;
 
@@ -292,6 +293,11 @@ const StyledTitle = CenterFlexbox.extend`
   }
 `;
 
+const StyleMessage = styled.span`
+  width: 100px;
+  height: auto;
+  display: inline-block;
+`;
 
 
 /**
@@ -549,7 +555,8 @@ export default function BottomWidgetFactory(TimeWidget, BarChart, ParallelCoordi
                   <BarChart 
                     height={300}
                     title={'Barangay Breakdown'}
-                    data={bgy.filter(e => typeof e.x == 'number' && e.label != 'population' && e.label !='income')}/>
+                    data={bgy.filter(e => typeof e.x == 'number' && e.label != 'population' && e.label !='income')}
+                    descriptions={INDICATORS_DESC}/>
                 </div>
               ) : null }
               

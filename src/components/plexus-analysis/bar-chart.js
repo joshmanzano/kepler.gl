@@ -41,6 +41,8 @@ import {
   ChartLabel
 } from 'react-vis';
 
+import {Tooltip} from 'components/common/styled-components';
+
 // import './../bottom-widget.scss';
 
 const ControlPanel = styled.div`
@@ -73,6 +75,12 @@ const ControlBtn = styled.button`
   border: none;
 `;
 
+const StyleMessage = styled.span`
+  width: 100px;
+  height: auto;
+  display: inline-block;
+`;
+
 export class BarChart extends Component {
   constructor(props) {
     super(props);
@@ -89,13 +97,13 @@ export class BarChart extends Component {
       maxBar,
       listSize,
       visState,
-      height
+      height,
+      descriptions
     } = this.props;
     // const width = 400;
     // TODO: transfer constant
     const width = 270;
-
-
+    var desc;
 
     let dataSorted = data;
     // slice data for paginated bar chart
@@ -162,17 +170,37 @@ export class BarChart extends Component {
     function myFormatter(value) {
       //console.log(value);
       //console.log('MYFORMATTER');
+      var v = value.replace(/\./g, '');
+      
+      console.log(v + '_indicator');
       return (
         <foreignObject
           x="-90"
           y="-10"
           width="80"
           height="20"
+          
+          
           onClick={() => {
             console.log('BARCHART CLICK ' + value);
           }}
+          data-tip
+          data-for={`${v}_right_indicator`}
+
+          // onMouseOver={() => {
+          //   if(descriptions != undefined) {
+          //     desc = descriptions.find(d => d.label.includes(v));
+          //     if(desc != undefined) {
+          //       console.log(desc.description);
+          //     }
+          //   }
+          // }}
         >
-          <text>{value}</text>
+          {/* {desc ?  */}
+            
+           {/* : null}  */}
+          <text >{value}</text>
+          
         </foreignObject>
       );
     }
@@ -239,6 +267,14 @@ export class BarChart extends Component {
               fontWeight: 200
             }}
           />
+          {console.log('hello this is desc ' + desc)}
+          {desc ? (
+            <div place="right" effect="solid">
+              {/* <StyleMessage>{desc.description}</StyleMessage> */}
+              <StyleMessage>BAKET AYAW</StyleMessage>
+            </div>
+          ) : null} 
+          
           {/* TODO: use props */}
           <YAxis
             // getY={d=>(d.y.length > 12 ? (d.y.slice(0,12) + '...') : d.y )}
@@ -249,6 +285,11 @@ export class BarChart extends Component {
               fontWeight: 200
             }}
           />
+          <Tooltip id={`${v}_right_indicator`} place="top" effect="solid">
+              {/* <StyleMessage>{desc.description}</StyleMessage> */}
+              {/* <StyleMessage>BAKET AYAW</StyleMessage> */}
+              here
+            </Tooltip>
           {/* { dataSorted.length > 0 ? (
           <HorizontalBarSeries 
              dataSorted={dataSorted} 
