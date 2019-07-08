@@ -141,6 +141,34 @@ const WidgetContainer = styled.div`
     align-items: flex-start;
     height: 100vh;    
   }
+
+  .bottom-widget--info {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bottom-widget--info-title {
+    font-weight: 900;
+    font-size: 2em;
+    line-height: 1;
+    margin-top:25px;
+    color: ${props => props.theme.labelColor};
+  }
+
+  .bottom-widget--info-desc {
+    font-size: 1.2em;
+    font-weight: 400;
+    color: ${props => props.theme.labelColor};    
+    // color: #C3C9C5;
+    padding-top: 10px;
+    max-width: 800px;
+    line-height: 1.3em;
+    // font-size: 1.2em;
+    // font-weight: 400;
+  }
 `;
 
 const VisRow = styled.div`
@@ -328,6 +356,14 @@ export default function VisWidgetFactory(
             </div>
           </ControlPanel>
           <div className="bottom-widget--content">
+            <div className="bottom-widget--info">
+                <div className="bottom-widget--info-title">
+                Parallel Coordinates
+                </div>
+                <div className="bottom-widget--info-desc">
+                This is a multi-indicator explorer of the transport desirability framework in the city. Each line indicates a barangay, while each vertical line is the values of an indicator. Multiple lines going to a single point signifies that there are a lot of barangays that have similar indicator scores. Lines converging to the top of the coordinates means that many barangays have a higher score, while lines converging at the bottom specifies that many barangays have a lower score.
+                </div>
+            </div>
             {bgyIncl ? (
               <ParallelCoordinatesD3
                 // data={bgyIncl.forEach(d => {
@@ -338,6 +374,14 @@ export default function VisWidgetFactory(
                 width={widgetWidth}
               />
             ) : null}
+            <div className="bottom-widget--info">
+                <div className="bottom-widget--info-title">
+                TD Distribution Scatter Plot
+                </div>
+                <div className="bottom-widget--info-desc">
+                These scatter plots show the relationship of the transport desirability score and each indicator. From these, you can see how much each indicator affects the overall desirability score - if it has a direct (diagonal line going up), indirect (diagonal line going down), or no relationship at all.  
+                </div>
+            </div>
             {bgyIncl ? (
               <VisRow>
                 <ScatterPlot
@@ -423,6 +467,14 @@ export default function VisWidgetFactory(
               </VisRow>
             ) : null}
 
+            <div className="bottom-widget--info">
+                <div className="bottom-widget--info-title">
+                City Amenities and Frequented Destinations
+                </div>
+                <div className="bottom-widget--info-desc">
+                The number of each amenity category located in the city is shown here. Additionally, frequented destinations are ranked in descending order and are partitioned by transport mode. The longest partition indicates the most common mode when going to that destination.
+                </div>
+            </div>
             {/* TODO: change to TOP destinations  */}
             {bgyIncl ? (
               <VisRow>
@@ -486,6 +538,14 @@ export default function VisWidgetFactory(
             ):null} */}
 
             {/* DEMOGRAPHIS */}
+            <div className="bottom-widget--info">
+                <div className="bottom-widget--info-title">
+                Mode Share by Demographic
+                </div>
+                <div className="bottom-widget--info-desc">
+                This shows the percentage of each mode share in the barangay. Bigger portions in the chart indicate that more people utilize that certain transport mode. Mode shares can be assessed by sex, income level, and age.
+                </div>
+            </div>
             {bgyIncl ? (
               <VisRow>
                 <DonutChart
