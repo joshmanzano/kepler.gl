@@ -18,23 +18,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React from 'react';
-import RangeSlider from 'components/common/range-slider';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
-const RangeFilter = ({filter, setFilter}) => (
-  <div>
-    {console.error(filter)}
-    <RangeSlider
-      range={filter.domain}
-      value0={filter.value[0]}
-      value1={filter.value[1]}
-      step={filter.step}
-      histogram={filter.histogram}
-      isEnlarged={filter.isEnlarged}
-      onChange={setFilter}
-      inputTheme="secondary"
-    />
-  </div>
-);
+import {Button} from 'components/common/styled-components';
+import {DEFAULT_LAYER_GROUPS} from 'constants/default-settings';
+import OverviewPanelFactory from './overview-panel/overview-panel';
 
-export default RangeFilter;
+OverviewManagerFactory.deps = [OverviewPanelFactory];
+// MapManagerFactory.deps = [
+//   MapStyleSelectorFactory,
+//   LayerGroupSelectorFactory
+// ];
+
+function OverviewManagerFactory(OverviewPanel) {
+  return class OverviewManager extends Component {
+
+    render() {
+      return (
+        <div className="overview-panel">
+          <OverviewPanel
+          />
+        </div>
+      );
+    }
+  };
+}
+
+export default OverviewManagerFactory;

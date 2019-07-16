@@ -32,6 +32,7 @@ import FilterManagerFactory from './side-panel/filter-manager';
 import InteractionManagerFactory from './side-panel/interaction-manager';
 import MapManagerFactory from './side-panel/map-manager';
 import IndicatorManagerFactory from './side-panel/indicator-manager';
+import OverviewManagerFactory from './side-panel/overview-manager';
 import PanelToggleFactory from './side-panel/panel-toggle';
 
 import {
@@ -84,6 +85,7 @@ SidePanelFactory.deps = [
 
   // PLEXUS
   IndicatorManagerFactory,
+  OverviewManagerFactory,
   PanelHeadingFactory
 ];
 
@@ -101,6 +103,7 @@ export default function SidePanelFactory(
   InteractionManager,
   MapManager,
   IndicatorManager,
+  OverviewManager,
   PanelHeading
 ) {
   return class SidePanel extends Component {
@@ -215,7 +218,11 @@ export default function SidePanelFactory(
 
       const indicatorManagerActions = {
         onConfigChange: visStateActions.setSelectedIndicator,
-        onChangeCity: this._onChangeCity
+        onChangeCity: this._onChangeCity,
+        setFilter: visStateActions.setFilter,
+      };
+
+      const overviewManagerActions = {
       };
 
       const mapManagerActions = {
@@ -227,10 +234,16 @@ export default function SidePanelFactory(
       };
 
       var cityName = '';
+      var regionName = '';
+      var str = '';
       if (activeCities && selectedCity) {
-        cityName = this.props.activeCities.find(
+        str = this.props.activeCities.find(
           op => op.id == this.props.selectedCity
         ).name;
+        
+        str = str.split(', ');
+        cityName = str[0];
+        regionName = str[1];
       }
 
       return (
@@ -255,6 +268,7 @@ export default function SidePanelFactory(
 
             <PanelHeading
               cityName={cityName}
+              regionName={regionName}
               onChangeCity={this._onChangeCity}
               />
             
@@ -269,11 +283,17 @@ export default function SidePanelFactory(
               </PanelTitle> */}
               {selectedCity ? (
                 <div>
+                  {activeSidePanel === 'overview' && (
+                    <OverviewManager
+                      {...overviewManagerActions}
+                    />
+                  )}
                   {activeSidePanel === 'indicators' && (
                     <IndicatorManager
                       {...indicatorManagerActions}
                       scores={scores}
                       selectedIndicator={selectedIndicator}
+                      filters={filters}
                     />
                   )}
                   {activeSidePanel === 'qualities' && (

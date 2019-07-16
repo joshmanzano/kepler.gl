@@ -37,7 +37,7 @@ import {
 } from 'components/common/icons';
 
 const StyledMapControl = styled.div`
-  right: 0;
+  right: 320px;
   width: ${props => props.theme.mapControl.width}px;
   padding: ${props => props.theme.mapControl.padding}px;
   z-index: 1;
@@ -195,7 +195,10 @@ export class MapControl extends Component {
     layerSelector
   );
 
+
   render() {
+
+    
     const items = this.initialDataSelector(this.props);
 
     if (!items) {
@@ -203,6 +206,7 @@ export class MapControl extends Component {
     }
 
     const {
+      datasets,
       dragRotate,
       isSplit,
       isExport,
@@ -221,7 +225,6 @@ export class MapControl extends Component {
       toggle3d = {},
       splitMap = {}
     } = mapControls;
-
     return (
       <StyledMapControl className="map-control">
         {/* Split Map */}
@@ -262,7 +265,7 @@ export class MapControl extends Component {
         ) : null} */}
 
         {/* 3D Map */}
-        {/* {toggle3d.show ? (
+         {toggle3d.show ? (
           <ActionPanel key={2}>
             <StyledMapControlButton
               onClick={e => {
@@ -278,10 +281,10 @@ export class MapControl extends Component {
               <MapLegendTooltip
                 id="action-3d"
                 message={dragRotate ? 'Disable 3D Map' : '3D Map'}
-              />
+            />*/}
             </StyledMapControlButton>
           </ActionPanel>
-        ) : null} */}
+        ) : null} 
 
         {/* Map Legend */}
         {/* {mapLegend.show ? ( */}
@@ -293,6 +296,7 @@ export class MapControl extends Component {
               onMapToggleLayer={onMapToggleLayer}
               isActive={mapLegend.active}
               toggleMenuPanel={() => onToggleMapControl('mapLegend')}
+              datasets={datasets}
             />
           </ActionPanel>
         {/* ) : null} */}
@@ -324,7 +328,7 @@ const MapControlPanel = ({children, header, onClick, scale = 1, isExport}) => (
   </StyledMapControlPanel>
 );
 
-const MapLegendPanel = ({items, isActive, scale, toggleMenuPanel, isExport}) =>
+const MapLegendPanel = ({items, isActive, scale, toggleMenuPanel, isExport, datasets}) =>
   !isActive ? (
     <StyledMapControlButton
       key={2}
@@ -348,6 +352,7 @@ const MapLegendPanel = ({items, isActive, scale, toggleMenuPanel, isExport}) =>
     >
       <MapLegend
         layers={items.filter(item => item.isVisible).map(item => item.layer)}
+        datasets={datasets}
       />
     </MapControlPanel>
   );
