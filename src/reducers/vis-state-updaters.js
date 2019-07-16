@@ -122,7 +122,9 @@ export const INITIAL_VIS_STATE = {
   activeBarangay: null,
   activeAnalysisTab: DEFAULT_ACTIVE_ANALYSIS,
   analysisRankingPage: DEFAULT_ANALYSIS_RANKING_PAGE,
-  analysisRankingReverse: false,
+  tdRankingPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+  tdRankingReverse: false,
+  activeBottomPanel: false
 };
 
 function updateStateWithLayerAndData(state, {layerData, layer, idx}) {
@@ -631,13 +633,29 @@ export const layerClickUpdater = (state, action) => {
     };
   }
   if (action.info.layer.id != 'barangays_layer') {
-    
+    let idx = 0;
+    if (state.layers[idx].config.isVisible) {
+      const isVisible = false;
+      state.layers[idx].updateLayerConfig({isVisible});
+    }
     return {
-      ...state//,
-      // clicked: null,
-      // activeBarangay: null
+      ...state,
+      clicked: null,
+      activeBarangay: null
     };
   }
+  // if(state.clicked == action.info) {
+  //   let idx = 0;
+  //   if (state.layers[idx].config.isVisible) {
+  //     const isVisible = false;
+  //     state.layers[idx].updateLayerConfig({isVisible});
+  //   }
+  //   return {
+  //     ...state,
+  //     clicked: null,
+  //     activeBarangay: null
+  //   };
+  // }
   const layer = state.layers[action.info.layer.props.idx];
   if (layer) {
     const {
@@ -655,12 +673,15 @@ export const layerClickUpdater = (state, action) => {
     let layerIdx = 0;
     if (!newState.layers[layerIdx].config.isVisible) {
       const isVisible = true;
-      
+
       newState.layers[layerIdx].updateLayerConfig({isVisible});
     }
     else {
       console.error("WTF ARE U DOING HERE");
     }
+
+    console.error('NEW BGY');
+    console.error(data);
     return {
       ...newState,
       clicked: action.info,
@@ -1056,16 +1077,16 @@ export const processDataUpdater = (state, action) => {
     scores[indicator.id] =
       allData.reduce((p, c) => p + c[column], 0) / allData.length;
     scores[indicator.id] = Math.round(scores[indicator.id] * 100) / 100;
-    const data = [...allData];
-    // Get top 10 and bottom 10
-    var arr = data.sort(function(a, b) {
-      return a[column] - b[column];
-    });
+    // const data = [...allData];
+    // // Get top 10 and bottom 10
+    // var arr = data.sort(function(a, b) {
+    //   return a[column] - b[column];
+    // });
 
-    indicatorData[indicator.id] = {
-      top: arr.slice(0, 10),
-      bottom: arr.slice(arr.length - 10, arr.length)
-    };
+    // indicatorData[indicator.id] = {
+    //   top: arr.slice(0, 10),
+    //   bottom: arr.slice(arr.length - 10, arr.length)
+    // };
   });
   // const idx = 3;
   // const oldLayerData = state.layerData[idx];
@@ -1111,7 +1132,7 @@ export const selectedIndicatorUpdater = (state, action) => {
   const config = {
     colorField: field
   };
-  
+
 
   const newLayer = oldLayer.updateLayerConfig(config);
   // console.error(newLayer);
@@ -1337,6 +1358,26 @@ export const updateActiveAnalysisTabUpdater = (state, action) => {
   };
 };
 
+export const updateActiveBottomPanelUpdater = (state, action) => {
+  console.log(state.activeBottomPanel);
+  return {
+    ...state,
+    activeBottomPanel: action.info,
+  };
+};
+
+export const setActiveBarangay = (state, action) => {
+  console.error('**************' + action);
+  console.error(action);
+  console.error(action.info);
+  return {
+    ...state,
+    activeBarangay: action.info,
+    clicked: null,
+      // activeBarangay: null
+  };
+};
+
 export const changeAnalysisRankPage = (state, action) => {
   console.log("**************" + action);
   console.log(action);
@@ -1355,4 +1396,24 @@ export const setAnalysisReverse = (state, action) => {
     ...state,
     analysisRankingReverse: action.info,
   };
-}; 
+};
+
+export const changeTDRankPage = (state, action) => {
+  console.log("**************" + action);
+  console.log(action);
+  console.log(action.info);
+  return {
+    ...state,
+    tdRankingPage: action.info,
+  };
+};
+
+export const setTDReverse = (state, action) => {
+  console.log("**************" + action);
+  console.log(action);
+  console.log(action.info);
+  return {
+    ...state,
+    tdRankingReverse: action.info,
+  };
+};

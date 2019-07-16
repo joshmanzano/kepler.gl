@@ -1,22 +1,3 @@
-// Copyright (c) 2019 Uber Technologies, Inc.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
@@ -30,47 +11,7 @@ import {
   SCALE_FUNC,
   ALL_FIELD_TYPES
 } from 'constants/default-settings';
-import {RadialChart} from 'react-vis';
-
-const getTimeLabelFormat = domain => {
-  const formatter = getTimeWidgetHintFormatter(domain);
-  return val => moment.utc(val).format(formatter);
-};
-
-const getNumericLabelFormat = domain => {
-  const diff = domain[1] - domain[0];
-
-  if (diff < 10) {
-    return format('.2f');
-  }
-
-  return format('.1f');
-};
-
-const getQuantLabelFormat = (domain, fieldType) => {
-  // quant scale can only be assigned to linear Fields: real, timestamp, integer
-  return fieldType === ALL_FIELD_TYPES.timestamp
-    ? getTimeLabelFormat(domain)
-    : !fieldType
-    ? defaultFormat
-    : getNumericLabelFormat(domain);
-};
-
-const getQuantLegends = (scale, labelFormat) => {
-  const labels = scale.range().map(d => {
-    const invert = scale.invertExtent(d);
-    return {
-        low: invert[0],
-        high: invert[1],
-    }
-    // return `${labelFormat(invert[0])} to ${labelFormat(invert[1])}`;
-  });
-
-  return {
-    data: scale.range(),
-    labels
-  };
-};
+import {RadialChart, Hint} from 'react-vis';
 
 const DonutPanel = styled.div `
   display: flex;
@@ -97,87 +38,98 @@ const ControlPanel = styled.div`
 
   .control-panel__title{
     font-weight: 500;
-    color: ${props => props.theme.textColorHl};    
+    color: ${props => props.theme.labelColor};
+    font-size: 1.2em;
+    font-weight:500;    
   }
 `;
 
 export class DonutChart extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      hovered: null,
+    }
   }
 
-  domainSelector = props => props.domain;
-  rangeSelector = props => props.range;
-  labelFormatSelector = props => props.labelFormat;
-  scaleTypeSelector = props => props.scaleType;
-  fieldTypeSelector = props => props.fieldType;
-
-  legendsSelector = createSelector(
-    this.domainSelector,
-    this.rangeSelector,
-    this.scaleTypeSelector,
-    this.labelFormatSelector,
-    this.fieldTypeSelector,
-    (domain, range, scaleType, labelFormat, fieldType) => {
-      const scaleFunction = SCALE_FUNC[scaleType];
-      // color scale can only be quantize, quantile or ordinal
-      const scale = scaleFunction()
-        .domain(domain)
-        .range(range);
-      console.log(scaleType);
-      // console.log('ordinal');
-      if (scaleType === SCALE_TYPES.ordinal) {
-        return getOrdinalLegends(scale);
-      }
-
-      const formatLabel =
-        labelFormat || getQuantLabelFormat(scale.domain(), fieldType);
-
-      // console.log('quant');
-      return getQuantLegends(scale, formatLabel);
-    }
-  );
 
   render() {
     const {
       data, 
       activeIndicator,
-      title
+      title,
+      legends,
+      values,
+      xLabel,
+      xKeyArr
     } = this.props;
-
-    const legends = this.legendsSelector(this.props);
 
     let pData;
     let aData = [0,0,0,0,0,0];
     
-    console.log('donut-chart data ' + activeIndicator);
-    console.log(pData);
-    console.log(aData);
-    console.log(data);
-    console.log(activeIndicator);
+    // console.log('donut-chart data ' + activeIndicator);
+    // console.log(pData);
+    // console.log(aData);
+    // console.log(data);
+    // console.log(activeIndicator);
     
-    pData = legends.data.map((d, idx) => ({
-      angle: 0,
-      color: d,
-    })) ;
+    if(legends) {
+      pData = legends.data.map((d, idx) => ({
+        angle: 0,
+        color: d,
+      })) ;
 
-    console.log('donut-chart data 2 ' + activeIndicator);
-    console.log(pData);
-    console.log(aData);
+      // console.log('donut-chart data 2 ' + activeIndicator);
+      // console.log(pData);
+      // console.log(aData);
 
-    for(var i=0; i<data.length; i++) {
-        for(var j=0; j<legends.data.length; j++) {
-            if(data[i][activeIndicator] >= legends.labels[j].low && data[i][activeIndicator] <= legends.labels[j].high) {
-                pData[j].angle = pData[j].angle+1;
-                aData[j]++;
-                break;
-            }
-        }
+      for(var i=0; i<data.length; i++) {
+          for(var j=0; j<legends.data.length; j++) {
+              if(data[i][activeIndicator] >= legends.labels[j].low && data[i][activeIndicator] <= legends.labels[j].high) {
+                  pData[j].angle = pData[j].angle+1;
+                  aData[j]++;
+                  break;
+              }
+          }
+      }
+
+      // console.log('donut-chart data 3 ' + activeIndicator);
+      // console.log(pData);
+      // console.log(aData);
+    } else if(values && xLabel) {
+      
+      pData = values.map((d) => ({
+        angle: d[xLabel],
+        value: d[xLabel],
+      }));
+      // console.error('donut');
+      // console.error(pData);
+    } else if(values && xKeyArr) {
+      pData = [];
+      let inserted = {};
+      xKeyArr.forEach((x) => {
+        // console.error(x);
+        // console.error(values);
+        values.forEach(d => {
+          // let key = x
+          // console.error(d);
+          if(x.name in inserted) {
+            pData.filter(a=>a.label==x.name)[0].angle += d[x.name];
+          } else {
+            inserted[x.name] = 0;
+            pData.push({
+              label: x.name,
+              value: d[x.name],
+              angle: d[x.name],
+            });
+          }
+        });
+      });
+      // console.error(values);
+      // console.error(pData);
     }
-
-    console.log('donut-chart data 3 ' + activeIndicator);
-    console.log(pData);
-    console.log(aData);
+    
 
     return (
       <DonutPanel>
@@ -193,8 +145,25 @@ export class DonutChart extends Component {
           radius={70}
           width={280} 
           height={170} 
-          colorType="literal"
-          />
+          colorType={legends?"literal":"category"}
+          onValueMouseOver={v => {console.error('radial over');console.error(v);this.setState({hovered: v})}}
+          onSeriesMouseOut={v => this.setState({hovered: null})}
+          >
+            {this.state.hovered && (
+              <Hint
+                // xType="literal"
+                // yType="literal"
+                // getX={d => d.x}
+                // getY={d => d.y}
+                value={(legends) ? {Count: this.state.hovered.value} : {
+                  // Barangay: this.state.hovered.y,
+                  // [categoryLabel ? categoryLabel : 'Category']: this.state.hovered.valueLabel,
+                  Category: this.state.hovered.label,
+                  Count: this.state.hovered.value,
+                }}
+              />
+            )}
+          </RadialChart>
       </DonutPanel>
     );
   }

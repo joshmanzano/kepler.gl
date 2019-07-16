@@ -86,7 +86,8 @@ const StyledMapControlButton = styled.div`
 `;
 
 const StyledMapControlPanel = styled.div`
-  background-color: ${props => props.theme.mapPanelBackgroundColor};
+  background-color: ${props => props.theme.sidePanelBg};
+  font-weight:400;
   flex-grow: 1;
   z-index: 1;
   p {
@@ -103,11 +104,13 @@ const StyledMapControlPanelContent = styled.div`
 const StyledMapControlPanelHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: ${props => props.theme.mapPanelHeaderBackgroundColor};
+  // background-color: ${props => props.theme.mapPanelHeaderBackgroundColor};
   height: 32px;
   padding: 6px 12px;
   font-size: 11px;
-  color: ${props => props.theme.secondaryBtnColor};
+  // color: ${props => props.theme.secondaryBtnColor};
+  background-color: #18273e;
+  color: ${props => props.theme.labelColor};
 
   button {
     width: 18px;
@@ -216,7 +219,9 @@ export class MapControl extends Component {
       onToggleSplitMap,
       onMapToggleLayer,
       onToggleMapControl,
-      scale
+      scale,
+      activeBarangay,
+      selected
     } = this.props;
 
     const {
@@ -226,7 +231,8 @@ export class MapControl extends Component {
       splitMap = {}
     } = mapControls;
     return (
-      <StyledMapControl className="map-control">
+      <StyledMapControl className="map-control" style={{right: activeBarangay || selected != 'desirability' ? '320px' : '0px'}}>
+      {/* <StyledMapControl className="map-control">       */}
         {/* Split Map */}
         {/* {splitMap.show ? (
           <ActionPanel key={0}>

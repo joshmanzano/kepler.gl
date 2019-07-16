@@ -437,6 +437,8 @@ export default function MapContainerFactory(MapPopover, MapControl) {
             onMapToggleLayer={this._handleMapToggleLayer}
             onToggleFullScreen={mapStateActions.toggleFullScreen}
             onToggleMapControl={toggleMapControl}
+            activeBarangay={this.props.activeBarangay}
+            selected={this.props.selected}
           />
           <MapComponent
             {...mapProps}

@@ -44,6 +44,8 @@ const StyledIndicatorPanel = styled.div`
 `;
 
 const StyledIndicatorSection = styled.div`
+  font-size: 1.1em;
+  font-weight: 500;
   // padding-bottom: 6px;
 `;
 
@@ -58,17 +60,18 @@ const StyledIndicatorContent = styled.div`
 IndicatorPanelFactory.deps = [IndicatorFactory];
 
 function IndicatorPanelFactory(Indicator) {
-  
+
   return class InteractionPanel extends Component {
     // _onclick = () => {
     //   console.error(1234);
     // };
-    
+
     render() {
       let idx = 0;
       return (
+
         <StyledIndicatorPanel className="indicator-panel">
-          <StyledIndicatorSection className="indicator-panel__section">
+          {/* <StyledIndicatorSection className="indicator-panel__section">
             {TRANSPORT_DESIRABILITY.label}
           </StyledIndicatorSection>
           <div style={{padding: '5px'}} />
@@ -87,19 +90,12 @@ function IndicatorPanelFactory(Indicator) {
                 filter={this.props.filters[idx]}
                 setFilter={value => this.props.setFilter(idx, 'value', value)}
               />
-              {/* {indicator.id === this.props.selectedIndicator? 
-              <RangeFilter
-                filter={this.props.filters[idx]}
-                setFilter={value => this.props.setFilter(idx, 'value', value)}
-                />
-                 : null
-              } */}
               </div>
             ))}
           </StyledIndicatorContent>
 
-          <SidePanelDivider />
-
+          <SidePanelDivider /> */}
+          {      console.error('INDICATOR MANAGER START')}
           <StyledIndicatorSection className="indicator-panel__section">
             {NON_TRANSPORT_MODE.label}
           </StyledIndicatorSection>
@@ -118,8 +114,9 @@ function IndicatorPanelFactory(Indicator) {
                 onConfigChange={this.props.onConfigChange}
                 filter={this.props.filters[idx]}
                 setFilter={value => this.props.setFilter(idx, 'value', value)}
+                reset={value => this.props.setFilter(idx, 'value', this.props.filters[idx].domain)}
               />
-              {/* {indicator.id === this.props.selectedIndicator? 
+              {/* {indicator.id === this.props.selectedIndicator?
               <RangeFilter
                 filter={this.props.filters[idx]}
                 setFilter={value => this.props.setFilter(idx, 'value', value)}
@@ -130,6 +127,7 @@ function IndicatorPanelFactory(Indicator) {
             ))}
           </StyledIndicatorContent>
 
+          <div style={{marginTop: '10px'}} />
           <SidePanelDivider />
 
           <StyledIndicatorSection className="indicator-panel__section">
@@ -150,8 +148,9 @@ function IndicatorPanelFactory(Indicator) {
                 onConfigChange={this.props.onConfigChange}
                 filter={this.props.filters[idx]}
                 setFilter={value => this.props.setFilter(idx, 'value', value)}
+                reset={value => this.props.setFilter(idx, 'value', this.props.filters[idx].domain)}
               />
-              {/* {indicator.id === this.props.selectedIndicator? 
+              {/* {indicator.id === this.props.selectedIndicator?
               <RangeFilter
                 filter={this.props.filters[idx]}
                 setFilter={value => this.props.setFilter(idx, 'value', value)}
@@ -161,6 +160,8 @@ function IndicatorPanelFactory(Indicator) {
               </div>
             ))}
           </StyledIndicatorContent>
+          {      console.error('INDICATOR MANAGER END')}
+
         </StyledIndicatorPanel>
         // <StyledInteractionPanel className="interaction-panel">
         //   <StyledPanelHeader

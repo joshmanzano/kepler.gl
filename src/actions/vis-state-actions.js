@@ -272,6 +272,14 @@ export function toggleActiveAnalysis(info) {
   };
 }
 
+export function toggleActiveBottom(info) {
+  console.log("VISSTATEACTIVEBOTTOM")
+  return {
+    type: ActionTypes.TOGGLE_ACTIVE_BOTTOM,
+    info
+  };
+}
+
 export function changeAnalysisRankPage(info) {
   console.log("CHANGEANARANKPAGE");
   console.log(info);
@@ -286,6 +294,22 @@ export function sortAnalysisReverse(info) {
   console.log(info);
   return {
     type: ActionTypes.SORT_ANALYSIS_REVERSE,
+    info
+  };
+} 
+
+export function changeTDRankPage(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.CHANGE_TD_RANK_PAGE,
+    info
+  };
+}
+
+export function sortTDReverse(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.SORT_TD_REVERSE,
     info
   };
 } 

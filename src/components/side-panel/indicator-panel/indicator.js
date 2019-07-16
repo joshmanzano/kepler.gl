@@ -21,53 +21,69 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Tooltip} from 'components/common/styled-components';
-import { RangeFilter } from '../../filters';
+import {RangeFilter} from '../../filters';
 
 const Score = styled.div`
   font-family: ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-serif;
-  margin-right:10px;
-  /*margin: auto;*/
-  /*background-color: #1a1a1a;*/
-  font-size: 1.3em;
-  /*width: 60px;
-  height: 100px;
+  font-size: 1.2em;
+  width: 100%;
   /*line-height: 60px;*/
-  flex:20%;
-  text-align:center;
-  background-color:#23282E;
-  padding:5px;
+  flex: 20%;
+  text-align: center;
+  padding: 12px;
+  background-color: ${props => props.theme.panelBackground};
+  color: ${props => props.theme.labelColor};
 `;
 
 const Label = styled.div`
   font-family: ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-serif;
-  font-size: 1.3em;
-  margin: 0 10px 0 10px;
-  flex:80%;
-  padding:5px;
+  font-size: 1.2em;
+  flex: 80%;
+  padding: 12px;
+  background-color: ${props => props.theme.labelColor};
+  :before {
+    content: ' ';
+    display: inline-block;
+    border-radius: 100%;
+    width: 10px;
+    height: 10px;
+    border: 2px #767b78 solid;
+    margin-right: 10px;
+    background-color: white;
+  }
+`;
+
+const Triangle = styled.div`
+  content: ' ';
+  display: inline-block;
+  float: right;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 19px 0 19px 10px;
+  border-color: #18273e #2c3c54 #18273e #c3c9c5;
 `;
 
 const Style = styled.button`
   font-family: ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-serif;
-  color: #ffffff;
+  color: #2c3c54;
   border-width: 0;
   cursor: pointer;
   outline: 0;
-  // align-content: center;
-  // justify-content: center;
+  align-items: center;
+  justify-content: center;
   display: flex;
-  flex-direction:row;
+  flex-direction: row;
   text-align: left;
-  margin: 10px;
-  //min-width: 85px;
-  width:95%;
+  margin: 10px 10px 1px 0px;
+  width: 100%;
   font-size: 0.8em;
-  background-color: #29323c;
-  padding: 10px 5px;
-  //border-radius: 10%;
-  //box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  font-weight: 600;
+  background-color: ${props => props.theme.sidePanelBg};
   :hover {
-    // color: #000000;
-    background-color: #3a4b5e;
+    //color: #C3C9C5;
+    //background-color: #3a4b5e;
+    opacity: 0.7;
   }
 `;
 
@@ -76,22 +92,64 @@ const StyleMessage = styled.span`
   height: auto;
   display: inline-block;
 `;
-const StyledIndicator=styled.div`
+const StyledIndicator = styled.div`
   .selected {
-    background-color: #476587;
-    color: #ffffff;
+    :before {
+      content: ' ';
+      display: inline-block;
+      border-radius: 100%;
+      width: 10px;
+      height: 10px;
+      margin-right: 10px;
+      border: 2px #767b78 solid;
+      background-color: #1fbad6;
+    }
   }
 `;
+
+const StyledRangeFilterContainer = styled.div`
+  background-color: #395379;
+  padding: 10px;
+  margin: 0px 6px 0px 6px;
+`;
+
+const StyledResetButton = styled.div`
+  background-color: ${props => props.theme.labelColor};
+  color: ${props => props.theme.panelBackground};
+  font-weight: 400;
+  margin-top: 15px;
+  padding: 5px;
+  width: 30%;
+  text-align: center;
+  cursor: pointer;
+
+  :hover {
+    opacity: 0.7;
+  }
+`;
+
 function IndicatorFactory() {
-  const Indicator = ({id, label, description, score, selected, onConfigChange, filter, setFilter}) => (
+  console.error('INDICATOR FACTORY');
+  const Indicator = ({
+    id,
+    label,
+    description,
+    score,
+    selected,
+    onConfigChange,
+    filter,
+    setFilter,
+    reset
+  }) => (
     <StyledIndicator>
       <Style
         onClick={() => onConfigChange(id)}
         data-tip
         data-for={`${label}_indicator`}
-        className={selected ? "selected" : ""}
+        // className={selected ? "selected" : ""}
       >
-        <Label>{label}</Label>
+        <Label className={selected ? 'selected' : ''}>{label}</Label>
+        <Triangle></Triangle>
         <Score>{score}%</Score>
       </Style>
       {description ? (
@@ -99,10 +157,12 @@ function IndicatorFactory() {
           <StyleMessage>{description}</StyleMessage>
         </Tooltip>
       ) : null}
-      {selected?<RangeFilter
-                filter={filter}
-                setFilter={setFilter}
-                />:null}
+      {selected && filter ? (
+        <StyledRangeFilterContainer>
+          <RangeFilter filter={filter} setFilter={setFilter} />
+          <StyledResetButton onClick={reset}>Reset</StyledResetButton>
+        </StyledRangeFilterContainer>
+      ) : null}
     </StyledIndicator>
   );
 

@@ -43,6 +43,7 @@ import PlotContainerFactory from './plot-container';
 import NotificationPanelFactory from './notification-panel';
 
 import {generateHashId} from 'utils/utils';
+import {getLegends} from 'utils/plexus-utils/map-utils';
 
 import {theme} from 'styles/base';
 
@@ -176,6 +177,8 @@ function KeplerGlFactory(
       });
     };
 
+    // let isOpen = false;
+
     render() {
       console.log("KEPLER");
       console.log(this.props);
@@ -219,36 +222,13 @@ function KeplerGlFactory(
         clicked,
         // PLEXUS
         plexus,
-        activeBarangay
+        activeBarangay,
+        activeBottomPanel
       } = visState;
 
       const notificationPanelFields = {
         removeNotification: uiStateActions.removeNotification,
         notifications: uiState.notifications
-      };
-
-      const sideFields = {
-        appName,
-        activeCities,
-        selectedCity,
-        version,
-        datasets,
-        filters,
-        layers,
-        layerOrder,
-        layerClasses,
-        interactionConfig,
-        mapStyle,
-        layerBlending,
-        onSaveMap,
-        uiState,
-        mapStyleActions,
-        visStateActions,
-        uiStateActions,
-        width: DIMENSIONS.sidePanel.width,
-        // PLEXUS
-        scores: plexus.scores,
-        selectedIndicator: plexus.selectedIndicator
       };
 
       const mapFields = {
@@ -269,11 +249,40 @@ function KeplerGlFactory(
         visStateActions,
         mapStateActions,
         // plexus
-        activeBarangay
+        activeBarangay,
+        selected: plexus.selectedIndicator
       };
 
       const isSplit = splitMaps && splitMaps.length > 1;
       const containerW = mapState.width * (Number(isSplit) + 1);
+
+      const sideFields = {
+        appName,
+        activeCities,
+        selectedCity,
+        version,
+        datasets,
+        filters,
+        layers,
+        layerOrder,
+        layerClasses,
+        interactionConfig,
+        mapStyle,
+        layerBlending,
+        onSaveMap,
+        uiState,
+        visState,
+        mapStyleActions,
+        visStateActions,
+        uiStateActions,
+        width: DIMENSIONS.sidePanel.width,
+        // PLEXUS
+        scores: plexus.scores,
+        selectedIndicator: plexus.selectedIndicator,
+        legends:(layers===undefined || !layers ) ? null : getLegends(isSplit ? splitMaps[0].layers : null, layers)
+      };
+
+      
 
       const mapContainers = !isSplit
         ? [
@@ -310,7 +319,11 @@ function KeplerGlFactory(
             }}
           >
             <NotificationPanel {...notificationPanelFields} />
-            {!uiState.readOnly && <SidePanel {...sideFields} />}
+            {!uiState.readOnly && <SidePanel 
+              {...sideFields
+              }
+              // legends={(mapFields.layers===undefined) ? null : getLegends(isSplit ? splitMaps[0].layers : null, mapFields.layers)}
+              />}
             <div className="maps" style={{display: 'flex'}}>
               {mapContainers}
             </div>
@@ -338,6 +351,7 @@ function KeplerGlFactory(
               containerW={containerW}
               layers={mapFields.layers}
               mapLayers={isSplit ? splitMaps[0].layers : null}
+              legends={(mapFields.layers===undefined) ? null : getLegends(isSplit ? splitMaps[0].layers : null, mapFields.layers)}
             />
             <VisWidget
               filters={filters}
@@ -347,7 +361,13 @@ function KeplerGlFactory(
               uiState={uiState}
               visStateActions={visStateActions}
               uiStateActions={uiStateActions}
-              // containerW={containerW}
+              width={containerW}
+              containerW={containerW}
+              sidePanelWidth={
+                uiState.readOnly ? 0 : this.props.sidePanelWidth + DIMENSIONS.sidePanel.margin.left
+              }
+              isOpen={activeBottomPanel}
+              toggleOpen={visStateActions.toggleActiveBottom}
               // layers={mapFields.layers}
               // mapLayers={isSplit ? splitMaps[0].layers : null}
             />
