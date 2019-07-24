@@ -111,7 +111,7 @@ function OverviewPanelFactory(Indicator, BarChart, StackedBarChart) {
             {/* {!visState.activeBarangay && visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value && bgyIncl ? ( */}
                 {/* <div className="breakdown-analysis__section"> */}
                   <StackedBarChart
-                    title={'Survey Sample'}
+                    title={'Survey Sample vs. Actual Population of City'}
                     values={[1021,30210 - 1021]}
                      />
                 {/* </div> */}
@@ -127,7 +127,7 @@ function OverviewPanelFactory(Indicator, BarChart, StackedBarChart) {
               <div>
                 <Indicator
                   id={indicator.id}
-                  label={indicator.label}
+                  label='Average City Score'
                   description={indicator.description}
                   score={
                     this.props.scores

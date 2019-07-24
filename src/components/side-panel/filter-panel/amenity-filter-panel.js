@@ -131,7 +131,7 @@ function AmenityFilterPanelFactory() {
       } = this.props;
 
       if (checked) {
-        filter.value.pop(option);
+        filter.value.splice(filter.value.indexOf(option), 1);
       } else {
         filter.value.push(option);
       }

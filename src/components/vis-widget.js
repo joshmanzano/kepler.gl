@@ -167,8 +167,8 @@ const WidgetContainer = styled.div`
     font-weight: 900;
     font-size: 2em;
     line-height: 1;
-    margin-top:25px;
     color: ${props => props.theme.labelColor};
+    margin-top: 40px;
   }
 
   .bottom-widget--info-desc {
@@ -181,6 +181,7 @@ const WidgetContainer = styled.div`
     line-height: 1.3em;
     // font-size: 1.2em;
     // font-weight: 400;
+    margin-bottom: 20px;
   }
 `;
 
@@ -368,10 +369,10 @@ export default function VisWidgetFactory(
           <div className="bottom-widget--content">
             <div className="bottom-widget--info">
                 <div className="bottom-widget--info-title">
-                Parallel Coordinates
+                Overview of All Indicator Scores of a Barangay
                 </div>
                 <div className="bottom-widget--info-desc">
-                This is a multi-indicator explorer of the transport desirability framework in the city. Each line indicates a barangay, while each vertical line is the values of an indicator. Multiple lines going to a single point signifies that there are a lot of barangays that have similar indicator scores. Lines converging to the top of the coordinates means that many barangays have a higher score, while lines converging at the bottom specifies that many barangays have a lower score.
+                This is a multi-indicator explorer of the transport desirability framework in the city. Each line indicates a barangay, while each vertical line is the values of an indicator. Multiple lines going to a single point signifies that there are a lot of barangays that have similar indicator scores. Lines converging to the top of the coordinates means that many barangays have a higher score, while lines converging at the bottom specifies that many barangays have a lower score. This can be filtered using the range filters found in the left panel.
                 </div>
             </div>
             {bgyIncl ? (
@@ -386,12 +387,11 @@ export default function VisWidgetFactory(
             ) : null}
             <div className="bottom-widget--info">
                 <div className="bottom-widget--info-title">
-                TD Distribution Scatter Plot
+                Relationship of Transport Desirability with Indicators
                 </div>
                 <div className="bottom-widget--info-desc">
-                These scatter plots show the relationship of the transport desirability score and each indicator. From these, you can see how much each indicator affects the overall desirability score - if it has a direct (diagonal line going up), indirect (diagonal line going down), or no relationship at all.  
+                These scatter plots show the relationship of the transport desirability score and each indicator. From these, you can see how much each indicator affects the overall desirability score - if it has a direct (diagonal line going up), indirect (diagonal line going down), or no relationship at all. This can also be filtered using the range filters found in the left panel.</div>
                 </div>
-            </div>
             {bgyIncl ? (
               <VisRow>
                 <ScatterPlot
@@ -483,7 +483,7 @@ export default function VisWidgetFactory(
                 City Amenities and Frequented Destinations
                 </div>
                 <div className="bottom-widget--info-desc">
-                The number of each amenity category located in the city is shown here. Additionally, frequented destinations are ranked in descending order and are partitioned by transport mode. The longest partition indicates the most common mode when going to that destination.
+                The number of each amenity category located in the city is shown here. Additionally, frequented destinations are ranked in descending order and are divided by transport mode. Each color in the bar chart represents a transportation mode going to that barangay. Longer bars mean that many individuals utilize this certain transport mode. Hovering the bars will show what type of mode share it represents and how many people use it.
                 </div>
             </div>
             {/* TODO: change to TOP destinations  */}
@@ -550,13 +550,13 @@ export default function VisWidgetFactory(
             
             <div className="bottom-widget--info">
                 <div className="bottom-widget--info-title">
-                Mode Share by Demographic
+                Survey Respondents by Demographic
                 </div>
                 <div className="bottom-widget--info-desc">
-                This shows the percentage of each mode share in the barangay. Bigger portions in the chart indicate that more people utilize that certain transport mode. Mode shares can be assessed by sex, income level, and age.
+                This section shows the survey respondents divided by sex, income level, and age. It is composed of two visualizations: a donut chart for the distribution of survey respondents by demographic for the whole city, and a stacked bar chart for each barangay. Each color in the charts represent a certain demographic and its corresponding count. Hovering on these will show their information.
                 </div>
             </div>
-            {/* DEMOGRAPHIS */}
+            {/* DEMOGRAPHICS */}
             {bgyIncl ? (
               <VisRow>
                 <DonutChart

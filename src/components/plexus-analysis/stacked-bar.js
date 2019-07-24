@@ -115,7 +115,7 @@ export class StackedBarChart extends Component {
             <p className="control-panel__title">{title}</p>
           </div>
         </ControlPanel>
-        <XYPlot
+        <XYPlot style={{margin: 10}}
           width={280}
           margin={{left: 0, right: 0, top: 25, bottom: 15}}
           height={80}
