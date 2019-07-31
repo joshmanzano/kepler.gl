@@ -1,0 +1,21 @@
+
+@import "~react-vis/dist/style";
+
+.rv-discrete-color-legend-item__title {
+    color: #c3c9c5,
+}
+
+.rv-discrete-color-legend-item {
+    padding: 0px;
+}
+
+.rv-discrete-color-legend.horizontal {
+    display: flex;
+    width: 300px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.rv-discrete-color-legend-item.horizontal {
+    width: 80px;
+}

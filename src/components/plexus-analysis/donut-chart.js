@@ -3,15 +3,13 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import {createSelector} from 'reselect';
-import {format} from 'd3-format';
-
 import {
   SCALE_TYPES,
   SCALE_FUNC,
   ALL_FIELD_TYPES
 } from 'constants/default-settings';
-import {RadialChart, Hint} from 'react-vis';
+import {RadialChart, Hint, DiscreteColorLegend} from 'react-vis';
+import './donut-chart.scss';
 
 const DonutPanel = styled.div `
   display: flex;
@@ -67,22 +65,14 @@ export class DonutChart extends Component {
 
     let pData;
     let aData = [0,0,0,0,0,0];
-    
-    // console.log('donut-chart data ' + activeIndicator);
-    // console.log(pData);
-    // console.log(aData);
-    // console.log(data);
-    // console.log(activeIndicator);
+    let leg;
+    let col = ['#ff205b', '#0acd6b', '#009adf', '#af58ba', '#ffc61f', '#f28522'];
     
     if(legends) {
       pData = legends.data.map((d, idx) => ({
         angle: 0,
         color: d,
       })) ;
-
-      // console.log('donut-chart data 2 ' + activeIndicator);
-      // console.log(pData);
-      // console.log(aData);
 
       for(var i=0; i<data.length; i++) {
           for(var j=0; j<legends.data.length; j++) {
@@ -93,27 +83,18 @@ export class DonutChart extends Component {
               }
           }
       }
-
-      // console.log('donut-chart data 3 ' + activeIndicator);
-      // console.log(pData);
-      // console.log(aData);
-    } else if(values && xLabel) {
+    } else if(values && xLabel) { // values in json array format, xLabel - key
       
       pData = values.map((d) => ({
         angle: d[xLabel],
         value: d[xLabel],
       }));
-      // console.error('donut');
-      // console.error(pData);
-    } else if(values && xKeyArr) {
+      
+    } else if(values && xKeyArr) { // 'Group by' values in xKeyArr
       pData = [];
       let inserted = {};
-      xKeyArr.forEach((x) => {
-        // console.error(x);
-        // console.error(values);
+      xKeyArr.forEach((x, i) => {
         values.forEach(d => {
-          // let key = x
-          // console.error(d);
           if(x.name in inserted) {
             pData.filter(a=>a.label==x.name)[0].angle += d[x.name];
           } else {
@@ -122,12 +103,13 @@ export class DonutChart extends Component {
               label: x.name,
               value: d[x.name],
               angle: d[x.name],
+              color: col[i%col.length],
             });
           }
         });
       });
-      // console.error(values);
-      // console.error(pData);
+
+      leg = xKeyArr.map((d, i)=>({title: d.name, color: col[i%col.length]}));
     }
     
 
@@ -145,7 +127,8 @@ export class DonutChart extends Component {
           radius={70}
           width={280} 
           height={170} 
-          colorType={legends?"literal":"category"}
+          colorType={'literal'}
+          // colorType={legends?"literal":"category"}
           onValueMouseOver={v => {console.error('radial over');console.error(v);this.setState({hovered: v})}}
           onSeriesMouseOut={v => this.setState({hovered: null})}
           >
@@ -164,6 +147,13 @@ export class DonutChart extends Component {
               />
             )}
           </RadialChart>
+          {xKeyArr && 
+          <DiscreteColorLegend 
+            orientation={'horizontal'}
+            items={leg} 
+            />
+          }
+          
       </DonutPanel>
     );
   }

@@ -10,7 +10,8 @@ import {
   SCALE_FUNC,
   ALL_FIELD_TYPES
 } from 'constants/default-settings';
-import {XYPlot, YAxis, HorizontalBarSeries, Hint} from 'react-vis';
+import {XYPlot, YAxis, HorizontalBarSeries, Hint, DiscreteColorLegend} from 'react-vis';
+import { getTimeWidgetHintFormatter } from '../../../dist/utils/filter-utils';
 
 
 const StackedBarChartPanel = styled.div`
@@ -45,13 +46,20 @@ const ControlPanel = styled.div`
 export class StackedBarChart extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      hovered: null,
+    }
   }
 
   render() {
-    const {data, activeIndicator, title, legends, values} = this.props;
+    const {data, activeIndicator, title, legends, values, xKeyArr} = this.props;
 
     let pData;
-      let sbBars = [];
+    let sbBars = [];
+    let leg;
+    let col = ['#ff205b', '#0acd6b', '#009adf', '#af58ba', '#ffc61f', '#f28522'];
+    
 
     if(legends) {
       pData = legends.data.map((d, idx) => ({
@@ -94,6 +102,59 @@ export class StackedBarChart extends Component {
           </HorizontalBarSeries>
         );
       });
+    } else if(values && xKeyArr) {
+      console.error('Stacked Bar conditional 3');
+      pData = [];
+      let inserted = {};
+      let total = 0;
+      xKeyArr.forEach((x, i) => {
+        values.forEach(d => {
+          total += d[x.name];
+          if(x.name in inserted) {
+            pData.filter(a=>a.label==x.name)[0].x += d[x.name];
+          } else {
+            inserted[x.name] = 0;
+            // pData.push({
+            //   label: x.name,
+            //   value: d[x.name],
+            //   angle: d[x.name],
+            //   color: col[i%col.length],
+            // });
+            console.error(d[x.name]);
+            pData.push({
+              label: x.name,
+              y: 0,
+              x: d[x.name],
+            });
+          }
+        });
+      });
+
+      pData = pData.map(d => ({
+        ...d,
+        value: ((d.x/total)*100).toFixed(2) + '%',
+      }))
+
+      console.error(pData);
+
+      pData.forEach((d,i) => {
+        sbBars.push(
+          <HorizontalBarSeries 
+            data={[d]} 
+            color={col[i%col.length]}
+            onValueMouseOver={(datapoint, event)=>{
+              // does something on click
+              // you can access the value of the event
+              console.error('bar chart hover');
+              console.error(datapoint);
+              console.error(event);
+              this.setState({hovered: datapoint});
+              // console.error(event);
+            }}/>
+        );
+      })
+
+      leg = xKeyArr.map((d, i)=>({title: d.name, color: col[i%col.length]}));
     } else if(values) {
       values.forEach(d => {
         let obj = {
@@ -116,13 +177,28 @@ export class StackedBarChart extends Component {
           </div>
         </ControlPanel>
         <XYPlot style={{margin: 10}}
-          width={280}
+          width={270}
           margin={{left: 0, right: 0, top: 25, bottom: 15}}
           height={80}
+          onMouseLeave={() => this.setState({hovered: null})}          
           stackBy="x"
         >
           { sbBars }
+          {this.state.hovered && (
+              <Hint
+                value={(legends) ? {Count: this.state.hovered.value} : {
+                  Category: this.state.hovered.label,
+                  Percentage: this.state.hovered.value,
+                }}
+              />
+            )}
         </XYPlot>
+        {xKeyArr && 
+          <DiscreteColorLegend 
+            orientation={'horizontal'}
+            items={leg} 
+            />
+          }
 
       </StackedBarChartPanel>
     );

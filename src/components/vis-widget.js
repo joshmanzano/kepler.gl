@@ -44,9 +44,10 @@ import {
   M_AGE
 } from 'utils/plexus-utils/sample-data-utils';
 
-import {scaleLinear} from 'd3-scale';
+// import {scaleLinear} from 'd3-scale';
 
 import BarChartFactory from './plexus-analysis/bar-chart';
+import StackedBarChartFactory from './plexus-analysis/stacked-bar';
 import ParallelCoordinatesKFactory from './plexus-analysis/parallel-coordinates';
 import ParallelCoordinatesD3Factory from './plexus-analysis/parallel-coordinates-d3';
 import ScatterPlotFactory from './plexus-analysis/scatter-plot';
@@ -167,8 +168,8 @@ const WidgetContainer = styled.div`
     font-weight: 900;
     font-size: 2em;
     line-height: 1;
+    margin-top:25px;
     color: ${props => props.theme.labelColor};
-    margin-top: 40px;
   }
 
   .bottom-widget--info-desc {
@@ -181,7 +182,6 @@ const WidgetContainer = styled.div`
     line-height: 1.3em;
     // font-size: 1.2em;
     // font-weight: 400;
-    margin-bottom: 20px;
   }
 `;
 
@@ -198,7 +198,8 @@ VisWidgetFactory.deps = [
   ParallelCoordinatesKFactory,
   ParallelCoordinatesD3Factory,
   DonutChartFactory,
-  ScatterPlotFactory
+  ScatterPlotFactory,
+  StackedBarChartFactory,
 ];
 
 export default function VisWidgetFactory(
@@ -206,7 +207,8 @@ export default function VisWidgetFactory(
   ParallelCoordinatesK,
   ParallelCoordinatesD3,
   DonutChart,
-  ScatterPlot
+  ScatterPlot,
+  StackedBarChart,
 ) {
   const VisWidget = props => {
     const {
@@ -214,7 +216,6 @@ export default function VisWidgetFactory(
       filters,
       visStateActions,
       uiStateActions,
-      // containerW,
       uiState,
       sidePanelWidth,
       selected,
@@ -241,7 +242,7 @@ export default function VisWidgetFactory(
 
     if (datasets.barangays) {
       if (datasets.barangays.data) {
-        console.error(datasets);
+        // console.error(datasets);
         // formatted barangay data
         bgyIncl = [];
         let bgyRef = {};
@@ -321,7 +322,7 @@ export default function VisWidgetFactory(
             });
           }
         });
-        console.error(bgyIncl);
+        // console.error(bgyIncl);
         // get maximum
         destMax = destCnt.reduce((prev, current) =>
           prev.count > current.count ? prev : current
@@ -333,10 +334,10 @@ export default function VisWidgetFactory(
     }
 
     const changeBarangay = id => {
-      console.error('set bgy');
+      // console.error('set bgy');
       let idIndex = BGY_DATA_DISPLAY.filter(bdd => bdd.id == 'id')[0].idx;
       let newBgy = datasets.barangays.data.filter(b => b[idIndex] == id)[0];
-      console.error(newBgy);
+      // console.error(newBgy);
       visStateActions.setActiveBarangay(newBgy);
     };
 
@@ -369,10 +370,10 @@ export default function VisWidgetFactory(
           <div className="bottom-widget--content">
             <div className="bottom-widget--info">
                 <div className="bottom-widget--info-title">
-                Overview of All Indicator Scores of a Barangay
+                Parallel Coordinates
                 </div>
                 <div className="bottom-widget--info-desc">
-                This is a multi-indicator explorer of the transport desirability framework in the city. Each line indicates a barangay, while each vertical line is the values of an indicator. Multiple lines going to a single point signifies that there are a lot of barangays that have similar indicator scores. Lines converging to the top of the coordinates means that many barangays have a higher score, while lines converging at the bottom specifies that many barangays have a lower score. This can be filtered using the range filters found in the left panel.
+                This is a multi-indicator explorer of the transport desirability framework in the city. Each line indicates a barangay, while each vertical line is the values of an indicator. Multiple lines going to a single point signifies that there are a lot of barangays that have similar indicator scores. Lines converging to the top of the coordinates means that many barangays have a higher score, while lines converging at the bottom specifies that many barangays have a lower score.
                 </div>
             </div>
             {bgyIncl ? (
@@ -387,11 +388,12 @@ export default function VisWidgetFactory(
             ) : null}
             <div className="bottom-widget--info">
                 <div className="bottom-widget--info-title">
-                Relationship of Transport Desirability with Indicators
+                TD Distribution Scatter Plot
                 </div>
                 <div className="bottom-widget--info-desc">
-                These scatter plots show the relationship of the transport desirability score and each indicator. From these, you can see how much each indicator affects the overall desirability score - if it has a direct (diagonal line going up), indirect (diagonal line going down), or no relationship at all. This can also be filtered using the range filters found in the left panel.</div>
+                These scatter plots show the relationship of the transport desirability score and each indicator. From these, you can see how much each indicator affects the overall desirability score - if it has a direct (diagonal line going up), indirect (diagonal line going down), or no relationship at all.  
                 </div>
+            </div>
             {bgyIncl ? (
               <VisRow>
                 <ScatterPlot
@@ -483,7 +485,7 @@ export default function VisWidgetFactory(
                 City Amenities and Frequented Destinations
                 </div>
                 <div className="bottom-widget--info-desc">
-                The number of each amenity category located in the city is shown here. Additionally, frequented destinations are ranked in descending order and are divided by transport mode. Each color in the bar chart represents a transportation mode going to that barangay. Longer bars mean that many individuals utilize this certain transport mode. Hovering the bars will show what type of mode share it represents and how many people use it.
+                The number of each amenity category located in the city is shown here. Additionally, frequented destinations are ranked in descending order and are partitioned by transport mode. The longest partition indicates the most common mode when going to that destination.
                 </div>
             </div>
             {/* TODO: change to TOP destinations  */}
@@ -550,20 +552,25 @@ export default function VisWidgetFactory(
             
             <div className="bottom-widget--info">
                 <div className="bottom-widget--info-title">
-                Survey Respondents by Demographic
+                Mode Share by Demographic
                 </div>
                 <div className="bottom-widget--info-desc">
-                This section shows the survey respondents divided by sex, income level, and age. It is composed of two visualizations: a donut chart for the distribution of survey respondents by demographic for the whole city, and a stacked bar chart for each barangay. Each color in the charts represent a certain demographic and its corresponding count. Hovering on these will show their information.
+                This shows the percentage of each mode share in the barangay. Bigger portions in the chart indicate that more people utilize that certain transport mode. Mode shares can be assessed by sex, income level, and age.
                 </div>
             </div>
-            {/* DEMOGRAPHICS */}
+            {/* DEMOGRAPHIS */}
             {bgyIncl ? (
               <VisRow>
-                <DonutChart
+                <StackedBarChart
+                    title={'By Gender'}
+                    values={BGY_DEMOGRAPHICS}
+                    xKeyArr={M_SEX}                    
+                />
+                {/* <DonutChart
                   title={'By Sex'}
                   values={BGY_DEMOGRAPHICS}
                   xKeyArr={M_SEX}
-                />
+                /> */}
                 <BarChart
                   data={BGY_DEMOGRAPHICS.filter(d => d.name)
                     .sort((a, b) => b['count'] - a['count'])
@@ -582,11 +589,16 @@ export default function VisWidgetFactory(
 
             {bgyIncl ? (
               <VisRow>
-                <DonutChart
+                <StackedBarChart
+                    title={'By Income Level'}
+                    values={BGY_DEMOGRAPHICS}
+                    xKeyArr={M_INCOME}                    
+                />
+                {/* <DonutChart
                   title={'By Income Level'}
                   values={BGY_DEMOGRAPHICS}
                   xKeyArr={M_INCOME}
-                />
+                /> */}
                 <BarChart
                   data={BGY_DEMOGRAPHICS.filter(d => d.name)
                     .sort((a, b) => b['count'] - a['count'])
@@ -605,11 +617,16 @@ export default function VisWidgetFactory(
 
             {bgyIncl ? (
               <VisRow>
-                <DonutChart
+                <StackedBarChart
+                    title={'By Age'}
+                    values={BGY_DEMOGRAPHICS}
+                    xKeyArr={M_AGE}                    
+                />
+                {/* <DonutChart
                   title={'By Age'}
                   values={BGY_DEMOGRAPHICS}
                   xKeyArr={M_AGE}
-                />
+                /> */}
                 <BarChart
                   data={BGY_DEMOGRAPHICS.filter(d => d.name)
                     .sort((a, b) => b['count'] - a['count'])

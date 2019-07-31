@@ -24,11 +24,11 @@ import styled from 'styled-components';
 import {IconRoundSmall} from 'components/common/styled-components';
 import {Close} from 'components/common/icons';
 
-import {format} from 'd3-format';
+// import {format} from 'd3-format';
 import {scaleLinear} from 'd3-scale';
 import {divgrid} from './divgrid';
 // import '~parcoord-es/parcoords.css';
-import './test.scss';
+import './parallel-coordinates-d3.scss';
 import ParCoords from 'parcoord-es';
 
 import * as d3 from 'd3';
@@ -185,7 +185,7 @@ export class ParallelCoordinatesD3 extends Component {
       .hideAxis(['name', 'population', 'income', 'desirability', 'id'])
       .margin({
         top: 40,
-        right: 60,
+        right: 50,
         bottom: 30,
         left: 20
       })
@@ -277,6 +277,14 @@ export class ParallelCoordinatesD3 extends Component {
           // .datum(this.state.data.slice(0, 10))
           .datum(data)
           .call(grid); 
+
+      var rows = d3.select('#grid').selectAll('.row');
+      rows.on('mouseover', function(d) {
+        chart.highlight([d]);
+      });
+      rows.on('mouseout', function(d) {
+        chart.unhighlight();
+      });
     
       // add mouse events on grid rows
       // var rows = d3.select('#grid').selectAll('.row');
@@ -291,8 +299,9 @@ export class ParallelCoordinatesD3 extends Component {
 
   render() {
     let {data, selected} = this.props;
+    console.error('pcoords width: ' + this.props.width);
 
-    this.refreshPC(data, selected);
+    this.refreshPC(data, selected, this.props.width);
 
     // axis colorworkaround
     d3.selectAll('path.domain').attr(
@@ -340,7 +349,7 @@ export class ParallelCoordinatesD3 extends Component {
             display: this.state.visible ? 'block' : 'none'
           }}
         /> */}
-        <PCVisWrapper id="example" className="parcoords ex" width={this.props.width - 50} visible={this.state.visible ? 'block' : 'none'}/>
+        <PCVisWrapper id="example" className="parcoords ex" width={this.props.width} visible={this.state.visible ? 'block' : 'none'}/>
         <div
           id="grid"
           className="parcoords ex"

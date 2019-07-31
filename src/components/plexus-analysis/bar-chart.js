@@ -132,11 +132,16 @@ export class BarChart extends Component {
     let dataSliced = data;
     let max;
     let dataLabels;
+    let col = ['#ff205b', '#0acd6b', '#009adf', '#af58ba', '#ffc61f', '#f28522']; // TODO: move to constants
     let bars = [];
 
     if (xKeyArr && data) {
-
-      xKeyArr.forEach(x => {
+      // console.error('bar chart xkeyarr');
+      // console.error(xKeyArr);
+      // let keyarr = xKeyArr.reverse();
+      // console.error(keyarr);      
+      // console.error(dataSliced);      
+      xKeyArr.forEach((x,i) => {
         dataSliced = dataSliced.map((d, idx) => ({
           ...d,
           x: xKey ? d[x[xKey]] : d[x],
@@ -160,6 +165,7 @@ export class BarChart extends Component {
               this.setState({hovered: datapoint});
               // console.error(event);
             }}
+            color={col[i%col.length]}
           />
         );
       });
@@ -180,6 +186,8 @@ export class BarChart extends Component {
           yOffset: 5,
           style: {fill: '#6A7485'}
         }));
+      
+      // bars = bars.reverse();
       
     } else {
       if (xKey && yKey) {
