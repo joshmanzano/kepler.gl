@@ -33,6 +33,14 @@ import ParCoords from 'parcoord-es';
 
 import * as d3 from 'd3';
 
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {
+  faSort
+} from '@fortawesome/free-solid-svg-icons';
+
+import ReactTable from 'react-table'
+// import 'react-table/react-table.css'
+
 // import './../bottom-widget.scss';
 
 const PCWrapper = styled.div`
@@ -42,6 +50,30 @@ const PCWrapper = styled.div`
   align-items: center;
   width: ${props => props.width - 50}px;
   background-color: ${props => props.theme.sidePanelBg};
+
+  .header {
+    position: sticky;
+    top: 0;
+    background-color: ${props => props.theme.sidePanelHeaderBg};
+    margin-bottom:5px;
+    cursor: pointer;
+  }
+
+  .header > .cell {
+    border-right: 2px solid #2C3C54;
+    text-overflow: ellipsis;
+    text-align: left;
+  }
+
+  .cell {
+    margin-left: 1px;
+    color: #c3c9c5;
+    text-align: right;
+  }
+
+  .row > .col-0 {
+    text-align: left;
+  }
 
   #grid {
     ${props => props.theme.sidePanelScrollBar};
@@ -90,6 +122,7 @@ const ControlBtn = styled.button`
   background: none;
   border: none;
 `;
+
 export class ParallelCoordinatesD3 extends Component {
   constructor(props) {
     super(props);
@@ -127,7 +160,7 @@ export class ParallelCoordinatesD3 extends Component {
       });
     }, domainStructure);
 
-    let pData = this.state.data.sort((a, b) => b['name'] - a['name']);
+    let pData = this.state.data.sort((a, b) => a['name'] - b['name']);
     let dimensions = {};
     domains.forEach(d => {
       if (
@@ -198,6 +231,7 @@ export class ParallelCoordinatesD3 extends Component {
 
     // create data table, row hover highlighting
     var grid = divgrid();
+
     d3.select('#grid')
       // .datum(this.state.data.slice(0, 10))
       .datum(pData)
@@ -240,6 +274,8 @@ export class ParallelCoordinatesD3 extends Component {
     });
 
     console.log('DIDMOUNT');
+    console.log(pData);
+    console.log(dimensions);
   }
 
   refreshPC(data, selected) {
@@ -271,12 +307,40 @@ export class ParallelCoordinatesD3 extends Component {
         .shadows()
         .render();
 
+      function sort_by_key(array, key, asc) {
+        return array.sort(function(a, b) {
+          var x = a[key]; var y = b[key];
+          if(asc) {
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+          } else {
+            return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+          }
+        });
+      }
+
+      data = sort_by_key(data, 'name', true);
+
       // update table on filter
       var grid = divgrid();
         d3.select('#grid')
           // .datum(this.state.data.slice(0, 10))
           .datum(data)
           .call(grid); 
+
+      var header = d3.select('#grid').selectAll('.header');
+      var headercols = header.selectAll('.cell');
+
+      var asc = [{'name' : true}, {'income' : true}, {'population' : true},
+                 {'desirability' : true}, {'spatial' : true}, {'temporal' : true},
+                 {'economic' : true}, {'physical' : true}, {'psychological' : true},
+                 {'physiological' : true}, {'sustainability' : true}, {'performance' : true},
+                 {'fairness' : true}];
+
+      headercols.on('mousedown', function(d) {
+        asc[d] = !asc[d];
+        data = sort_by_key(data, d, asc[d]);
+        d3.select('#grid').datum(data).call(grid);
+      });
     
       // add mouse events on grid rows
       // var rows = d3.select('#grid').selectAll('.row');
@@ -290,6 +354,60 @@ export class ParallelCoordinatesD3 extends Component {
   }
 
   render() {
+    let pData = this.state.data.sort((a, b) => b['name'] - a['name']);
+    const columns = [{
+      Header: 'Name',
+      accessor: 'name' // String-based value accessors!
+    }, {
+      Header: 'Income',
+      accessor: 'income',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+      Header: 'Population',
+      accessor: 'population',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+      Header: 'Desirability',
+      accessor: 'desirability',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+      Header: 'Spatial',
+      accessor: 'spatial',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+      Header: 'Temporal',
+      accessor: 'temporal',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+      Header: 'Economic',
+      accessor: 'economic',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+      Header: 'Physical',
+      accessor: 'physical',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+      Header: 'Psychological',
+      accessor: 'psychological',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+      Header: 'Physiological',
+      accessor: 'physiological',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+      Header: 'Sustainability',
+      accessor: 'sustainability',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+      Header: 'Performance',
+      accessor: 'performance',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+      Header: 'Fairness',
+      accessor: 'fairness',
+      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    },]
+
     let {data, selected} = this.props;
 
     this.refreshPC(data, selected);
@@ -341,6 +459,10 @@ export class ParallelCoordinatesD3 extends Component {
           }}
         /> */}
         <PCVisWrapper id="example" className="parcoords ex" width={this.props.width - 50} visible={this.state.visible ? 'block' : 'none'}/>
+        {/* hello<ReactTable
+          data={pData}
+          columns={columns}
+        /> */}
         <div
           id="grid"
           className="parcoords ex"
