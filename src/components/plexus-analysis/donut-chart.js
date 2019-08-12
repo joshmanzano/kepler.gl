@@ -129,18 +129,12 @@ export class DonutChart extends Component {
           height={170} 
           colorType={'literal'}
           // colorType={legends?"literal":"category"}
-          onValueMouseOver={v => {console.error('radial over');console.error(v);this.setState({hovered: v})}}
+          onValueMouseOver={v => {this.setState({hovered: v})}}
           onSeriesMouseOut={v => this.setState({hovered: null})}
           >
             {this.state.hovered && (
               <Hint
-                // xType="literal"
-                // yType="literal"
-                // getX={d => d.x}
-                // getY={d => d.y}
                 value={(legends) ? {Count: this.state.hovered.value} : {
-                  // Barangay: this.state.hovered.y,
-                  // [categoryLabel ? categoryLabel : 'Category']: this.state.hovered.valueLabel,
                   Category: this.state.hovered.label,
                   Count: this.state.hovered.value,
                 }}

@@ -27,6 +27,7 @@ import IndicatorFactory from './../indicator-panel/indicator';
 import {TRANSPORT_DESIRABILITY} from 'constants/default-settings';
 import { BGY_DATA_DISPLAY } from 'utils/filter-utils';
 import BarChartFactory from './../../plexus-analysis/bar-chart';
+import PaginatedRankingFactory from './../../plexus-analysis/paginated-ranking';
 import StackedBarChartFactory from './../../plexus-analysis/stacked-bar';
 
 // import OverviewFactory from './Overview';
@@ -73,14 +74,14 @@ const StyledIndicatorContent = styled.div`
   // flex-wrap: wrap;
   width: 100%;
 `;
-OverviewPanelFactory.deps = [IndicatorFactory, BarChartFactory, StackedBarChartFactory];
+OverviewPanelFactory.deps = [IndicatorFactory, BarChartFactory, StackedBarChartFactory, PaginatedRankingFactory];
 
-function OverviewPanelFactory(Indicator, BarChart, StackedBarChart) {
+function OverviewPanelFactory(Indicator, BarChart, StackedBarChart, PaginatedRanking) {
   
   return class InteractionPanel extends Component {
 
     render() {
-      const DEFAULT_LIST = 5;
+      const DEFAULT_LIST = 10;
       let bgyIncl;
       let maxListSize = DEFAULT_LIST;
 
@@ -157,10 +158,11 @@ function OverviewPanelFactory(Indicator, BarChart, StackedBarChart) {
               activeIndicator={'desirability'} 
               data={bgyIncl}
               legends={this.props.legends}
+              showLegend
               />
             : null}
           <div style={{marginBottom: '5px'}} />
-          {bgyIncl? <BarChart
+          {/* {bgyIncl? <BarChart
             floatFormat
             listSize={bgyIncl.length}
             maxBar={maxListSize}
@@ -177,6 +179,25 @@ function OverviewPanelFactory(Indicator, BarChart, StackedBarChart) {
             reverseFunc={this.props.reverseFunc}
             analysisRankingReverse={this.props.rankingReverse}
             analysisRankingPage={this.props.rankingPage}
+            /> : null } */}
+            {bgyIncl? <PaginatedRanking
+            floatFormat
+            listSize={bgyIncl.length}
+            maxBar={maxListSize}
+            data={bgyIncl}
+            xKey={'desirability'}
+            yKey={'name'}
+            title={'Rankings'}
+            onLabelClick={(id) => { 
+              let idIndex = BGY_DATA_DISPLAY.filter(bdd=>bdd.id=='id')[0].idx;
+              let newBgy = this.props.datasets.barangays.data.filter(b=>b[idIndex]==id)[0];
+              this.props.changeBarangay(newBgy);
+            }}                                
+            paginationFunc={this.props.paginationFunc}
+            reverseFunc={this.props.reverseFunc}
+            analysisRankingReverse={this.props.rankingReverse}
+            analysisRankingPage={this.props.rankingPage}
+            legends={this.props.legends}            
             /> : null }
             {/* {/* {console.error('END OVERVIEW PANEL')} */}
         </StyledOverviewPanel>

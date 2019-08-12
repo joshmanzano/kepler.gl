@@ -17,6 +17,7 @@ import { getTimeWidgetHintFormatter } from '../../../dist/utils/filter-utils';
 const StackedBarChartPanel = styled.div`
   display: flex;
   flex-direction: column;
+  margin: 25px 0px 40px 0;
 `;
 
 const ControlPanel = styled.div`
@@ -53,7 +54,7 @@ export class StackedBarChart extends Component {
   }
 
   render() {
-    const {data, activeIndicator, title, legends, values, xKeyArr} = this.props;
+    const {data, activeIndicator, title, legends, values, xKeyArr, showLegend} = this.props;
 
     let pData;
     let sbBars = [];
@@ -62,6 +63,7 @@ export class StackedBarChart extends Component {
     
 
     if(legends) {
+
       pData = legends.data.map((d, idx) => ({
         angle: 0,
         color: d
@@ -90,6 +92,9 @@ export class StackedBarChart extends Component {
           </HorizontalBarSeries>
         );
       });
+
+      leg = legends.data.map((d, i)=>({title: legends.labels[i].low.toFixed(2) + ' to ' + legends.labels[i].high.toFixed(2), color: d}));
+      
     } else if(values && this.props.xLabel) {
       values.forEach(d => {
         let obj = {
@@ -103,7 +108,7 @@ export class StackedBarChart extends Component {
         );
       });
     } else if(values && xKeyArr) {
-      console.error('Stacked Bar conditional 3');
+      // console.error('Stacked Bar conditional 3');
       pData = [];
       let inserted = {};
       let total = 0;
@@ -120,7 +125,7 @@ export class StackedBarChart extends Component {
             //   angle: d[x.name],
             //   color: col[i%col.length],
             // });
-            console.error(d[x.name]);
+            // console.error(d[x.name]);
             pData.push({
               label: x.name,
               y: 0,
@@ -135,7 +140,7 @@ export class StackedBarChart extends Component {
         value: ((d.x/total)*100).toFixed(2) + '%',
       }))
 
-      console.error(pData);
+      // console.error(pData);
 
       pData.forEach((d,i) => {
         sbBars.push(
@@ -145,9 +150,9 @@ export class StackedBarChart extends Component {
             onValueMouseOver={(datapoint, event)=>{
               // does something on click
               // you can access the value of the event
-              console.error('bar chart hover');
-              console.error(datapoint);
-              console.error(event);
+              // console.error('bar chart hover');
+              // console.error(datapoint);
+              // console.error(event);
               this.setState({hovered: datapoint});
               // console.error(event);
             }}/>
@@ -193,7 +198,7 @@ export class StackedBarChart extends Component {
               />
             )}
         </XYPlot>
-        {xKeyArr && 
+        {(xKeyArr || legends) && showLegend && 
           <DiscreteColorLegend 
             orientation={'horizontal'}
             items={leg} 

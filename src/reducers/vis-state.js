@@ -62,7 +62,11 @@ import {
   updateActiveAnalysisTabUpdater,
   updateActiveBottomPanelUpdater,
   changeAnalysisRankPage,
+  changeOriPage,
+  changeDestPage,
   setAnalysisReverse,
+  setOriReverse,
+  setDestReverse,
   changeTDRankPage,
   setTDReverse,
 } from './vis-state-updaters';
@@ -138,7 +142,11 @@ const actionHandler = {
   [ActionTypes.TOGGLE_ACTIVE_ANALYSIS]: updateActiveAnalysisTabUpdater,
   [ActionTypes.TOGGLE_ACTIVE_BOTTOM]: updateActiveBottomPanelUpdater,
   [ActionTypes.CHANGE_ANALYSIS_RANK_PAGE]: changeAnalysisRankPage,
+  [ActionTypes.CHANGE_ORI_PAGE]: changeOriPage,
+  [ActionTypes.CHANGE_DEST_PAGE]: changeDestPage,
   [ActionTypes.SORT_ANALYSIS_REVERSE]: setAnalysisReverse,
+  [ActionTypes.SORT_ORI_REVERSE]: setOriReverse,
+  [ActionTypes.SORT_DEST_REVERSE]: setDestReverse,
   [ActionTypes.CHANGE_TD_RANK_PAGE]: changeTDRankPage,
   [ActionTypes.SORT_TD_REVERSE]: setTDReverse,
 };

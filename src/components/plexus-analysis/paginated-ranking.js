@@ -53,7 +53,6 @@ const ControlPanel = styled.div`
   display: flex;
   justify-content: space-between;
   width: ${props => props.width}px;
-
   .control-panel-item {
     margin-top: 12px 0 8px 0;
   }
@@ -70,7 +69,7 @@ const ControlPanel = styled.div`
 
   .control-panel__title {
     font-weight: 500;
-    color: ${props => props.theme.labelColor};    
+    color: ${props => props.theme.labelColor};
   }
 `;
 const ControlBtn = styled.button`
@@ -80,13 +79,40 @@ const ControlBtn = styled.button`
   border: none;
 `;
 
-export class BarChart extends Component {
+const PTable = styled.div`
+  display: grid;
+  margin: 10px 0 20px 0;
+  grid-template-columns: 20px 60px auto;
+  grid-column-gap: 10px;
+  grid-row-gap: 5px;
+  width: ${props => props.width}px;
+  color: ${props => props.theme.labelColor};
+  
+
+  .ptable-index {
+    justify-self: end;
+  }
+
+  .ptable-value {
+    text-align: center;
+    background-color: white;
+    height: fit-content;
+    border-radius: 3px;
+    background-color: #1fb9d5;
+    color: #fff;
+  }
+
+  .ptable-label {
+  }
+`;
+
+export class PaginatedRanking extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      hovered: null,
-    }
+      hovered: null
+    };
   }
 
   render() {
@@ -106,154 +132,114 @@ export class BarChart extends Component {
       analysisRankingReverse,
       analysisRankingPage,
       onLabelClick,
-      height
+      height,
+      legends
     } = this.props;
 
     // TODO: make responsive
     const width = 270;
 
-    // console.log('bar chart');
-    // console.log(data);
-    // format data
-    // let formattedData = data;
-    // {
-    //   xKey && yKey && !Array.isArray(xKey)
-    //     ? (formattedData = data.map((d, idx) => ({
-    //         ...d,
-    //         x: d[xKey],
-    //         y: d[yKey]
-    //       })))
-    //     : (formattedData = data.map((d, idx) => ({
-    //         ...d,
-    //         x: d.x
-    //       })));
-    // }
     let formattedData = data;
     let dataSorted = data;
     let dataSliced = data;
     let max;
     let dataLabels;
-    let col = ['#ff205b', '#0acd6b', '#009adf', '#af58ba', '#ffc61f', '#f28522']; // TODO: move to constants
+    let col = [
+      '#ff205b',
+      '#0acd6b',
+      '#009adf',
+      '#af58ba',
+      '#ffc61f',
+      '#f28522'
+    ]; // TODO: move to constants
     let bars = [];
+    let tcontent = [];
 
-    if (xKeyArr && data) {
-      // console.error('bar chart xkeyarr');
-      // console.error(xKeyArr);
-      // let keyarr = xKeyArr.reverse();
-      // console.error(keyarr);      
-      // console.error(dataSliced);      
-      xKeyArr.forEach((x,i) => {
-        dataSliced = dataSliced.map((d, idx) => ({
-          ...d,
-          x: xKey ? d[x[xKey]] : d[x],
-          y: d[yKey],
-          valueLabel: xKey ? x[xKey] : x,
-          actualValue: xKey ? d[x[xKey]] : d[x],
-        }));
-        bars.push(
-          <HorizontalBarSeries
-            animation
-            data={dataSliced.filter(d =>
-              !d.hasOwnProperty('display') ? true : d.display
-            )}
-            barWidth={0.5}
-            onValueMouseOver={(datapoint, event)=>{
-              // does something on click
-              // you can access the value of the event
-              // console.error('bar chart hover');
-              // console.error(datapoint);
-              // console.error(event);
-              this.setState({hovered: datapoint});
-              // console.error(event);
-            }}
-            color={col[i%col.length]}
-          />
-        );
-      });
-
-      // get largest value in data
-      max = dataSliced.reduce((prev, current) =>
-        prev.count > current.count ? prev : current
-      ).count;
-
-      // generate labels
-      dataLabels = dataSliced
-        .filter(d => (!d.hasOwnProperty('display') ? true : d.display))
-        .map((d, idx) => ({
-          x: d.count,
-          y: d.name,
-          label: d.count,
-          // xOffset: 20,
-          yOffset: 5,
-          style: {fill: '#6A7485'}
-        }));
-      
-      // bars = bars.reverse();
-      
+    if (xKey && yKey) {
+      formattedData = data.filter(d => typeof d[yKey] !== undefined);
+      formattedData = formattedData.map((d, idx) => ({
+        ...d,
+        x: d[xKey],
+        y: d[yKey]
+      }));
     } else {
-      if (xKey && yKey) {
-        formattedData = data.filter(d => typeof d[yKey] !== undefined);
-        formattedData = formattedData.map((d, idx) => ({
-          ...d,
-          x: d[xKey],
-          y: d[yKey]
-        }));
-      } else {
-        formattedData = data.filter(d => typeof d['y'] !== undefined);
-        formattedData = data.map((d, idx) => ({
-          ...d,
-          x: d.x
-        }));
-      }
-
-      dataSorted = formattedData;
-      dataSliced = formattedData;
-
-      // slice data for paginated bar chart
-      if (paginationFunc && reverseFunc) {
-        dataSorted = analysisRankingReverse
-          ? formattedData.reverse()
-          : formattedData;
-        dataSliced = dataSorted.slice(
-          (analysisRankingPage - 1) * maxBar,
-          Math.min(
-            maxBar + (analysisRankingPage - 1) * maxBar,
-            dataSorted.length
-          )
-        );
-        dataSliced = dataSliced.reverse();
-      }
-
-      // get largest value in data
-      max = domainMax
-        ? domainMax
-        : dataSorted.reduce((prev, current) =>
-            prev.x > current.x ? prev : current
-          ).x;
-
-      // generate labels
-      dataLabels = dataSliced
-        .filter(d => (!d.hasOwnProperty('display') ? true : d.display))
-        .map((d, idx) => ({
-          x: d.x,
-          y: d.y,
-          label: floatFormat ? d.x.toFixed(2) : d.x,
-          xOffset: 20,
-          yOffset: 7,
-          style: {fill: '#6A7485'}
-        }));
-
-      bars.push(
-        <HorizontalBarSeries
-          animation
-          data={dataSliced.filter(d =>
-            !d.hasOwnProperty('display') ? true : d.display
-          )}
-          barWidth={0.5}
-        />
-      );
-      // console.error('non stacked bar chart DONE');
+      formattedData = data.filter(d => typeof d['y'] !== undefined);
+      formattedData = data.map((d, idx) => ({
+        ...d,
+        x: d.x
+      }));
     }
+
+    dataSorted = formattedData;
+    dataSliced = formattedData;
+
+    // slice data for paginated bar chart
+    if (paginationFunc && reverseFunc) {
+      dataSorted = analysisRankingReverse
+        ? formattedData.reverse()
+        : formattedData;
+      dataSliced = dataSorted.slice(
+        (analysisRankingPage - 1) * maxBar,
+        Math.min(maxBar + (analysisRankingPage - 1) * maxBar, dataSorted.length)
+      );
+      dataSliced = dataSliced.reverse();
+    }
+
+    // get largest value in data
+    max = domainMax
+      ? domainMax
+      : dataSorted.reduce((prev, current) =>
+          prev.x > current.x ? prev : current
+        ).x;
+
+    // generate labels
+    dataLabels = dataSliced
+      .filter(d => (!d.hasOwnProperty('display') ? true : d.display))
+      .map((d, idx) => ({
+        x: d.x,
+        y: d.y,
+        label: floatFormat ? d.x.toFixed(2) : d.x,
+        xOffset: 20,
+        yOffset: 7,
+        style: {fill: '#6A7485'}
+      }));
+
+    let currCol = legends ? analysisRankingReverse ? legends.data.length - 1 : 0 : 0;
+    dataSliced.forEach((d, i)=>{
+      // assign color
+      let tex = '#fff';
+      if(legends) {
+        if(analysisRankingReverse) {
+          while(d.x < legends.labels[currCol].low && currCol >= 0) {
+            currCol--;
+          }
+        } else {
+          while(d.x > legends.labels[currCol].high && currCol < legends.data.length) {
+            currCol++;
+          }
+        } 
+      }
+
+      tcontent.push(<div className='ptable-label'>{(d.y)}</div>);
+      {legends ? 
+        tcontent.push(<div className='ptable-value' style={{backgroundColor: legends.data[currCol], color: currCol <= 2 ?  '#fff': '#212121'}}>{d.x.toFixed(2)}</div>) //(dataSliced.length - i)+(analysisRankingPage - 1) * maxBar || 10+0*10 
+        : tcontent.push(<div className='ptable-value'>{floatFormat?d.x.toFixed(2):d.x}</div>) //(dataSliced.length - i)+(analysisRankingPage - 1) * maxBar || 10+0*10 
+      }
+      tcontent.push(<div className='ptable-index'>{analysisRankingReverse ? 1 + formattedData.length - ((dataSliced.length - i)+(analysisRankingPage - 1) * maxBar): (dataSliced.length - i)+(analysisRankingPage - 1) * maxBar}</div>);
+    });
+
+    tcontent = tcontent.reverse();
+
+    bars.push(
+      <HorizontalBarSeries
+        animation
+        data={dataSliced.filter(d =>
+          !d.hasOwnProperty('display') ? true : d.display
+        )}
+        barWidth={0.5}
+      />
+    );
+    // console.error('non stacked bar chart DONE');
 
     // get bar chart labels
     let maxDom = 0;
@@ -278,30 +264,30 @@ export class BarChart extends Component {
           width="80"
           height="20"
           onClick={() => {
-            console.log('BARCHART CLICK ' + value);
-            console.log('BARCHART CLICK ' + index);
+            console.log('PR CLICK ' + value);
+            console.log('PR CLICK ' + index);
             console.log(dataSliced[index]);
-            if(onLabelClick) onLabelClick(dataSliced[index].id);
+            if (onLabelClick) onLabelClick(dataSliced[index].id);
           }}
         >
-        <div
-          xmlns="http://www.w3.org/1999/xhtml"
-          style={{
-            width: 80, 
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            display: 'block',
-            textAlign: 'end',
-            cursor: 'pointer',
-            ":hover": {
-              textDecoration: 'underline',
-              color: 'white',
-            }
-          }}
-        >
-          {/* <text>{value}</text> */}
-          {value}
+          <div
+            xmlns="http://www.w3.org/1999/xhtml"
+            style={{
+              width: 80,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'block',
+              textAlign: 'end',
+              cursor: 'pointer',
+              ':hover': {
+                textDecoration: 'underline',
+                color: 'white'
+              }
+            }}
+          >
+            {/* <text>{value}</text> */}
+            {value}
           </div>
         </foreignObject>
       );
@@ -359,8 +345,10 @@ export class BarChart extends Component {
           </ControlPanel>
         ) : null}
 
-        <XYPlot
-          // xDomain={[0.0, 1.0].map(x => x * 100)}
+        <PTable width={width}>
+          {tcontent}
+        </PTable>
+        {/* <XYPlot
           xDomain={[0, maxDom]}
           margin={{left: 100, right: 30, top: 25, bottom: 25}}
           height={height ? height : 160}
@@ -378,9 +366,7 @@ export class BarChart extends Component {
               fontWeight: 200
             }}
           />
-          {/* TODO: use props */}
           <YAxis
-            // getY={d=>(d.y.length > 12 ? (d.y.slice(0,12) + '...') : d.y )}
             tickFormat={myFormatter}
             style={{
               ticks: {stroke: '#C3C9C5'},
@@ -404,29 +390,17 @@ export class BarChart extends Component {
               getY={d => d.y}
               value={{
                 Barangay: this.state.hovered.y,
-                [categoryLabel ? categoryLabel : 'Category']: this.state.hovered.valueLabel,
-                Count: this.state.hovered.actualValue,
+                [categoryLabel ? categoryLabel : 'Category']: this.state.hovered
+                  .valueLabel,
+                Count: this.state.hovered.actualValue
               }}
             />
           )}
-          {/* TODO: fix off-center bug */}
-          {/* {title ? (
-            <ChartLabel
-              includeMargin={false}
-              text={title}
-              xPercent={0.5}
-              yPercent={1.4}
-              style={{
-                // transform: 'rotate(-90)',
-                textAnchor: 'middle'
-              }}
-            />
-          ) : null} */}
-        </XYPlot>
+        </XYPlot> */}
       </div>
     );
   }
 }
 
-const BarChartFactory = () => BarChart;
-export default BarChartFactory;
+const PaginatedRankingFactory = () => PaginatedRanking;
+export default PaginatedRankingFactory;

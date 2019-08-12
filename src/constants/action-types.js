@@ -96,6 +96,10 @@ const ActionTypes = keyMirror({
   SORT_ANALYSIS_REVERSE: null,
   CHANGE_TD_RANK_PAGE: null,
   SORT_TD_REVERSE: null,
+  SORT_ORI_REVERSE: null,
+  SORT_DEST_REVERSE: null,
+  CHANGE_ORI_PAGE: null,
+  CHANGE_DEST_PAGE: null,
   
   // uiState > export image
   SET_RATIO: null,

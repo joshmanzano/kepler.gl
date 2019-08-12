@@ -41,13 +41,18 @@ import {
   BGY_DEMOGRAPHICS,
   M_SEX,
   M_INCOME,
-  M_AGE
+  M_AGE,
+  MS_SEX,
+  generateModeShareDemographics,
+  MS_INCOME,
+  MS_AGE
 } from 'utils/plexus-utils/sample-data-utils';
 
 // import {scaleLinear} from 'd3-scale';
 
 import BarChartFactory from './plexus-analysis/bar-chart';
 import StackedBarChartFactory from './plexus-analysis/stacked-bar';
+import StackedBarGroupFactory from './plexus-analysis/stacked-bar-group';
 import ParallelCoordinatesKFactory from './plexus-analysis/parallel-coordinates';
 import ParallelCoordinatesD3Factory from './plexus-analysis/parallel-coordinates-d3';
 import ScatterPlotFactory from './plexus-analysis/scatter-plot';
@@ -200,6 +205,7 @@ VisWidgetFactory.deps = [
   DonutChartFactory,
   ScatterPlotFactory,
   StackedBarChartFactory,
+  StackedBarGroupFactory,
 ];
 
 export default function VisWidgetFactory(
@@ -209,6 +215,7 @@ export default function VisWidgetFactory(
   DonutChart,
   ScatterPlot,
   StackedBarChart,
+  StackedBarGroup,
 ) {
   const VisWidget = props => {
     const {
@@ -341,6 +348,7 @@ export default function VisWidgetFactory(
       visStateActions.setActiveBarangay(newBgy);
     };
 
+    // generateModeShareDemographics();
     // let demo = generateDemographics();
     // console.error(demo);
 
@@ -564,14 +572,21 @@ export default function VisWidgetFactory(
                 <StackedBarChart
                     title={'By Gender'}
                     values={BGY_DEMOGRAPHICS}
-                    xKeyArr={M_SEX}                    
+                    xKeyArr={M_SEX}          
+                    showLegend          
+                />
+                <StackedBarGroup
+                    title={'Mode Share By Gender'}
+                    values={MS_SEX}
+                    xKeyArr={TRANSPORT_MODES}          
+                    showLegend          
                 />
                 {/* <DonutChart
                   title={'By Sex'}
                   values={BGY_DEMOGRAPHICS}
                   xKeyArr={M_SEX}
                 /> */}
-                <BarChart
+                {/* <BarChart
                   data={BGY_DEMOGRAPHICS.filter(d => d.name)
                     .sort((a, b) => b['count'] - a['count'])
                     .slice(0, 10)
@@ -583,7 +598,7 @@ export default function VisWidgetFactory(
                   categoryLabel={'Sex'}
                   title={'Frequency per area'}
                   height={250}
-                />
+                /> */}
               </VisRow>
             ) : null}
 
@@ -592,14 +607,22 @@ export default function VisWidgetFactory(
                 <StackedBarChart
                     title={'By Income Level'}
                     values={BGY_DEMOGRAPHICS}
-                    xKeyArr={M_INCOME}                    
+                    xKeyArr={M_INCOME}     
+                    showLegend               
+                />
+                <StackedBarGroup
+                    title={'Mode Share By Income Level'}
+                    values={MS_INCOME}
+                    xKeyArr={TRANSPORT_MODES}  
+                    categoryLabel={'Income Level'}        
+                    showLegend          
                 />
                 {/* <DonutChart
                   title={'By Income Level'}
                   values={BGY_DEMOGRAPHICS}
                   xKeyArr={M_INCOME}
                 /> */}
-                <BarChart
+                {/* <BarChart
                   data={BGY_DEMOGRAPHICS.filter(d => d.name)
                     .sort((a, b) => b['count'] - a['count'])
                     .slice(0, 10)
@@ -611,7 +634,7 @@ export default function VisWidgetFactory(
                   categoryLabel={'Income Range'}
                   title={'Frequency per area'}
                   height={250}
-                />
+                /> */}
               </VisRow>
             ) : null}
 
@@ -620,14 +643,22 @@ export default function VisWidgetFactory(
                 <StackedBarChart
                     title={'By Age'}
                     values={BGY_DEMOGRAPHICS}
-                    xKeyArr={M_AGE}                    
+                    xKeyArr={M_AGE}       
+                    showLegend             
+                />
+                <StackedBarGroup
+                    title={'Mode Share By Age'}
+                    values={MS_AGE}
+                    xKeyArr={TRANSPORT_MODES}  
+                    categoryLabel={'Age Group'}                                    
+                    showLegend          
                 />
                 {/* <DonutChart
                   title={'By Age'}
                   values={BGY_DEMOGRAPHICS}
                   xKeyArr={M_AGE}
                 /> */}
-                <BarChart
+                {/* <BarChart
                   data={BGY_DEMOGRAPHICS.filter(d => d.name)
                     .sort((a, b) => b['count'] - a['count'])
                     .slice(0, 10)
@@ -639,7 +670,7 @@ export default function VisWidgetFactory(
                   categoryLabel={'Age Group'}
                   title={'Frequency per area'}
                   height={250}
-                />
+                /> */}
               </VisRow>
             ) : null}
           </div> : null}

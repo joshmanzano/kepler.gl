@@ -121,8 +121,15 @@ export const INITIAL_VIS_STATE = {
   },
   activeBarangay: null,
   activeAnalysisTab: DEFAULT_ACTIVE_ANALYSIS,
+
   analysisRankingPage: DEFAULT_ANALYSIS_RANKING_PAGE,
   tdRankingPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+  destPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+  oriPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+
+  destReverse: false,
+  oriReverse: false,
+  analysisRankingReverse: false,
   tdRankingReverse: false,
   activeBottomPanel: false
 };
@@ -494,7 +501,12 @@ export const removeLayerUpdater = (state, {idx}) => {
 
     activeBarangay: layerToRemove.isLayerHovered(clicked)
       ? null
-      : activeBarangay
+      : activeBarangay,
+      destPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+      oriPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+    
+      destReverse: false,
+      oriReverse: false,
   };
 };
 
@@ -686,7 +698,12 @@ export const layerClickUpdater = (state, action) => {
       ...newState,
       clicked: action.info,
       activeBarangay: data,
-      activeAnalysisTab: DEFAULT_ACTIVE_ANALYSIS
+      activeAnalysisTab: DEFAULT_ACTIVE_ANALYSIS,
+      destPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+  oriPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+
+  destReverse: false,
+  oriReverse: false,
     };
   }
 
@@ -1374,6 +1391,11 @@ export const setActiveBarangay = (state, action) => {
     ...state,
     activeBarangay: action.info,
     clicked: null,
+    destPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+  oriPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+
+  destReverse: false,
+  oriReverse: false,
       // activeBarangay: null
   };
 };
@@ -1388,6 +1410,26 @@ export const changeAnalysisRankPage = (state, action) => {
   };
 };
 
+export const changeOriPage = (state, action) => {
+  console.log("**************" + action);
+  console.log(action);
+  console.log(action.info);
+  return {
+    ...state,
+    oriPage: action.info,
+  };
+};
+
+export const changeDestPage = (state, action) => {
+  console.log("**************" + action);
+  console.log(action);
+  console.log(action.info);
+  return {
+    ...state,
+    destPage: action.info,
+  };
+};
+
 export const setAnalysisReverse = (state, action) => {
   console.log("**************" + action);
   console.log(action);
@@ -1395,6 +1437,26 @@ export const setAnalysisReverse = (state, action) => {
   return {
     ...state,
     analysisRankingReverse: action.info,
+  };
+};
+
+export const setOriReverse = (state, action) => {
+  console.log("**************" + action);
+  console.log(action);
+  console.log(action.info);
+  return {
+    ...state,
+    oriReverse: action.info,
+  };
+};
+
+export const setDestReverse = (state, action) => {
+  console.log("**************" + action);
+  console.log(action);
+  console.log(action.info);
+  return {
+    ...state,
+    destReverse: action.info,
   };
 };
 

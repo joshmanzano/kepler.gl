@@ -306,10 +306,42 @@ export function changeTDRankPage(info) {
   };
 }
 
+export function changeOriPage(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.CHANGE_ORI_PAGE,
+    info
+  };
+}
+
+export function changeDestPage(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.CHANGE_DEST_PAGE,
+    info
+  };
+}
+
 export function sortTDReverse(info) {
   console.log(info);
   return {
     type: ActionTypes.SORT_TD_REVERSE,
+    info
+  };
+} 
+
+export function sortOriReverse(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.SORT_ORI_REVERSE,
+    info
+  };
+} 
+
+export function sortDestReverse(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.SORT_DEST_REVERSE,
     info
   };
 } 
