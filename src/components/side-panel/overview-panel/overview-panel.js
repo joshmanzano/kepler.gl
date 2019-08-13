@@ -78,7 +78,7 @@ OverviewPanelFactory.deps = [IndicatorFactory, BarChartFactory, StackedBarChartF
 
 function OverviewPanelFactory(Indicator, BarChart, StackedBarChart, PaginatedRanking) {
   
-  return class InteractionPanel extends Component {
+  return class OverviewPanel extends Component {
 
     render() {
       const DEFAULT_LIST = 10;

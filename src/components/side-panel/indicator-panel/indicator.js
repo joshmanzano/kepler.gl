@@ -88,9 +88,10 @@ const Style = styled.button`
 `;
 
 const StyleMessage = styled.span`
-  width: 100px;
+  width: 200px;
   height: auto;
   display: inline-block;
+  font-size: 1.2em;
 `;
 const StyledIndicator = styled.div`
   .selected {

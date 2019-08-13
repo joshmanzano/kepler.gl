@@ -349,6 +349,7 @@ export class ParallelCoordinatesD3 extends Component {
         asc[d] = !asc[d];
         data = sort_by_key(data, d, asc[d]);
         d3.select('#grid').datum(data).call(grid);
+        <FontAwesomeIcon icon={faSort} />
 // >>>>>>> origin/table-sort
       });
     
