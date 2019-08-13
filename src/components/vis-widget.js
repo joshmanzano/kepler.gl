@@ -80,6 +80,9 @@ const ControlPanel = styled.div`
   justify-content: space-between;
   width: 100%;
   padding: 6px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 
   .control-panel-item {
     margin-top: 12px 0 8px 0;
@@ -188,6 +191,12 @@ const WidgetContainer = styled.div`
     // font-size: 1.2em;
     // font-weight: 400;
   }
+`;
+
+const LegendText = styled.div`
+  color: ${props => props.theme.labelColor};
+  float: left;
+  margin-top: 20px;
 `;
 
 const VisRow = styled.div`
@@ -394,6 +403,9 @@ export default function VisWidgetFactory(
                 width={widgetWidth}
               />
             ) : null}
+
+            <LegendText><i>* Income is represented as peso and is the average income of the barangay.</i></LegendText>
+
             <div className="bottom-widget--info">
                 <div className="bottom-widget--info-title">
                 TD Distribution Scatter Plot
