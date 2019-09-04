@@ -63,6 +63,11 @@ const PCWrapper = styled.div`
     border-right: 2px solid #2C3C54;
     text-overflow: ellipsis;
     text-align: left;
+
+    // :after {
+    //   content: '\f0dc';
+    //   font-family: FontAwesome;
+    // }
   }
 
   .cell {

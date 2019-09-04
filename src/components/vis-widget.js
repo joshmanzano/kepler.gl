@@ -502,10 +502,10 @@ export default function VisWidgetFactory(
 
             <div className="bottom-widget--info">
                 <div className="bottom-widget--info-title">
-                City Amenities and Frequented Destinations
+                City Amenities 
                 </div>
                 <div className="bottom-widget--info-desc">
-                The number of each amenity category located in the city is shown here. Additionally, frequented destinations are ranked in descending order and are divided by transport mode. Each color in the bar chart represents a transportation mode going to that barangay. Longer bars mean that many individuals utilize this certain transport mode. Hovering the bars will show what type of mode share it represents and how many people use it.
+                The number of each amenity category located in the city is shown here. Longer bars mean that the city has many amenities of this type. 
                 </div>
             </div>
             {/* TODO: change to TOP destinations  */}
@@ -543,7 +543,7 @@ export default function VisWidgetFactory(
                 domainMax={destMax}
                 height={250}
                 /> */}
-                <BarChart
+                {/* <BarChart
                   data={SEGMENTED_DESTINATIONS.filter(d => d.name)
                     .sort((a, b) => b['count'] - a['count'])
                     .slice(0, 10)
@@ -554,7 +554,7 @@ export default function VisWidgetFactory(
                   title={'Frequent destinations'}
                   height={250}
                   domainMax={destMax}
-                />
+                /> */}
               </VisRow>
             ) : null}
 
@@ -575,7 +575,7 @@ export default function VisWidgetFactory(
                 Survey Respondents by Demographic
                 </div>
                 <div className="bottom-widget--info-desc">
-                This section shows the survey respondents divided by sex, income level, and age. It is composed of two visualizations: a donut chart for the distribution of survey respondents by demographic for the whole city, and a stacked bar chart for each barangay. Each color in the charts represent a certain demographic and its corresponding count. Hovering on these will show their information.
+                This section shows the survey respondents divided by sex, income level, and age. It is composed of two visualizations: a stacked bar chart for the distribution of survey respondents by demographic for the whole city, and mode share for each barangay. Each color in the charts represent a certain demographic and its corresponding count. Hovering on these will show their information.
                 </div>
             </div>
             {/* DEMOGRAPHIS */}
