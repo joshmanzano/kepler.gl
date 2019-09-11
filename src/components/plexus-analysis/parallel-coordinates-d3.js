@@ -38,7 +38,7 @@ import {
   faSort
 } from '@fortawesome/free-solid-svg-icons';
 
-import ReactTable from 'react-table'
+// import ReactTable from 'react-table'
 // import 'react-table/react-table.css'
 
 // import './../bottom-widget.scss';
@@ -273,9 +273,6 @@ export class ParallelCoordinatesD3 extends Component {
       table: grid,
     });
 
-    console.log('DIDMOUNT');
-    console.log(pData);
-    console.log(dimensions);
   }
 
   refreshPC(data, selected) {
@@ -292,9 +289,7 @@ export class ParallelCoordinatesD3 extends Component {
 
       // let chart = this.state.pc;
 
-      console.error(data);
       let dataNew = data.forEach(d=>delete d.id);
-      console.error(dataNew);
       // update color on indicator change
       let chart = this.state.pc;
       chart
@@ -350,7 +345,6 @@ export class ParallelCoordinatesD3 extends Component {
         data = sort_by_key(data, d, asc[d]);
         d3.select('#grid').datum(data).call(grid);
         <FontAwesomeIcon icon={faSort} />
-// >>>>>>> origin/table-sort
       });
     
       // add mouse events on grid rows
@@ -420,7 +414,6 @@ export class ParallelCoordinatesD3 extends Component {
     },]
 
     let {data, selected} = this.props;
-    console.error('pcoords width: ' + this.props.width);
 
     this.refreshPC(data, selected, this.props.width);
 
@@ -436,45 +429,11 @@ export class ParallelCoordinatesD3 extends Component {
 
     return (
       <PCWrapper width={this.props.width}
-        // style={{
-        //   display: 'flex',
-        //   flexDirection: 'column',
-        //   justifyContent: 'flex-start',
-        //   alignItems: 'center',
-        //   width: '100%',
-        // }}
+       
       >
-        {/* TODO move to parent */}
-        {/* <ControlPanel>
-          <div className="control-panel-item">
-            <p className="control-panel__title">Parallel Coordinates</p>
-          </div>
-          <div className="control-panel-item">
-            <IconRoundSmall onClick={() => {
-                console.log('close');
-                this.setState({visible: !this.state.visible});
-              }} >
-              <Close height="12px" onClick={() => {
-                console.log('close');
-                this.setState({visible: !this.state.visible});
-              }} />
-            </IconRoundSmall>
-          </div>
-        </ControlPanel> */}
-        {/* <div
-          id="example"
-          className="parcoords ex"
-          style={{
-            width: '1106px',
-            height: '280px',
-            display: this.state.visible ? 'block' : 'none'
-          }}
-        /> */}
+       
         <PCVisWrapper id="example" className="parcoords ex" width={this.props.width - 50} visible={this.state.visible ? 'block' : 'none'}/>
-        {/* hello<ReactTable
-          data={pData}
-          columns={columns}
-        /> */}
+        
         <div
           id="grid"
           className="parcoords ex"

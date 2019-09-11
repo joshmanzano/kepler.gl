@@ -192,8 +192,8 @@ class SelectCity extends Component {
   };
 
   onSelect = e => {
-    console.log(e);
-    console.log('HERE');
+    // console.log(e);
+    // console.log('HERE');
     this.props.onChangeCity(e);
     // const {selectedCity} = this.props;
     // if (!selectedCity) {
@@ -202,12 +202,12 @@ class SelectCity extends Component {
     // var dataUrl = 'http://127.0.0.1:8000/barangays/'+selectedCity+'/geo.json';
     var dataUrl = 'http://127.0.0.1:8000/config/' + e + '/config.json';
     this.props.onSelectCity({dataUrl});
-    console.log('HEKE');
+    // console.log('HEKE');
   };
 
   render() {
-    console.log('SELECT CITY');
-    console.log(this.props);
+    // console.log('SELECT CITY');
+    // console.log(this.props);
     const {activeCities, selectedCity, onChangeCity} = this.props;
     return (
       <div>

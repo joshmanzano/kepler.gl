@@ -100,6 +100,7 @@ const ActionTypes = keyMirror({
   SORT_DEST_REVERSE: null,
   CHANGE_ORI_PAGE: null,
   CHANGE_DEST_PAGE: null,
+  SET_BOTTOM_TAB: null,
   
   // uiState > export image
   SET_RATIO: null,

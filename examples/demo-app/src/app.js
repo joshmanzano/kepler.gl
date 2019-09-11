@@ -292,8 +292,8 @@ class App extends Component {
   };
 
   render() {
-    console.log("APP");
-    console.log(this.props);
+    // console.log("APP");
+    // console.log(this.props);
     const {showBanner, width, height} = this.state;
     const {sharing} = this.props.demo;
     const rootNode = this.root;

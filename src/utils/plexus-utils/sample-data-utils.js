@@ -1,4 +1,18 @@
+
 // CONTAINS DUMMY DATA AND FUNCTIONS TO GENERATE DUMMY DATA
+
+export const BGY_MODE_SHARE = [
+  {
+    'privateVehicle': 5,
+    'jeepney': 58,
+    'uvExpress': 23,
+    'bus': 14,
+    'taxi': 9,
+    'tricycle': 43,
+    'train': 0,
+    'others': 2,
+  }
+];
 
 export const BGY_DEMOGRAPHICS = [
   {
@@ -4063,23 +4077,6 @@ export const M_SEX = [
   {name: 'Other', rate: 0.02}
 ];
 
-// export const M_INCOME = [
-//   {name: '<=5,000', count: 8},
-//   {name: '5,001-10,000', count: },
-//   {name: '10,001-15,000', count: },
-//   {name: '15,001-20,000', count: 25},
-//   {name: '20,001-25,000', count: 20},
-//   {name: '25,001-30,000', count: 13},
-//   {name: '30,001-40,000', count: 9},
-//   {name: '40,001-50,000', count: 4},
-//   {name: '50,001-70,000', count: 2},
-//   {name: '70,001-90,000', count: 2},
-//   {name: '90,001-120,000', count: 4},
-//   {name: '>120,001-150,000', count: 1},
-//   {name: '150,001-200,000', count: 1},
-//   {name: '>200,000', count: 1}
-// ];
-
 export const M_INCOME = [
   {name: '<=5,000', rate: 0.1},
   {name: '5,001-20,000', rate: 0.22},
@@ -4120,39 +4117,27 @@ export const M_AGE = [
   }
 ];
 
-// export const TRANSPORT_MODES = [
-//   'car',
-//   'motorcycle',
-//   'jeepney',
-//   'uvExpress',
-//   'bus',
-//   'grab',
-//   'taxi',
-//   'pedicab',
-//   'tricycle',
-//   'train',
-//   'others',
-//   'schoolService',
-//   'bike',
-//   'walk'
-// ];
-
 export const TRANSPORT_MODES = [
   'privateVehicle',
-  // 'motorcycle',
   'jeepney',
   'uvExpress',
   'bus',
-  // 'grab',
   'taxi',
-  // 'pedicab',
   'tricycle',
   'train',
   'others'
-  // 'schoolService',
-  // 'bike',
-  // 'walk'
 ];
+
+export const TRANSPORT_MODES_LABELS = {
+  'privateVehicle':'Private Vehicle',
+  'jeepney': 'Jeepney',
+  'uvExpress': 'UV Express',
+  'bus': 'Bus',
+  'taxi': 'Taxi',
+  'tricycle': 'Jeepney',
+  'train': 'Train',
+  'others': 'Others',
+};
 
 export function subDivideDestinationData() {
   let subDestinations = [];
@@ -4289,6 +4274,10 @@ export function generateModeShareDemographics() {
   console.error(msArr);
 }
 
+export const MS_GENERAL = [
+
+];
+
 export const MS_SEX = [
   {
     name: 'Male',
@@ -4331,7 +4320,7 @@ export const MS_INCOME = [
     privateVehicle: 0,
     jeepney: 75,
     uvExpress: 0,
-    bus: 6,
+    bus: 8,
     taxi: 0,
     tricycle: 17,
     train: 0,
@@ -4372,7 +4361,7 @@ export const MS_INCOME = [
   },
   {
     name: '70,001-120,000',
-    privateVehicle: 43,
+    privateVehicle: 44,
     jeepney: 3,
     uvExpress: 12,
     bus: 19,

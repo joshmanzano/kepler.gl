@@ -10,12 +10,19 @@
 }
 
 .rv-discrete-color-legend.horizontal {
-    display: flex;
-    width: 300px;
+    display: grid;
+    /* width: 260px; */
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 0;
     flex-wrap: wrap;
     justify-content: space-between;
 }
 
 .rv-discrete-color-legend-item.horizontal {
-    width: 80px;
+    padding: 0 10px 10px 0;//    width: 80px;
+}
+
+.rv-discrete-color-legend-item.horizontal span.rv-discrete-color-legend-item__title {
+    margin-left: 8px;
+    display: inline;
 }

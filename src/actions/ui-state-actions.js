@@ -41,7 +41,7 @@ const {
   TOGGLE_MAP_CONTROL,
   ADD_NOTIFICATION,
   REMOVE_NOTIFICATION,
-
+  SET_BOTTOM_TAB,
   /* PLEXUS-SPECIFIC */
   // TOGGLE_ACTIVE_ANALYSIS,
 } = ActionTypes;
@@ -69,7 +69,7 @@ const [
   setExportFiltered,
   setExportConfig,
   setExportData,
-
+  setBottomTab,
   /* PLEXUS-SPECIFIC */
   // toggleActiveAnalysis,
 ] = [
@@ -97,6 +97,7 @@ const [
 
   /* PLEXUS-SPECIFIC */
   // TOGGLE_ACTIVE_ANALYSIS,
+  SET_BOTTOM_TAB,
 ].map(a => createAction(a));
 
 export {
@@ -108,4 +109,5 @@ export {
   
   /* PLEXUS-SPECIFIC */
   // toggleActiveAnalysis
+  setBottomTab,
 };

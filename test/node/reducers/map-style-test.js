@@ -65,7 +65,7 @@ test('#mapStyleReducer -> RECEIVE_MAP_CONFIG', t => {
 
   // load state
   const stateLoaded = SchemaManager.parseSavedConfig(savedState);
-  console.log(stateLoaded);
+  // console.log(stateLoaded);
 
   const stateWithConfig = reducer(
     stateWithToken,

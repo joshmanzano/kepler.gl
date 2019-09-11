@@ -1,28 +1,9 @@
-// Copyright (c) 2019 Uber Technologies, Inc.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 
 import React from 'react';
 import styled from 'styled-components';
-import {createSelector} from 'reselect';
-import {IconRoundSmall} from 'components/common/styled-components';
-import {Close} from 'components/common/icons';
+import { createSelector } from 'reselect';
+import { IconRoundSmall } from 'components/common/styled-components';
+import { Close } from 'components/common/icons';
 
 import PropTypes from 'prop-types';
 import {
@@ -38,6 +19,7 @@ import {
 import {
   TRANSPORT_MODES,
   SEGMENTED_DESTINATIONS,
+  BGY_MODE_SHARE,
   BGY_DEMOGRAPHICS,
   M_SEX,
   M_INCOME,
@@ -45,7 +27,8 @@ import {
   MS_SEX,
   generateModeShareDemographics,
   MS_INCOME,
-  MS_AGE
+  MS_AGE,
+  TRANSPORT_MODES_LABELS
 } from 'utils/plexus-utils/sample-data-utils';
 
 // import {scaleLinear} from 'd3-scale';
@@ -57,8 +40,9 @@ import ParallelCoordinatesKFactory from './plexus-analysis/parallel-coordinates'
 import ParallelCoordinatesD3Factory from './plexus-analysis/parallel-coordinates-d3';
 import ScatterPlotFactory from './plexus-analysis/scatter-plot';
 import DonutChartFactory from './plexus-analysis/donut-chart';
+import RankingFactory from './plexus-analysis/ranking';
 
-import {SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER} from 'constants';
+import { SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER } from 'constants';
 
 const innerPdSide = 32;
 const propTypes = {
@@ -173,11 +157,12 @@ const WidgetContainer = styled.div`
   }
 
   .bottom-widget--info-title {
-    font-weight: 900;
-    font-size: 2em;
+    font-weight: 500;
+    font-size: 1.8em;
     line-height: 1;
     margin-top:25px;
-    color: ${props => props.theme.labelColor};
+    color: #fff;
+    // color: ${props => props.theme.labelColor};
   }
 
   .bottom-widget--info-desc {
@@ -193,7 +178,16 @@ const WidgetContainer = styled.div`
   }
 `;
 
-const LegendText = styled.div`
+const DescriptionBlock = styled.div`
+  font-size: 1.2em;
+  font-weight: 400;
+  color: #C3C9C5;
+  padding-top: 10px;
+  max-width: 800px;
+  line-height: 1.3em;
+`;
+
+const PBlock = styled.div`
   color: ${props => props.theme.labelColor};
   float: left;
   margin-top: 20px;
@@ -205,6 +199,20 @@ const VisRow = styled.div`
   align-items: flex-start;
   margin-top: 15px;
   margin-bottom: 15px;
+
+  > * {
+    &:not(:first-child) {
+      margin-left: 20px;
+    }
+  }
+`;
+
+const BoldBlock = styled.div`
+font-size: 2.5em;
+font-weight: 900;
+color: #C3C9C5;
+width: 150px;
+line-height: 1.3em;
 `;
 
 VisWidgetFactory.deps = [
@@ -215,6 +223,7 @@ VisWidgetFactory.deps = [
   ScatterPlotFactory,
   StackedBarChartFactory,
   StackedBarGroupFactory,
+  RankingFactory,
 ];
 
 export default function VisWidgetFactory(
@@ -225,6 +234,7 @@ export default function VisWidgetFactory(
   ScatterPlot,
   StackedBarChart,
   StackedBarGroup,
+  Ranking
 ) {
   const VisWidget = props => {
     const {
@@ -243,17 +253,17 @@ export default function VisWidgetFactory(
       toggleOpen
     } = props;
 
-    let bgyIncl;
-    let amtyCnt;
-    let destCnt;
-    let oriCnt;
-    let destMax;
+    let bgyIncl,
+      amtyCnt,
+      destCnt,
+      oriCnt,
+      destMax;
 
     // const enlargedFilterWidth = isOpen ? containerW - sidePanelWidth : containerW;
     // const currView = selected;
     const maxWidth = 1080;
     // const widgetWidth = Math.min(maxWidth, containerW + 200);
-    const widgetWidth = Math.min(containerW-340);
+    const widgetWidth = Math.min(containerW - 340);
     // const DEFAULT_LIST = 5;
 
     if (datasets.barangays) {
@@ -364,9 +374,124 @@ export default function VisWidgetFactory(
     // const destinations = subDivideDestinationData();
     // console.error(destinations);
 
+    const visBlockDescr = {
+      overview: {
+        title: 'Overview of All Indicator Scores of a Barangay',
+        desc: 'This is a multi-indicator explorer of the transport desirability framework in the city. Each line indicates a barangay, while each vertical line is the values of an indicator. Multiple lines going to a single point signifies that there are a lot of barangays that have similar indicator scores. Lines converging to the top of the coordinates means that many barangays have a higher score, while lines converging at the bottom specifies that many barangays have a lower score. This can be filtered using the range filters found in the left panel.'
+      },
+      scatterPlot: {
+        title: 'Relationship of Transport Desirability with Indicators',
+        desc: 'These scatter plots show the relationship of the transport desirability score and each indicator. From these, you can see how much each indicator affects the overall desirability score - if it has a direct (diagonal line going up), indirect (diagonal line going down), or no relationship at all. This can also be filtered using the range filters found in the left panel.',
+      },
+      amenities: {
+        title: 'City Amenities and Frequented Destinations',
+        desc: 'The number of each amenity category located in the city is shown here. Additionally, frequented destinations are ranked in descending order and are divided by transport mode. Each color in the bar chart represents a transportation mode going to that barangay. Longer bars mean that many individuals utilize this certain transport mode. Hovering the bars will show what type of mode share it represents and how many people use it.',
+      },
+      demographics: {
+        title: 'Survey Respondents by Demographic',
+        desc: 'This section shows the survey respondents divided by sex, income level, and age. It is composed of two visualizations: a donut chart for the distribution of survey respondents by demographic for the whole city, and a stacked bar chart for each barangay. Each color in the charts represent a certain demographic and its corresponding count. Hovering on these will show their information.',
+      }
+    };
+
+    const scatterData = [
+      {
+        title: 'Spatial X Desirability',
+        xKey: '',
+        xKey: 'desirability',
+        yKey: 'spatial',
+        xLabel: 'Transport Desirability',
+        yLabel: 'Spatial'
+      },
+      {
+        title: 'Temporal X Desirability',
+        xKey: '',
+        xKey: 'desirability',
+        yKey: 'temporal',
+        xLabel: 'Transport Desirability',
+        yLabel: 'temporal'
+      },
+      {
+        title: 'Economic X Desirability',
+        xKey: '',
+        xKey: 'desirability',
+        yKey: 'economic',
+        xLabel: 'Transport Desirability',
+        yLabel: 'economic'
+      },
+      {
+        title: 'Physical X Desirability',
+        xKey: '',
+        xKey: 'desirability',
+        yKey: 'physical',
+        xLabel: 'Transport Desirability',
+        yLabel: 'Physical'
+      },
+      {
+        title: 'Psychological X Desirability',
+        xKey: '',
+        xKey: 'desirability',
+        yKey: 'psychological',
+        xLabel: 'Transport Desirability',
+        yLabel: 'Psychological'
+      },
+      {
+        title: 'Physiological X Desirability',
+        xKey: '',
+        xKey: 'desirability',
+        yKey: 'physiological',
+        xLabel: 'Transport Desirability',
+        yLabel: 'Physiological',
+      },
+      {
+        title: 'Sustainability X Desirability',
+        xKey: '',
+        xKey: 'desirability',
+        yKey: 'sustainability',
+        xLabel: 'Transport Desirability',
+        yLabel: 'Sustainability'
+      },
+      {
+        title: 'Performance X Desirability',
+        xKey: '',
+        xKey: 'desirability',
+        yKey: 'performance',
+        xLabel: 'Transport Desirability',
+        yLabel: 'Performance'
+      },
+      {
+        title: 'Fairness X Desirability',
+        xKey: '',
+        xKey: 'desirability',
+        yKey: 'fairness',
+        xLabel: 'Transport Desirability',
+        yLabel: 'Fairness',
+      },
+    ];
+
+    const scatterComp = [];
+
+    if (bgyIncl) {
+      for (var i = 0; i < 3; i++) { // 0 1 2 3 
+        // let vr = <VisRow />;
+        for (var j = 0; j < 3; j++) {
+          scatterComp.push(
+            <ScatterPlot
+              title={scatterData[i * 3 + j].title}
+              data={bgyIncl}
+              xKey={scatterData[i * 3 + j].xKey}
+              yKey={scatterData[i * 3 + j].yKey}
+              xLabel={scatterData[i * 3 + j].xLabel}
+              yLabel={scatterData[i * 3 + j].yLabel}
+            />
+          )
+        }
+        // scatterComp.push(vr);
+      }
+    }
+
     return (
       <WidgetContainer width={widgetWidth}>
-        <div className={isOpen? "bottom-widget--inner": "bottom-widget--close"}>
+        <div className={isOpen ? "bottom-widget--inner" : "bottom-widget--close"}>
           {/* TODO move to parent */}
           <ControlPanel>
             <div className="control-panel-item">
@@ -383,324 +508,615 @@ export default function VisWidgetFactory(
               </IconRoundSmall>
             </div>
           </ControlPanel>
-          {isOpen ? 
-          <div className="bottom-widget--content">
-            <div className="bottom-widget--info">
-                <div className="bottom-widget--info-title">
-                Overview of All Indicator Scores of a Barangay
+          {isOpen ?
+            (uiState.bottomTab != 'default' ?
+              <div className="bottom-widget--content">
+                <div className="bottom-widget--info">
+                  <div className="bottom-widget--info-title">
+                    {visBlockDescr.overview.title}
+                  </div>
+                  <div className="bottom-widget--info-desc">
+                    {visBlockDescr.overview.desc}
+                  </div>
                 </div>
-                <div className="bottom-widget--info-desc">
-                This is a multi-indicator explorer of the transport desirability framework in the city. Each line indicates a barangay, while each vertical line is the values of an indicator. Multiple lines going to a single point signifies that there are a lot of barangays that have similar indicator scores. Lines converging to the top of the coordinates means that many barangays have a higher score, while lines converging at the bottom specifies that many barangays have a lower score. This can be filtered using the range filters found in the left panel.
-                </div>
-            </div>
-            {bgyIncl ? (
-              <ParallelCoordinatesD3
-                // data={bgyIncl.forEach(d => {
-                //   delete d.id;
-                // })}
-                data={bgyIncl}
-                selected={selected}
-                width={widgetWidth}
-              />
-            ) : null}
-
-            <LegendText><i>* Income is represented as peso and is the average income of the barangay.</i></LegendText>
-
-            <div className="bottom-widget--info">
-                <div className="bottom-widget--info-title">
-                Relationship of Transport Desirability with Indicators
-                </div>
-                <div className="bottom-widget--info-desc">
-                These scatter plots show the relationship of the transport desirability score and each indicator. From these, you can see how much each indicator affects the overall desirability score - if it has a direct (diagonal line going up), indirect (diagonal line going down), or no relationship at all. This can also be filtered using the range filters found in the left panel.  
-                </div>
-            </div>
-            {bgyIncl ? (
-              <VisRow>
-                <ScatterPlot
-                  title={'Spatial X Desirability'}
-                  data={bgyIncl}
-                  xKey={'desirability'}
-                  yKey={'spatial'}
-                  xLabel={'Transport Desirability'}
-                  yLabel={'Spatial'}
-                />
-                <ScatterPlot
-                  title={'Temporal X Desirability'}
-                  data={bgyIncl}
-                  xKey={'desirability'}
-                  yKey={'temporal'}
-                  xLabel={'Transport Desirability'}
-                  yLabel={'Temporal'}
-                />
-                <ScatterPlot
-                  title={'Economic X Desirability'}
-                  data={bgyIncl}
-                  xKey={'desirability'}
-                  yKey={'economic'}
-                  xLabel={'Transport Desirability'}
-                  yLabel={'Economic'}
-                />
-              </VisRow>
-            ) : null}
-            
-            {bgyIncl ? (
-              <VisRow>
-                <ScatterPlot
-                  title={'Physical X Desirability'}
-                  data={bgyIncl}
-                  xKey={'desirability'}
-                  yKey={'physical'}
-                  xLabel={'Transport Desirability'}
-                  yLabel={'Physical'}
-                />
-                <ScatterPlot
-                  title={'Psychological X Desirability'}
-                  data={bgyIncl}
-                  xKey={'desirability'}
-                  yKey={'psychological'}
-                  xLabel={'Transport Desirability'}
-                  yLabel={'Psychological'}
-                />
-                <ScatterPlot
-                  title={'Physiological X Desirability'}
-                  data={bgyIncl}
-                  xKey={'desirability'}
-                  yKey={'physiological'}
-                  xLabel={'Transport Desirability'}
-                  yLabel={'Physiological'}
-                />
-              </VisRow>
-            ) : null}
-            {bgyIncl ? (
-              <VisRow>
-                <ScatterPlot
-                  title={'Sustainability X Desirability'}
-                  data={bgyIncl}
-                  xKey={'desirability'}
-                  yKey={'sustainability'}
-                  xLabel={'Transport Desirability'}
-                  yLabel={'Sustainability'}
-                />
-                <ScatterPlot
-                  title={'Performance X Desirability'}
-                  data={bgyIncl}
-                  xKey={'desirability'}
-                  yKey={'performance'}
-                  xLabel={'Transport Desirability'}
-                  yLabel={'Performance'}
-                />{' '}
-                <ScatterPlot
-                  title={'Fairness X Desirability'}
-                  data={bgyIncl}
-                  xKey={'desirability'}
-                  yKey={'fairness'}
-                  xLabel={'Transport Desirability'}
-                  yLabel={'Fairness'}
-                />
-              </VisRow>
-            ) : null}
-
-            <div className="bottom-widget--info">
-                <div className="bottom-widget--info-title">
-                City Amenities and Frequented Destinations
-                </div>
-                <div className="bottom-widget--info-desc">
-                The number of each amenity category located in the city is shown here. Additionally, frequented destinations are ranked in descending order and are divided by transport mode. Each color in the bar chart represents a transportation mode going to that barangay. Longer bars mean that many individuals utilize this certain transport mode. Hovering the bars will show what type of mode share it represents and how many people use it.
-                </div>
-            </div>
-            {/* TODO: change to TOP destinations  */}
-            {bgyIncl ? (
-              <VisRow>
-                <BarChart
-                  data={amtyCnt}
-                  xKey={'count'}
-                  yKey={'name'}
-                  title={'City Amenities'}
-                  height={250}
-                />
-
-                {/* <BarChart 
-                data={oriCnt.sort((a, b) => b['count'] - a['count']).slice(0,10).reverse()}       
-                xKey={'count'}
-                yKey={'name'}
-                title={'Most Frequent Origins'}
-                domainMax={destMax}
-                height={250}
-                /> */}
-                {/* <BarChart 
-                data={destCnt.sort((a, b) => b['count'] - a['count']).slice(0,10).reverse()}       
-                xKey={'count'}
-                yKey={'name'}
-                title={'Frequently Visited Destinations'}
-                domainMax={destMax}
-                height={250}
-                /> */}
-                {/* <BarChart 
-                data={BGY_DEMOGRAPHICS.filter(d=>d.name).sort((a, b) => b['count'] - a['count']).slice(0,10).reverse()}       
-                xKeyArr={TRANSPORT_MODES}
-                  yKey={'name'}
-                title={'Most Frequent Origins'}
-                domainMax={destMax}
-                height={250}
-                /> */}
-                <BarChart
-                  data={SEGMENTED_DESTINATIONS.filter(d => d.name)
-                    .sort((a, b) => b['count'] - a['count'])
-                    .slice(0, 10)
-                    .reverse()}
-                  xKeyArr={TRANSPORT_MODES}
-                  onLabelClick={changeBarangay}
-                  yKey={'name'}
-                  title={'Frequent destinations'}
-                  height={250}
-                  domainMax={destMax}
-                />
-              </VisRow>
-            ) : null}
-
-            {/* {bgyIncl ? (
-              <VisRow>
-                <BarChart 
-                  data={SEGMENTED_DESTINATIONS.filter(d=>d.name).sort((a, b) => b['count'] - a['count']).slice(0,10).reverse()}       
-                  xKeyArr={TRANSPORT_MODES}
-                  yKey={'name'}
-                  title={'Frequent destinations'}
-                  height={500}
+                {bgyIncl ? (
+                  <ParallelCoordinatesD3
+                    data={bgyIncl}
+                    selected={selected}
+                    width={widgetWidth}
                   />
-              </VisRow>
-            ):null} */}
-            
-            <div className="bottom-widget--info">
-                <div className="bottom-widget--info-title">
-                Survey Respondents by Demographic
-                </div>
-                <div className="bottom-widget--info-desc">
-                This section shows the survey respondents divided by sex, income level, and age. It is composed of two visualizations: a donut chart for the distribution of survey respondents by demographic for the whole city, and a stacked bar chart for each barangay. Each color in the charts represent a certain demographic and its corresponding count. Hovering on these will show their information.
-                </div>
-            </div>
-            {/* DEMOGRAPHIS */}
-            {bgyIncl ? (
-              <VisRow>
-                <StackedBarChart
-                    title={'By Gender'}
-                    values={BGY_DEMOGRAPHICS}
-                    xKeyArr={M_SEX}          
-                    showLegend          
-                />
-                <StackedBarGroup
-                    title={'Mode Share By Gender'}
-                    values={MS_SEX}
-                    xKeyArr={TRANSPORT_MODES}          
-                    showLegend          
-                />
-                {/* <DonutChart
-                  title={'By Sex'}
-                  values={BGY_DEMOGRAPHICS}
-                  xKeyArr={M_SEX}
-                /> */}
-                {/* <BarChart
-                  data={BGY_DEMOGRAPHICS.filter(d => d.name)
-                    .sort((a, b) => b['count'] - a['count'])
-                    .slice(0, 10)
-                    .reverse()}
-                  xKeyArr={M_SEX}
-                  xKey={'name'}
-                  yKey={'name'}
-                  onLabelClick={changeBarangay}
-                  categoryLabel={'Sex'}
-                  title={'Frequency per area'}
-                  height={250}
-                /> */}
-              </VisRow>
-            ) : null}
+                ) : null}
 
-            {bgyIncl ? (
-              <VisRow>
-                <StackedBarChart
-                    title={'By Income Level'}
+                <PBlock><i>* Income is represented as peso and is the average income of the barangay.</i></PBlock>
+
+                <div className="bottom-widget--info">
+                  <div className="bottom-widget--info-title">
+                    {visBlockDescr.scatterPlot.title}
+                  </div>
+                  <div className="bottom-widget--info-desc">
+                    {visBlockDescr.scatterPlot.desc}
+                  </div>
+                </div>
+
+                {bgyIncl ? (
+                  <VisRow>
+                    {scatterComp.slice(0, 3)}
+                  </VisRow>
+                ) : null}
+
+                {bgyIncl ? (
+                  <VisRow>
+                    {scatterComp.slice(3, 6)}
+                  </VisRow>
+                ) : null}
+
+                {bgyIncl ? (
+                  <VisRow>
+                    {scatterComp.slice(6, 9)}
+                  </VisRow>
+                ) : null}
+
+                <div className="bottom-widget--info">
+                  <div className="bottom-widget--info-title">
+                    {visBlockDescr.amenities.title}
+                  </div>
+                  <div className="bottom-widget--info-desc">
+                    {visBlockDescr.amenities.desc}
+                  </div>
+                </div>
+                {/* TODO: change to TOP destinations  */}
+                {bgyIncl ? (
+                  <VisRow>
+                    <BarChart
+                      data={amtyCnt}
+                      xKey={'count'}
+                      yKey={'name'}
+                      title={'City Amenities'}
+                      height={250}
+                    />
+
+                    <BarChart
+                      data={SEGMENTED_DESTINATIONS.filter(d => d.name)
+                        .sort((a, b) => b['count'] - a['count'])
+                        .slice(0, 10)
+                        .reverse()}
+                      xKeyArr={TRANSPORT_MODES}
+                      onLabelClick={changeBarangay}
+                      yKey={'name'}
+                      title={'Frequent destinations'}
+                      height={250}
+                      domainMax={destMax}
+                    />
+                  </VisRow>
+                ) : null}
+
+                <div className="bottom-widget--info">
+                  <div className="bottom-widget--info-title">
+                    {visBlockDescr.demographics.title}
+                  </div>
+                  <div className="bottom-widget--info-desc">
+                    {visBlockDescr.demographics.desc}
+                  </div>
+                </div>
+                {/* DEMOGRAPHIS */}
+                {bgyIncl ? (
+                  <VisRow>
+                    <StackedBarChart
+                      title={'By Gender'}
+                      values={BGY_DEMOGRAPHICS}
+                      xKeyArr={M_SEX}
+                      showLegend
+                    />
+                    <StackedBarGroup
+                      title={'Mode Share By Gender'}
+                      values={MS_SEX}
+                      xKeyArr={TRANSPORT_MODES}
+                      xKeyArrLabels={TRANSPORT_MODES_LABELS}
+                      showLegend
+                    />
+                  </VisRow>
+                ) : null}
+
+                {bgyIncl ? (
+                  <VisRow>
+                    <StackedBarChart
+                      title={'By Income Level'}
+                      values={BGY_DEMOGRAPHICS}
+                      xKeyArr={M_INCOME}
+                      showLegend
+                    />
+                    <StackedBarGroup
+                      title={'Mode Share By Income Level'}
+                      values={MS_INCOME}
+                      xKeyArr={TRANSPORT_MODES}
+                      xKeyArrLabels={TRANSPORT_MODES_LABELS}
+                      categoryLabel={'Income Level'}
+                      showLegend
+                    />
+
+                  </VisRow>
+                ) : null}
+
+                {bgyIncl ? (
+                  <VisRow>
+                    <StackedBarChart
+                      title={'By Age'}
+                      values={BGY_DEMOGRAPHICS}
+                      xKeyArr={M_AGE}
+                      showLegend
+                    />
+                    <StackedBarGroup
+                      title={'Mode Share By Age'}
+                      values={MS_AGE}
+                      xKeyArr={TRANSPORT_MODES}
+                      xKeyArrLabels={TRANSPORT_MODES_LABELS}
+                      categoryLabel={'Age Group'}
+                      showLegend
+                    />
+
+                  </VisRow>
+                ) : null}
+              </div> :
+
+
+              //
+              //      
+              //      D A T A    S T O R Y   
+              //
+              //
+
+              <div className="bottom-widget--content">
+                <div className="bottom-widget--info">
+                  <div className="bottom-widget--info-title">
+                    Transport Desirability Score of Baguio
+              </div>
+                  <div className="bottom-widget--info-desc">
+                    Insert a detailed description of Transport Desirability here. Baguio is ranked 130th of 200 cities in the Philippines based on Transport Desirability.
+              </div>
+                </div>
+                <VisRow>
+                  <Ranking
+                    // floatFormat
+                    data={[
+                      {
+                        name: 'Spatial',
+                        value: 49.42,
+                      },
+                      {
+                        name: 'Temporal',
+                        value: 49.72,
+                      },
+                      {
+                        name: 'Economic',
+                        value: 50.29,
+                      },
+                      {
+                        name: 'Physical',
+                        value: 49.86,
+                      },
+                      {
+                        name: 'Psychological',
+                        value: 47.24,
+                      },
+                      {
+                        name: 'Physiological',
+                        value: 53.05,
+                      },
+                      {
+                        name: 'Sustainability',
+                        value: 51.12,
+                      },
+                      {
+                        name: 'Performance',
+                        value: 48.16,
+                      },
+                      {
+                        name: 'Fairness',
+                        value: 49.88,
+                      },
+                    ]}
+                    xKey={'value'}
+                    yKey={'name'}
+                    title={'City Indicators'}
+                    maxColItems={5}
+                  />
+                </VisRow>
+
+                <DescriptionBlock>
+                  The next two sections highlight the best features of the city's transport system.
+            </DescriptionBlock>
+
+                <div className="bottom-widget--info">
+                  <div className="bottom-widget--info-title">
+                    Spatial
+              </div>
+                  <div className="bottom-widget--info-desc">
+                    Insert a detailed description of the Spatial indicator here. What constitutes its score? What does it mean if it's good? If it's bad? How can I improve it?
+              </div>
+                </div>
+                <VisRow>
+                  <Ranking
+                    noted={true}
+                    data={[
+                      {
+                        name: 'Food Establishments',
+                        value: 127,
+                        note: 'More than 50'
+                      },
+                      {
+                        name: 'Hospitals',
+                        value: 6,
+                        note: 'Reaches more than 60% of barangays'
+                      },
+                      {
+                        name: 'Schools',
+                        value: 13,
+                        note: 'Reaches more than 57% of barangays'
+                      },
+                    ]}
+                    xKey={'value'}
+                    yKey={'name'}
+                  />
+                </VisRow>
+
+                <DescriptionBlock>
+                  However, 6 out of 129 barangays do not meet the standard barangay amenity counts.
+            </DescriptionBlock>
+
+                <VisRow>
+                  {/* <StackedBarChart
+                    title={'Distance of All Trips'}
+                    values={[
+                      {
+                        'Less than 5km': 33,
+                        '6km to 20km': 45,
+                        '21km to 50km': 21,
+                        '51km above': 13,
+                      }
+                    ]}
+                    xKeyArr={[
+                      'Less than 5km',
+                      '6km to 20km',
+                      '21km to 50km',
+                      '51km above'
+                    ]}
+                    // xKeyArrLabels={TRANSPORT_MODES_LABELS}
+                    // legendOrientation={'horizontal'}
+                    showLegend
+                    isXKeyArrReg
+                  /> */}
+                  <BarChart
+                    data={[
+                      {
+                        name: 'Less than 5km',
+                        count: 30,
+                      },
+                      {
+                        name: '6km to 20km',
+                        count: 42,
+                      },
+                      {
+                        name: '21km to 50km',
+                        count: 21,
+                      },
+                      {
+                        name: '51km above',
+                        count: 7,
+                      },
+                    ].reverse()}
+                    xKey={'count'}
+                    yKey={'name'}
+                    title={'Average Distance of All Trips (in %)'}
+                    height={180}
+                  />
+
+
+                  <StackedBarChart
+                    title={'Mode Share'}
+                    values={BGY_MODE_SHARE}
+                    xKeyArr={TRANSPORT_MODES}
+                    xKeyArrLabels={TRANSPORT_MODES_LABELS}
+                    // legendOrientation={'horizontal'}
+                    showLegend
+                    isXKeyArrReg
+                  />
+
+                </VisRow>
+
+                <DescriptionBlock>
+                  Insights on the trip distance and mode share.
+                </DescriptionBlock>
+
+                <div className="bottom-widget--info">
+                  <div className="bottom-widget--info-title">
+                    Temporal
+                  </div>
+                  <div className="bottom-widget--info-desc">
+                    Insert a detailed description of the Temporal indicator here. What constitutes its score? What does it mean if it's good? If it's bad? How can I improve it?
+                  </div>
+                </div>
+
+                <VisRow>
+                  {/* <StackedBarChart
+                    title={'Average Distance of All Trips'}
+                    values={[
+                      {
+                        'Less than 5km': 33,
+                        '6km to 20km': 45,
+                        '21km to 50km': 21,
+                        '51km above': 7,
+                      }
+                    ]}
+                    xKeyArr={[
+                      'Less than 5km',
+                      '6km to 20km',
+                      '21km to 50km',
+                      '51km above'
+                    ]}
+                    showLegend
+                    isXKeyArrReg
+                  /> */}
+
+                  <BarChart
+                    data={[
+                      {
+                        name: 'Less than 5km',
+                        count: 30,
+                      },
+                      {
+                        name: '6km to 20km',
+                        count: 42,
+                      },
+                      {
+                        name: '21km to 50km',
+                        count: 21,
+                      },
+                      {
+                        name: '51km above',
+                        count: 7,
+                      },
+                    ].reverse()}
+                    xKey={'count'}
+                    yKey={'name'}
+                    title={'Average Distance of All Trips (in %)'}
+                    height={180}
+                  />
+
+                  <BarChart
+                    data={[
+                      {
+                        name: 'Less than 10 minutes',
+                        count: 18,
+                      },
+                      {
+                        name: '11 to 30 minutes',
+                        count: 39,
+                      },
+                      {
+                        name: '31 minutes to 1 hour',
+                        count: 19,
+                      },
+                      {
+                        name: '1 hour to 2 hours',
+                        count: 14,
+                      },
+                      {
+                        name: '2 hours above',
+                        count: 10,
+                      },
+                    ].reverse()}
+                    xKey={'count'}
+                    yKey={'name'}
+                    title={'Average Travel Times of All Trips (in %)'}
+                    height={180}
+                  />
+
+                  {/* <StackedBarChart
+                    title={'Average Travel Times of All Trips'}
+                    values={[
+                      {
+                        'Less than 10 minutes': 21,
+                        '11 to 30 minutes': 81,
+                        '31 minutes to 1 hour': 68,
+                        '1 hour to 2 hours': 38,
+                        '2 hours above': 14,
+                      }
+                    ]}
+                    xKeyArr={[
+                      'Less than 10 minutes',
+                      '11 to 30 minutes',
+                      '31 minutes to 1 hour',
+                      '1 hour to 2 hours',
+                      '2 hours above'
+                    ]}
+                    showLegend
+                    isXKeyArrReg
+                  /> */}
+                </VisRow>
+                <VisRow>
+                  <Ranking
+                    // floatFormat
+                    data={[
+                      {
+                        name: 'Scout Barrio to Irisan',
+                        value: '79km',
+                      },
+                      {
+                        name: 'Irisan to Crystal Cove',
+                        value: '72km',
+                      },
+                      {
+                        name: 'Irisan to Fort del Pilar',
+                        value: '67km',
+                      },
+                    ]}
+                    xKey={'value'}
+                    yKey={'name'}
+                    title={'Highest Travel Distances'}
+                  />
+
+                  <Ranking
+                    // floatFormat
+                    data={[
+                      {
+                        name: 'Kirad to Happy Hollow',
+                        value: '154 minutes',
+                      },
+                      {
+                        name: 'Irisan to Irisan',
+                        value: '133 minutes',
+                      },
+                      {
+                        name: 'Lourdes Subdivision to Happy Hollow',
+                        value: '122 minutes',
+                      },
+                    ]}
+                    xKey={'value'}
+                    yKey={'name'}
+                    title={'Highest Travel Times'}
+                  />
+                </VisRow>
+                <VisRow>
+                  <StackedBarChart
+                    title={'Mode Share'}
+                    values={BGY_MODE_SHARE}
+                    xKeyArr={TRANSPORT_MODES}
+                    xKeyArrLabels={TRANSPORT_MODES_LABELS}
+                    legendOrientation={'horizontal'}
+                    showLegend
+                    isXKeyArrReg
+                  />
+                </VisRow>
+
+                <DescriptionBlock>
+                  Overall insights and summary goes here.
+                </DescriptionBlock>
+
+                <div className="bottom-widget--info">
+                  <div className="bottom-widget--info-title">
+                    Economic
+                  </div>
+                  <div className="bottom-widget--info-desc">
+                    Insert a detailed description of the Economic indicator here. What constitutes its score? What does it mean if it's good? If it's bad? How can I improve it?
+                  </div>
+                </div>
+
+                <VisRow>
+                  <StackedBarChart
+                    title={'Demographics by Income Level'}
                     values={BGY_DEMOGRAPHICS}
-                    xKeyArr={M_INCOME}     
-                    showLegend               
-                />
-                <StackedBarGroup
+                    xKeyArr={M_INCOME}
+                    showLegend
+                  />
+                  <StackedBarGroup
                     title={'Mode Share By Income Level'}
                     values={MS_INCOME}
-                    xKeyArr={TRANSPORT_MODES}  
-                    categoryLabel={'Income Level'}        
-                    showLegend          
-                />
-                {/* <DonutChart
-                  title={'By Income Level'}
-                  values={BGY_DEMOGRAPHICS}
-                  xKeyArr={M_INCOME}
-                /> */}
-                {/* <BarChart
-                  data={BGY_DEMOGRAPHICS.filter(d => d.name)
-                    .sort((a, b) => b['count'] - a['count'])
-                    .slice(0, 10)
-                    .reverse()}
-                  xKeyArr={M_INCOME}
-                  xKey={'name'}
-                  yKey={'name'}
-                  onLabelClick={changeBarangay}
-                  categoryLabel={'Income Range'}
-                  title={'Frequency per area'}
-                  height={250}
-                /> */}
-              </VisRow>
-            ) : null}
+                    xKeyArr={TRANSPORT_MODES}
+                    xKeyArrLabels={TRANSPORT_MODES_LABELS}
+                    categoryLabel={'Income Level'}
+                    showLegend
+                  />
+                </VisRow>
 
-            {bgyIncl ? (
-              <VisRow>
-                <StackedBarChart
-                    title={'By Age'}
-                    values={BGY_DEMOGRAPHICS}
-                    xKeyArr={M_AGE}       
-                    showLegend             
-                />
-                <StackedBarGroup
-                    title={'Mode Share By Age'}
-                    values={MS_AGE}
-                    xKeyArr={TRANSPORT_MODES}  
-                    categoryLabel={'Age Group'}                                    
-                    showLegend          
-                />
-                {/* <DonutChart
-                  title={'By Age'}
-                  values={BGY_DEMOGRAPHICS}
-                  xKeyArr={M_AGE}
-                /> */}
-                {/* <BarChart
-                  data={BGY_DEMOGRAPHICS.filter(d => d.name)
-                    .sort((a, b) => b['count'] - a['count'])
-                    .slice(0, 10)
-                    .reverse()}
-                  xKeyArr={M_AGE}
-                  xKey={'name'}
-                  yKey={'name'}
-                  onLabelClick={changeBarangay}
-                  categoryLabel={'Age Group'}
-                  title={'Frequency per area'}
-                  height={250}
-                /> */}
-              </VisRow>
+                <div className="bottom-widget--info">
+                  <div className="bottom-widget--info-title">
+                    Physical
+                  </div>
+                  <div className="bottom-widget--info-desc">
+                    Insert a detailed description of the Physical indicator here. What constitutes its score? What does it mean if it's good? If it's bad? How can I improve it?
+                  </div>
+                </div>
+
+                <VisRow>
+                  <StackedBarChart
+                    title={'Trips affected by Flooding'}
+                    values={[20, 80]}
+                    legendLabels={['No', 'Yes']}
+                    // xKeyArr={M_INCOME}
+                    showLegend
+                  />
+                  <DescriptionBlock>
+                    About 80% of trips are affected by flooding. Insert possible causes and solutions.
+                  </DescriptionBlock>
+                </VisRow>
+
+                <VisRow>
+                  <StackedBarChart
+                    title={'Trips affected by Flooding'}
+                    values={[40, 60]}
+                    legendLabels={['No', 'Yes']}
+                    // xKeyArr={M_INCOME}
+                    showLegend
+                  />
+                  <DescriptionBlock>
+                    About 20% of trips are cancelled in the event of a flood. Insert possible causes and solutions.
+                  </DescriptionBlock>
+                </VisRow>
+
+                <VisRow>
+                  <BoldBlock>
+                    + 20 Php
+                  </BoldBlock>
+                  <DescriptionBlock>
+                    The increase in cost amounts to an average of 20 Php in the event of a flood.
+                  </DescriptionBlock>
+                </VisRow>
+
+                <VisRow>
+                  <BoldBlock>
+                    + 30 mins
+                  </BoldBlock>
+                  <DescriptionBlock>
+                    The increase in travel time amounts to an average of 30 minutes in the event of a flood.
+                  </DescriptionBlock>
+                </VisRow>
+
+                <div className="bottom-widget--info">
+                  <div className="bottom-widget--info-title">
+                    Psychological
+                  </div>
+                  <div className="bottom-widget--info-desc">
+                    Insert a detailed description of the Psychological indicator here. What constitutes its score? What does it mean if it's good? If it's bad? How can I improve it?
+                  </div>
+
+                  <VisRow>
+                    <StackedBarChart
+                      title={'Mode Share'}
+                      values={BGY_MODE_SHARE}
+                      xKeyArr={TRANSPORT_MODES}
+                      xKeyArrLabels={TRANSPORT_MODES_LABELS}
+                      legendOrientation={'horizontal'}
+                      showLegend
+                      isXKeyArrReg
+                    />
+                  </VisRow>
+                </div>
+
+                <div className="bottom-widget--info">
+                  <div className="bottom-widget--info-title">
+                    Performance
+                  </div>
+                  <div className="bottom-widget--info-desc">
+                    Insert a detailed description of the Performance indicator here. What constitutes its score? What does it mean if it's good? If it's bad? How can I improve it?
+                  </div>
+
+                  <VisRow>
+                    <StackedBarChart
+                      title={'Mode Share'}
+                      values={BGY_MODE_SHARE}
+                      xKeyArr={TRANSPORT_MODES}
+                      xKeyArrLabels={TRANSPORT_MODES_LABELS}
+                      legendOrientation={'horizontal'}
+                      showLegend
+                      isXKeyArrReg
+                    />
+                  </VisRow>
+                </div>
+              </div>
+
             ) : null}
-          </div> : null}
         </div>
       </WidgetContainer>
-
-      // <TimeWidget
-      //   fields={datasets[filters[enlargedFilterIdx].dataId].fields}
-      //   setFilterPlot={visStateActions.setFilterPlot}
-      //   setFilter={visStateActions.setFilter}
-      //   toggleAnimation={visStateActions.toggleAnimation}
-      //   updateAnimationSpeed={visStateActions.updateAnimationSpeed}
-      //   enlargeFilter={visStateActions.enlargeFilter}
-      //   width={Math.min(maxWidth, enlargedFilterWidth)}
-      //   isAnyFilterAnimating={isAnyFilterAnimating}
-      //   enlargedIdx={enlargedFilterIdx}
-      //   filter={filters[enlargedFilterIdx]}
-      // />
     );
   };
 

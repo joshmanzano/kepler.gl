@@ -53,6 +53,7 @@ import {
 
   /* PLEXUS-SPECIFIC */
   updateActiveAnalysisTabUpdater, 
+  setBottomTabUpdater,
 } from './ui-state-updaters';
 
 export const DEFAULT_ACTIVE_SIDE_PANEL = 'overview';
@@ -96,6 +97,7 @@ export const DEFAULT_EXPORT_DATA = {
 export const DEFAULT_NOTIFICATIONS = [];
 
 // export const DEFAULT_ACTIVE_ANALYSIS = 'profile';
+export const DEFAULT_BOTTOM_TAB = 'default';
 
 export const INITIAL_UI_STATE = {
   readOnly: false,
@@ -114,6 +116,8 @@ export const INITIAL_UI_STATE = {
 
   /* PLEXUS-SPECIFIC */
   // activeAnalysisTab: DEFAULT_ACTIVE_ANALYSIS,
+  bottomTab: DEFAULT_BOTTOM_TAB,
+
 };
 
 const actionHandler = {
@@ -141,6 +145,7 @@ const actionHandler = {
 
   /* PLEXUS-SPECIFIC */
   // [ActionTypes.TOGGLE_ACTIVE_ANALYSIS]: updateActiveAnalysisTabUpdater,
+  [ActionTypes.SET_BOTTOM_TAB]: setBottomTabUpdater,
 };
 
 /* Reducer */

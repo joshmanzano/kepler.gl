@@ -91,9 +91,6 @@ const AnalysisSectionToggle = ({activeTab, update, barangay}) => (
             active={ANALYSIS_TABS_DEF[e].value === activeTab}
             onClick={() => {
               update(ANALYSIS_TABS_BGY[e].value);
-              console.log(
-                ANALYSIS_TABS_BGY[e].label + ' ' + ANALYSIS_TABS_BGY[e].value
-              );
             }}
           >
             {ANALYSIS_TABS_BGY[e].label}
@@ -105,9 +102,6 @@ const AnalysisSectionToggle = ({activeTab, update, barangay}) => (
             active={ANALYSIS_TABS_DEF[e].value === activeTab}
             onClick={() => {
               update(ANALYSIS_TABS_DEF[e].value);
-              console.log(
-                ANALYSIS_TABS_DEF[e].label + ' ' + ANALYSIS_TABS_DEF[e].value
-              );
             }}
           >
             {ANALYSIS_TABS_DEF[e].label}
@@ -389,8 +383,7 @@ export default function BottomWidgetFactory(
 
     if (datasets.barangays) {
       if (datasets.barangays.data) {
-        console.log('Check barangay dataset json format');
-        console.log(datasets);
+        
         maxListSize = Math.min(DEFAULT_LIST, datasets.barangays.data.length);
 
         // formatted barangay data
@@ -450,8 +443,7 @@ export default function BottomWidgetFactory(
         // TODO get bgy ranking by id
         ranking =
           bgyIncl.findIndex(b => b['name'] == visState.activeBarangay[1]) + 1;
-        console.log('rank ' + ranking);
-        console.log(bgy);
+          
 
         // amenities
         let inserted = {};
@@ -523,13 +515,13 @@ export default function BottomWidgetFactory(
           // }
         });
 
-        console.error(destCnt);
-        console.error(oriCnt);
+        // console.error(destCnt);
+        // console.error(oriCnt);
         // console.error(bgy);
         // console.error(SEGMENTED_DESTINATIONS);
         // console.error(SEGMENTED_DESTINATIONS.filter(d=>d.name && d.id==bgy.filter(e=>e.label=='id')[0].x));
       } else {
-        console.log('no active bgy');
+
       }
     }
 
@@ -664,7 +656,7 @@ export default function BottomWidgetFactory(
                     xKey={'count'}
                     yKey={'name'}
                     title={'Barangays going to ' + bgy.filter(e => e.label == 'name')[0].x}
-                    onLabelClick={changeBarangay}
+                    // onLabelClick={changeBarangay}
                     paginationFunc={visStateActions.changeOriPage}
                     reverseFunc={visStateActions.sortOriReverse}
                     analysisRankingReverse={visState.oriReverse}

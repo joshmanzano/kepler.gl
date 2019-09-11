@@ -197,8 +197,8 @@ export default function ModalContainerFactory(
 
     /* eslint-disable complexity */
     render() {
-      console.log('MODAL CONTAINER');
-      console.log(this.props);
+      // console.log('MODAL CONTAINER');
+      // console.log(this.props);
       const {
         containerW,
         containerH,

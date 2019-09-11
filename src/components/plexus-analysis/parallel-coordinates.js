@@ -54,10 +54,6 @@ export class ParallelCoordinatesK extends Component {
       });
     }, domainStructure);
 
-    console.log('pk domains');
-    console.log(domains);
-    console.log(data);
-
     domains = domains.map(d => {
       return {
         ...d,

@@ -278,9 +278,9 @@ export class BarChart extends Component {
           width="80"
           height="20"
           onClick={() => {
-            console.log('BARCHART CLICK ' + value);
-            console.log('BARCHART CLICK ' + index);
-            console.log(dataSliced[index]);
+            // console.log('BARCHART CLICK ' + value);
+            // console.log('BARCHART CLICK ' + index);
+            // console.log(dataSliced[index]);
             if(onLabelClick) onLabelClick(dataSliced[index].id);
           }}
         >

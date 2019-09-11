@@ -18,36 +18,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
-import {scaleLinear} from 'd3-scale';
-import {IconRoundSmall} from 'components/common/styled-components';
-import {ArrowLeft, ArrowRight} from 'components/common/icons';
-
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAngleLeft,
   faAngleRight,
   faSortAmountDown,
   faSortAmountDownAlt
 } from '@fortawesome/free-solid-svg-icons';
-
-import {
-  XYPlot,
-  XAxis,
-  YAxis,
-  VerticalGridLines,
-  HorizontalGridLines,
-  HorizontalBarSeries,
-  makeWidthFlexible,
-  LabelSeries,
-  ChartLabel,
-  Hint
-} from 'react-vis';
-
-// import './../bottom-widget.scss';
 
 const ControlPanel = styled.div`
   display: flex;
@@ -119,11 +100,9 @@ export class PaginatedRanking extends Component {
     const {
       data,
       title,
-      xKeyArr,
       floatFormat,
       xKey,
       yKey,
-      categoryLabel,
       paginationFunc,
       reverseFunc,
       maxBar,
@@ -131,7 +110,6 @@ export class PaginatedRanking extends Component {
       listSize,
       analysisRankingReverse,
       analysisRankingPage,
-      onLabelClick,
       height,
       legends
     } = this.props;
@@ -143,37 +121,27 @@ export class PaginatedRanking extends Component {
     let dataSorted = data;
     let dataSliced = data;
     let max;
-    let dataLabels;
-    let col = [
-      '#ff205b',
-      '#0acd6b',
-      '#009adf',
-      '#af58ba',
-      '#ffc61f',
-      '#f28522'
-    ]; // TODO: move to constants
-    let bars = [];
     let tcontent = [];
 
     if (xKey && yKey) {
-      formattedData = data.filter(d => typeof d[yKey] !== undefined);
-      formattedData = formattedData.map((d, idx) => ({
-        ...d,
-        x: d[xKey],
-        y: d[yKey]
-      }));
+      formattedData = data.filter(d => typeof d[yKey] !== undefined)
+        .map((d, idx) => ({
+          ...d,
+          x: d[xKey],
+          y: d[yKey]
+        }));
     } else {
-      formattedData = data.filter(d => typeof d['y'] !== undefined);
-      formattedData = data.map((d, idx) => ({
-        ...d,
-        x: d.x
-      }));
+      formattedData = data.filter(d => typeof d['y'] !== undefined)
+        .map((d, idx) => ({
+          ...d,
+          x: d.x
+        }));
     }
 
     dataSorted = formattedData;
     dataSliced = formattedData;
 
-    // slice data for paginated bar chart
+    // slice data for paginated
     if (paginationFunc && reverseFunc) {
       dataSorted = analysisRankingReverse
         ? formattedData.reverse()
@@ -189,57 +157,46 @@ export class PaginatedRanking extends Component {
     max = domainMax
       ? domainMax
       : dataSorted.reduce((prev, current) =>
-          prev.x > current.x ? prev : current
-        ).x;
+        prev.x > current.x ? prev : current
+      ).x;
 
     // generate labels
-    dataLabels = dataSliced
-      .filter(d => (!d.hasOwnProperty('display') ? true : d.display))
-      .map((d, idx) => ({
-        x: d.x,
-        y: d.y,
-        label: floatFormat ? d.x.toFixed(2) : d.x,
-        xOffset: 20,
-        yOffset: 7,
-        style: {fill: '#6A7485'}
-      }));
+    // dataLabels = dataSliced
+    //   .filter(d => (!d.hasOwnProperty('display') ? true : d.display))
+    //   .map((d, idx) => ({
+    //     x: d.x,
+    //     y: d.y,
+    //     label: floatFormat ? d.x.toFixed(2) : d.x,
+    //     xOffset: 20,
+    //     yOffset: 7,
+    //     style: {fill: '#6A7485'}
+    //   }));
 
     let currCol = legends ? analysisRankingReverse ? legends.data.length - 1 : 0 : 0;
-    dataSliced.forEach((d, i)=>{
+    dataSliced.forEach((d, i) => {
       // assign color
-      let tex = '#fff';
-      if(legends) {
-        if(analysisRankingReverse) {
-          while(d.x < legends.labels[currCol].low && currCol >= 0) {
+      if (legends) {
+        if (analysisRankingReverse) {
+          while (d.x < legends.labels[currCol].low && currCol >= 0) {
             currCol--;
           }
         } else {
-          while(d.x > legends.labels[currCol].high && currCol < legends.data.length) {
+          while (d.x > legends.labels[currCol].high && currCol < legends.data.length) {
             currCol++;
           }
-        } 
+        }
       }
 
       tcontent.push(<div className='ptable-label'>{(d.y)}</div>);
-      {legends ? 
-        tcontent.push(<div className='ptable-value' style={{backgroundColor: legends.data[currCol], color: currCol <= 2 ?  '#fff': '#212121'}}>{d.x.toFixed(2)}</div>) //(dataSliced.length - i)+(analysisRankingPage - 1) * maxBar || 10+0*10 
-        : tcontent.push(<div className='ptable-value'>{floatFormat?d.x.toFixed(2):d.x}</div>) //(dataSliced.length - i)+(analysisRankingPage - 1) * maxBar || 10+0*10 
+      {
+        legends ?
+          tcontent.push(<div className='ptable-value' style={{ backgroundColor: legends.data[currCol], color: currCol <= 2 ? '#fff' : '#212121' }}>{d.x.toFixed(2)}</div>) //(dataSliced.length - i)+(analysisRankingPage - 1) * maxBar || 10+0*10 
+          : tcontent.push(<div className='ptable-value'>{floatFormat ? d.x.toFixed(2) : d.x}</div>) //(dataSliced.length - i)+(analysisRankingPage - 1) * maxBar || 10+0*10 
       }
-      tcontent.push(<div className='ptable-index'>{analysisRankingReverse ? 1 + formattedData.length - ((dataSliced.length - i)+(analysisRankingPage - 1) * maxBar): (dataSliced.length - i)+(analysisRankingPage - 1) * maxBar}</div>);
+      tcontent.push(<div className='ptable-index'>{analysisRankingReverse ? 1 + formattedData.length - ((dataSliced.length - i) + (analysisRankingPage - 1) * maxBar) : (dataSliced.length - i) + (analysisRankingPage - 1) * maxBar}</div>);
     });
 
     tcontent = tcontent.reverse();
-
-    bars.push(
-      <HorizontalBarSeries
-        animation
-        data={dataSliced.filter(d =>
-          !d.hasOwnProperty('display') ? true : d.display
-        )}
-        barWidth={0.5}
-      />
-    );
-    // console.error('non stacked bar chart DONE');
 
     // get bar chart labels
     let maxDom = 0;
@@ -249,51 +206,8 @@ export class PaginatedRanking extends Component {
 
     // truncate long y-axis labels
     const MAX_LENGTH = 13;
-    // dataSliced = dataSliced.map(d => ({
-    //   ...d,
-    //   y: d.y.length > MAX_LENGTH ? d.y.slice(0, MAX_LENGTH) + '...' : d.y
-    // }));
-
     // labels right of bar
 
-    function myFormatter(value, index, scale, tickTotal) {
-      return (
-        <foreignObject
-          x="-90"
-          y="-10"
-          width="80"
-          height="20"
-          onClick={() => {
-            console.log('PR CLICK ' + value);
-            console.log('PR CLICK ' + index);
-            console.log(dataSliced[index]);
-            if (onLabelClick) onLabelClick(dataSliced[index].id);
-          }}
-        >
-          <div
-            xmlns="http://www.w3.org/1999/xhtml"
-            style={{
-              width: 80,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              display: 'block',
-              textAlign: 'end',
-              cursor: 'pointer',
-              ':hover': {
-                textDecoration: 'underline',
-                color: 'white'
-              }
-            }}
-          >
-            {/* <text>{value}</text> */}
-            {value}
-          </div>
-        </foreignObject>
-      );
-    }
-
-    const FlexibleXYPlot = makeWidthFlexible(XYPlot);
     let maxPage;
 
     if (paginationFunc && reverseFunc)
@@ -320,8 +234,8 @@ export class PaginatedRanking extends Component {
                   {analysisRankingReverse ? (
                     <FontAwesomeIcon icon={faSortAmountDown} />
                   ) : (
-                    <FontAwesomeIcon icon={faSortAmountDownAlt} />
-                  )}
+                      <FontAwesomeIcon icon={faSortAmountDownAlt} />
+                    )}
                 </ControlBtn>
                 <ControlBtn
                   onClick={() => {
@@ -348,55 +262,6 @@ export class PaginatedRanking extends Component {
         <PTable width={width}>
           {tcontent}
         </PTable>
-        {/* <XYPlot
-          xDomain={[0, maxDom]}
-          margin={{left: 100, right: 30, top: 25, bottom: 25}}
-          height={height ? height : 160}
-          width={width}
-          onMouseLeave={() => this.setState({hovered: null})}
-          stackBy={xKeyArr ? 'x' : ''}
-          yType="ordinal"
-        >
-          <XAxis
-            orientation={'top'}
-            tickValues={[0, maxDom / 2, maxDom]}
-            style={{
-              ticks: {stroke: '#C3C9C5'},
-              text: {fill: '#C3C9C5'},
-              fontWeight: 200
-            }}
-          />
-          <YAxis
-            tickFormat={myFormatter}
-            style={{
-              ticks: {stroke: '#C3C9C5'},
-              color: '#C3C9C5',
-              fontWeight: 200
-            }}
-          />
-
-          {bars}
-
-          <LabelSeries
-            data={dataLabels}
-            labelAnchorX="middle"
-            labelAnchorY="text-after-edge"
-          />
-          {this.state.hovered && (
-            <Hint
-              xType="literal"
-              yType="literal"
-              getX={d => d.x}
-              getY={d => d.y}
-              value={{
-                Barangay: this.state.hovered.y,
-                [categoryLabel ? categoryLabel : 'Category']: this.state.hovered
-                  .valueLabel,
-                Count: this.state.hovered.actualValue
-              }}
-            />
-          )}
-        </XYPlot> */}
       </div>
     );
   }

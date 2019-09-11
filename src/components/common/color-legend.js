@@ -143,8 +143,6 @@ export default class ColorLegend extends Component {
 
     const legends = this.legendsSelector(this.props);
     const height = legends.data.length * (ROW_H + GAP);
-    console.log('legends');
-    console.log(legends);
     return (
       <StyledLegend>
         <svg width={width - 24} height={height}>

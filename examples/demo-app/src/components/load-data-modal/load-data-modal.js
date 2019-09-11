@@ -148,8 +148,8 @@ class LoadDataModal extends Component {
       sampleMaps, isMapLoading, onSwitchToLoadingMethod,
       error, activeCities, onSwitchToLoadingMethodCity, selectedCity, onChangeCity
     } = this.props;
-    console.log("LOAD DATA MODAL");
-    console.log(this.props);
+    // console.log("LOAD DATA MODAL");
+    // console.log(this.props);
     return (
       <ThemeProvider theme={themeLT}>
         <div className="load-data-modal">

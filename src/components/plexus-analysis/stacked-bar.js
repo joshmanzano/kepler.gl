@@ -1,23 +1,45 @@
-import React, {Component} from 'react';
+// Copyright (c) 2019 Uber Technologies, Inc.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import {createSelector} from 'reselect';
-import {format} from 'd3-format';
+import { createSelector } from 'reselect';
+import { format } from 'd3-format';
 
 import {
   SCALE_TYPES,
   SCALE_FUNC,
   ALL_FIELD_TYPES
 } from 'constants/default-settings';
-import {XYPlot, YAxis, HorizontalBarSeries, Hint, DiscreteColorLegend} from 'react-vis';
+import { XYPlot, XAxis, HorizontalBarSeries, Hint, DiscreteColorLegend } from 'react-vis';
 import { getTimeWidgetHintFormatter } from '../../../dist/utils/filter-utils';
+import './react-vis-override.scss';
 
 
 const StackedBarChartPanel = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 25px 0px 40px 0;
+  // margin: 25px 0px 40px 0;
+  margin: 20px 0px 0px 0;
 `;
 
 const ControlPanel = styled.div`
@@ -44,6 +66,17 @@ const ControlPanel = styled.div`
   }
 `;
 
+const ContentPanel = styled.div`
+  display: flex;
+  flex-direction: ${props => props.orientation=='horizontal' ? 'row' : 'column'};
+
+  > * {
+    &:not(:first-child) {
+      margin-left: ${props => props.orientation=='horizontal' ? '40px' : '0px'};
+    }
+  }
+`;
+
 export class StackedBarChart extends Component {
   constructor(props) {
     super(props);
@@ -54,15 +87,17 @@ export class StackedBarChart extends Component {
   }
 
   render() {
-    const {data, activeIndicator, title, legends, values, xKeyArr, showLegend} = this.props;
+    const { data, activeIndicator, title, legends, values, xKeyArr, xKeyArrLabels, showLegend, isXKeyArrReg, legendLabels } = this.props;
 
     let pData;
     let sbBars = [];
     let leg;
-    let col = ['#ff205b', '#0acd6b', '#009adf', '#af58ba', '#ffc61f', '#f28522'];
-    
+    // let col = ['#ff205b', '#0acd6b', '#009adf', '#af58ba', '#ffc61f', '#f28522'];
+    let col = ['#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14e', '#edc949', '#b07aa2', '#ff9da7', '#9c755f', '#bab0ac']; // tableau 10 https://www.tableau.com/about/blog/2016/7/colors-upgrade-tableau-10-56782
+    let col2 = ['#9ed5cd', '#44a7cb','#2e62a1','#192574',];
+    let ticks = [];
 
-    if(legends) {
+    if (legends) {
 
       pData = legends.data.map((d, idx) => ({
         angle: 0,
@@ -81,99 +116,122 @@ export class StackedBarChart extends Component {
         }
       }
 
+      let total = 0;
       pData.forEach(d => {
         let obj = {
           y: 0,
           x: d.angle
         };
+
+        // ticks.push(d.angle + total);
+
+        total += d.angle;
+
         sbBars.push(
           <HorizontalBarSeries data={[obj]} color={d.color}>
             <Hint data={obj} />
           </HorizontalBarSeries>
         );
+        
       });
 
-      leg = legends.data.map((d, i)=>({title: legends.labels[i].low.toFixed(2) + ' to ' + legends.labels[i].high.toFixed(2), color: d}));
-      
-    } else if(values && this.props.xLabel) {
+      leg = legends.data.map((d, i) => ({ title: legends.labels[i].low.toFixed(2) + ' to ' + legends.labels[i].high.toFixed(2), color: d }));
+
+    } else if (values && this.props.xLabel) {
+      let total = 0;
+
+      ticks.push(0);
       values.forEach(d => {
         let obj = {
           y: 0,
           x: d[this.props.xLabel]
         };
+
+        ticks.push(d[this.props.xLabel] + total);
+        total += d[this.props.xLabel];
+
         sbBars.push(
           <HorizontalBarSeries data={[obj]} color={d.color}>
             <Hint data={obj} />
           </HorizontalBarSeries>
         );
       });
-    } else if(values && xKeyArr) {
-      // console.error('Stacked Bar conditional 3');
+    } else if (values && xKeyArr) {
+      // keys are in array of JSON objects (default: key is 'name')
       pData = [];
       let inserted = {};
       let total = 0;
-      xKeyArr.forEach((x, i) => {
+
+      // manual count of each total in value
+      xKeyArr.forEach((x, i) => { // each bin in bar chart will correspond to value in x 
         values.forEach(d => {
-          total += d[x.name];
-          if(x.name in inserted) {
-            pData.filter(a=>a.label==x.name)[0].x += d[x.name];
+          let key = isXKeyArrReg ? x : x.name;
+          total += d[key];
+          if (key in inserted) { // add value of current data to x
+            pData.filter(a => a.label == key)[0].x += d[key];
           } else {
-            inserted[x.name] = 0;
-            // pData.push({
-            //   label: x.name,
-            //   value: d[x.name],
-            //   angle: d[x.name],
-            //   color: col[i%col.length],
-            // });
-            // console.error(d[x.name]);
+            inserted[key] = 0;
             pData.push({
-              label: x.name,
-              y: 0,
-              x: d[x.name],
+              label: key,
+              y: 0, // all in one axis
+              x: d[key],
             });
           }
         });
       });
 
+      // calculates percentage
       pData = pData.map(d => ({
         ...d,
-        value: ((d.x/total)*100).toFixed(2) + '%',
+        value: ((d.x / total) * 100).toFixed(2) + '%',
       }))
 
-      // console.error(pData);
+      // pData.forEach((d) => {
+      //   ticks.push(((d.x / total) * 100).toFixed(2));
+      // });
 
-      pData.forEach((d,i) => {
+      pData.forEach((d, i) => {
         sbBars.push(
-          <HorizontalBarSeries 
-            data={[d]} 
-            color={col[i%col.length]}
-            onValueMouseOver={(datapoint, event)=>{
-              // does something on click
-              // you can access the value of the event
-              // console.error('bar chart hover');
-              // console.error(datapoint);
-              // console.error(event);
-              this.setState({hovered: datapoint});
-              // console.error(event);
-            }}/>
+          <HorizontalBarSeries
+            data={[d]}
+            color={col[i % col.length]}
+            onValueMouseOver={(datapoint, event) => {
+              this.setState({ hovered: datapoint });
+            }} />
         );
       })
 
-      leg = xKeyArr.map((d, i)=>({title: d.name, color: col[i%col.length]}));
-    } else if(values) {
-      values.forEach(d => {
+      leg = xKeyArr.map((d, i) => ({
+        title: isXKeyArrReg ? (xKeyArrLabels ? xKeyArrLabels[d] : d) : d.name,
+        color: col[i % col.length]
+      }));
+    } else if (values) {
+      let total = 0;
+      ticks.push(0);
+      values.forEach((d, i) => {
         let obj = {
           y: 0,
           x: d
         };
+
+        ticks.push(d + total);
+        total += d;
+
         sbBars.push(
-          <HorizontalBarSeries data={[obj]} color={d.color}>
+          <HorizontalBarSeries data={[obj]} 
+          // color={d.color}
+          color={col2[i % col2.length]}
+          >
             <Hint data={obj} />
           </HorizontalBarSeries>
         );
+
+        if(legendLabels) {
+          leg = legendLabels.map((d, i) => ({ title: legendLabels[i], color: col2[i % col2.length] }));
+        }
       });
     }
-    
+
     return (
       <StackedBarChartPanel>
         <ControlPanel>
@@ -181,29 +239,43 @@ export class StackedBarChart extends Component {
             <p className="control-panel__title">{title}</p>
           </div>
         </ControlPanel>
-        <XYPlot style={{margin: 10}}
+        <ContentPanel orientation={this.props.legendOrientation}>
+        <XYPlot style={{ margin: 10 }}
           width={270}
-          margin={{left: 0, right: 0, top: 25, bottom: 15}}
-          height={80}
-          onMouseLeave={() => this.setState({hovered: null})}          
+          margin={{ left: 5, right: 15, top: 25, bottom: ticks !== undefined && ticks.length != 0 ? 50 : 0 }}
+          height={ticks !== undefined && ticks.length != 0 ? 110 : 80}
+          onMouseLeave={() => this.setState({ hovered: null })}
           stackBy="x"
         >
-          { sbBars }
-          {this.state.hovered && (
-              <Hint
-                value={(legends) ? {Count: this.state.hovered.value} : {
-                  Category: this.state.hovered.label,
-                  Percentage: this.state.hovered.value,
-                }}
-              />
-            )}
-        </XYPlot>
-        {(xKeyArr || legends) && showLegend && 
-          <DiscreteColorLegend 
-            orientation={'horizontal'}
-            items={leg} 
-            />
+          {ticks !== undefined && ticks.length != 0 &&
+          <XAxis
+          // orientation={'top'}
+          tickValues={ticks}
+          style={{
+            ticks: {stroke: '#C3C9C5'},
+            text: {fill: '#C3C9C5'},
+            fontWeight: 200
+          }}
+        />
           }
+          
+          {sbBars}
+          {this.state.hovered && (
+            <Hint
+              value={(legends) ? { Count: this.state.hovered.value } : {
+                Category: this.state.hovered.label,
+                Percentage: this.state.hovered.value,
+              }}
+            />
+          )}
+        </XYPlot>
+        {(xKeyArr || legends || this.props.legendLabels) && showLegend &&
+          <DiscreteColorLegend
+            orientation={'horizontal'}
+            items={leg}
+          />
+        }
+        </ContentPanel>
 
       </StackedBarChartPanel>
     );

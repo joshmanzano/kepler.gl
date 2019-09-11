@@ -635,9 +635,6 @@ export const layerClickUpdater = (state, action) => {
       const isVisible = false;
       state.layers[idx].updateLayerConfig({isVisible});
     }
-    console.log("LYU: ");
-    // console.log(data);
-    console.log(action.info);
     return {
       ...state,
       clicked: null,
@@ -1366,9 +1363,6 @@ export function updateAllLayerDomainData(state, dataId, newFilter) {
 
 /* PLEXUS-SPECIFIC UPDATERS */
 export const updateActiveAnalysisTabUpdater = (state, action) => {
-  console.log('**************' + action);
-  console.log(action);
-  console.log(action.info);
   return {
     ...state,
     activeAnalysisTab: action.info,
@@ -1376,7 +1370,6 @@ export const updateActiveAnalysisTabUpdater = (state, action) => {
 };
 
 export const updateActiveBottomPanelUpdater = (state, action) => {
-  console.log(state.activeBottomPanel);
   return {
     ...state,
     activeBottomPanel: action.info,
@@ -1384,9 +1377,6 @@ export const updateActiveBottomPanelUpdater = (state, action) => {
 };
 
 export const setActiveBarangay = (state, action) => {
-  console.error('**************' + action);
-  console.error(action);
-  console.error(action.info);
   return {
     ...state,
     activeBarangay: action.info,
@@ -1401,9 +1391,6 @@ export const setActiveBarangay = (state, action) => {
 };
 
 export const changeAnalysisRankPage = (state, action) => {
-  console.log("**************" + action);
-  console.log(action);
-  console.log(action.info);
   return {
     ...state,
     analysisRankingPage: action.info,
@@ -1411,9 +1398,6 @@ export const changeAnalysisRankPage = (state, action) => {
 };
 
 export const changeOriPage = (state, action) => {
-  console.log("**************" + action);
-  console.log(action);
-  console.log(action.info);
   return {
     ...state,
     oriPage: action.info,
@@ -1421,9 +1405,6 @@ export const changeOriPage = (state, action) => {
 };
 
 export const changeDestPage = (state, action) => {
-  console.log("**************" + action);
-  console.log(action);
-  console.log(action.info);
   return {
     ...state,
     destPage: action.info,
@@ -1431,9 +1412,6 @@ export const changeDestPage = (state, action) => {
 };
 
 export const setAnalysisReverse = (state, action) => {
-  console.log("**************" + action);
-  console.log(action);
-  console.log(action.info);
   return {
     ...state,
     analysisRankingReverse: action.info,
@@ -1441,9 +1419,6 @@ export const setAnalysisReverse = (state, action) => {
 };
 
 export const setOriReverse = (state, action) => {
-  console.log("**************" + action);
-  console.log(action);
-  console.log(action.info);
   return {
     ...state,
     oriReverse: action.info,
@@ -1451,9 +1426,6 @@ export const setOriReverse = (state, action) => {
 };
 
 export const setDestReverse = (state, action) => {
-  console.log("**************" + action);
-  console.log(action);
-  console.log(action.info);
   return {
     ...state,
     destReverse: action.info,
@@ -1461,9 +1433,6 @@ export const setDestReverse = (state, action) => {
 };
 
 export const changeTDRankPage = (state, action) => {
-  console.log("**************" + action);
-  console.log(action);
-  console.log(action.info);
   return {
     ...state,
     tdRankingPage: action.info,
@@ -1471,9 +1440,6 @@ export const changeTDRankPage = (state, action) => {
 };
 
 export const setTDReverse = (state, action) => {
-  console.log("**************" + action);
-  console.log(action);
-  console.log(action.info);
   return {
     ...state,
     tdRankingReverse: action.info,

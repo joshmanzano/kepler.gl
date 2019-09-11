@@ -180,8 +180,8 @@ function KeplerGlFactory(
     // let isOpen = false;
 
     render() {
-      console.log("KEPLER");
-      console.log(this.props);
+      // console.log("KEPLER");
+      // console.log(this.props);
 
       const {
         // props
