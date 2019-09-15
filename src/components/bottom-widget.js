@@ -41,7 +41,13 @@ import {
 } from 'utils/filter-utils';
 import {
   SEGMENTED_DESTINATIONS,
-  TRANSPORT_MODES
+  TRANSPORT_MODES,
+  AVE_AMENITIES,
+  LONGEST_TRAVEL_TIMES,
+  SHORTEST_TRAVEL_TIMES,
+  HIGHEST_COSTS,
+  LOWEST_COSTS,
+  CITY_FLOODING
 } from 'utils/plexus-utils/sample-data-utils';
 import {scaleLinear} from 'd3-scale';
 
@@ -854,7 +860,7 @@ export default function BottomWidgetFactory(
                 <div className = "breakdown-analysis__section">
                   <BarChart
                     listSize={9}
-                    data={bgyIncl}
+                    data={AVE_AMENITIES}
                     xKey={'average'}
                     yKey={'name'}
                     title={'Average Count of City Amenities'}
@@ -863,25 +869,27 @@ export default function BottomWidgetFactory(
                 </div> 
               ) : null}
 
+            {console.log('sample data for travel time')}
+            {console.log(LONGEST_TRAVEL_TIMES)}
+            {console.log(SHORTEST_TRAVEL_TIMES)}
             {/* Temporal Indicator */}
             {!visState.activeBarangay &&
               visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
               bgyIncl && ACTIVE_INDICATOR_LABEL == 'Temporal' ? (
                 <div className = "breakdown-analysis__section">
                   <PaginatedRanking
-                    floatFormat
-                    listSize={10}
+                    // floatFormat
+                    listSize={LONGEST_TRAVEL_TIMES.length}
                     maxBar={10}
-                    data={bgyIncl}
-                    xKey={selected}
+                    data={LONGEST_TRAVEL_TIMES}
+                    xKey={'time'}
                     yKey={'name'}
-                    title={'Longest Ave. Travel Times'}
+                    title={'Longest Ave. Travel Times (in mins)'}
                     onLabelClick={changeBarangay}
-                    paginationFunc={visStateActions.changeAnalysisRankPage}
-                    reverseFunc={visStateActions.sortAnalysisReverse}
-                    analysisRankingReverse={visState.analysisRankingReverse}
-                    analysisRankingPage={visState.analysisRankingPage}
-                    legends={legends}
+                    paginationFunc={visStateActions.changeOriPage}
+                    reverseFunc={visStateActions.sortOriReverse}
+                    analysisRankingReverse={visState.oriReverse}
+                    analysisRankingPage={visState.oriPage}
                   />
                 </div> 
               ) : null}
@@ -891,19 +899,18 @@ export default function BottomWidgetFactory(
               bgyIncl && ACTIVE_INDICATOR_LABEL == 'Temporal' ? (
                 <div className = "breakdown-analysis__section">
                   <PaginatedRanking
-                    floatFormat
-                    listSize={10}
+                    // floatFormat
+                    listSize={SHORTEST_TRAVEL_TIMES.length}
                     maxBar={10}
-                    data={bgyIncl}
-                    xKey={selected}
+                    data={SHORTEST_TRAVEL_TIMES}
+                    xKey={'time'}
                     yKey={'name'}
-                    title={'Shortest Ave. Travel Times'}
+                    title={'Shortest Ave. Travel Times (in mins)'}
                     onLabelClick={changeBarangay}
-                    paginationFunc={visStateActions.changeAnalysisRankPage}
-                    reverseFunc={visStateActions.sortAnalysisReverse}
-                    analysisRankingReverse={visState.analysisRankingReverse}
-                    analysisRankingPage={visState.analysisRankingPage}
-                    legends={legends}
+                    paginationFunc={visStateActions.changeOriPage}
+                    reverseFunc={visStateActions.sortOriReverse}
+                    analysisRankingReverse={visState.oriReverse}
+                    analysisRankingPage={visState.oriPage}
                   />
                 </div> 
               ) : null}
@@ -922,19 +929,18 @@ export default function BottomWidgetFactory(
               bgyIncl && ACTIVE_INDICATOR_LABEL == 'Economic' ? (
                 <div className = "breakdown-analysis__section">
                   <PaginatedRanking
-                    floatFormat
-                    listSize={10}
+                    // floatFormat
+                    listSize={HIGHEST_COSTS.length}
                     maxBar={10}
-                    data={bgyIncl}
-                    xKey={selected}
+                    data={HIGHEST_COSTS}
+                    xKey={'cost'}
                     yKey={'name'}
-                    title={'Top 10 Average Travel Costs'}
+                    title={'Highest Travel Costs (in pesos)'}
                     onLabelClick={changeBarangay}
-                    paginationFunc={visStateActions.changeAnalysisRankPage}
-                    reverseFunc={visStateActions.sortAnalysisReverse}
-                    analysisRankingReverse={visState.analysisRankingReverse}
-                    analysisRankingPage={visState.analysisRankingPage}
-                    legends={legends}
+                    paginationFunc={visStateActions.changeOriPage}
+                    reverseFunc={visStateActions.sortOriReverse}
+                    analysisRankingReverse={visState.oriReverse}
+                    analysisRankingPage={visState.oriPage}
                   />
                 </div> 
               ) : null}
@@ -944,19 +950,18 @@ export default function BottomWidgetFactory(
               bgyIncl && ACTIVE_INDICATOR_LABEL == 'Economic' ? (
                 <div className = "breakdown-analysis__section">
                   <PaginatedRanking
-                    floatFormat
-                    listSize={10}
+                    // floatFormat
+                    listSize={LOWEST_COSTS.length}
                     maxBar={10}
-                    data={bgyIncl}
-                    xKey={selected}
+                    data={LOWEST_COSTS}
+                    xKey={'cost'}
                     yKey={'name'}
-                    title={'Bottom 10 Average Travel Costs'}
+                    title={'Lowest Travel Costs (in pesos)'}
                     onLabelClick={changeBarangay}
-                    paginationFunc={visStateActions.changeAnalysisRankPage}
-                    reverseFunc={visStateActions.sortAnalysisReverse}
-                    analysisRankingReverse={visState.analysisRankingReverse}
-                    analysisRankingPage={visState.analysisRankingPage}
-                    legends={legends}
+                    paginationFunc={visStateActions.changeOriPage}
+                    reverseFunc={visStateActions.sortOriReverse}
+                    analysisRankingReverse={visState.oriReverse}
+                    analysisRankingPage={visState.oriPage}
                   />
                 </div> 
               ) : null}
@@ -1000,11 +1005,9 @@ export default function BottomWidgetFactory(
                 <div className = "breakdown-analysis__section">
                   <StackedBarChart
                     title={'For Baguio'}
-                    // activeIndicator={selected}
-                    // data={[19, 81]}
-                    // legends={['Yes', 'No']}
+                    // values={CITY_FLOODING}
+                    // xKeyArr={CITY_FLOODING}
                     // showLegend
-                    // values={[1021,30210 - 1021]}
                   />
                 </div> 
               ) : null}

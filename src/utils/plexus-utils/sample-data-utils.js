@@ -4473,6 +4473,78 @@ export const MS_AGE = [
     others: 0
   }
 ];
+
+// SAMPLE DATA FOR INDICATOR PANEL
+
+export const AVE_AMENITIES = [
+  {name: 'Academic Facilities', average: 15},
+  {name: 'Accommodations', average: 31},
+  {name: 'Financial Establishments', average: 24},
+  {name: 'Food Establishments', average: 189},
+  {name: 'Market and Convenience Stores', average: 13},
+  {name: 'Medical Facilities', average: 3},
+  {name: 'Recreational Facilities', average: 11},
+  {name: 'Service Shops', average: 17},
+  {name: 'Stores', average: 28}
+];
+
+export const LONGEST_TRAVEL_TIMES = [
+  {name: 'San Antonio Village to Outlook Drive', id: '4658', time: 75},
+  {name: 'Outlook Drive to Padre Burgos', id: '4634', time: 73},
+  {name: 'Modern Site, East to Hillside', id: '4630', time: 67},
+  {name: 'Sanitary Camp, South to Holy Ghost Proper', id: '4663', time: 63},
+  {name: 'Quezon Hill, Proper to Hillside', id: '4645', time: 62},
+  {name: 'Santos Tomas Proper to Gabriela Silang', id: '4666', time: 60},
+  {name: 'Hillside to Asin Road', id: '4600', time: 56},
+  {name: 'Fairview Village to Sanitary Camp, North', id: '4586', time: 53},
+  {name: 'Asin Road to Fairview Village', id: '4553', time: 48},
+  {name: 'Dominican Hill-Mirador to Lourdes Subdivision Extension', id: '4582', time: 47}
+];
+
+export const SHORTEST_TRAVEL_TIMES = [
+  {name: 'Dept. of Public Services Area to Outlook Drive', id: '4584', time: 3},
+  {name: 'Bayan Park West (Bayan Park) to Irisan', id: '4565', time: 3},
+  {name: 'Hillside to Santo Tomas Proper', id: '4600', time: 4},
+  {name: 'Padre Burgos to Gabriel Silang', id: '4636', time: 5},
+  {name: 'Lourdes Subdivision, Lower to Lourdes Subdivision Extension', id: '4617', time: 5},
+  {name: 'Lourdes Subdivision Extension to Holy Ghost Proper', id: '4616', time: 5},
+  {name: 'Holy Ghost Proper to Gabriela Silang', id: '4602', time: 10},
+  {name: 'Lourdes Subdivision, Proper to Sanitary Camp North', id: '4618', time: 10},
+  {name: 'Gabriela Silang to Fairview Village', id: '4589', time: 12},
+  {name: 'Sanitary Camp, North to Lourdes Subdivision Extension', id: '4662', time: 12}
+];
+
+export const HIGHEST_COSTS = [
+  {name: 'San Antonio Village to Outlook Drive', id: '4658', cost: 210},
+  {name: 'Outlook Drive to Padre Burgos', id: '4634', cost: 100},
+  {name: 'Modern Site, East to Hillside', id: '4630', cost: 95},
+  {name: 'Sanitary Camp, South to Holy Ghost Proper', id: '4663', cost: 90},
+  {name: 'Quezon Hill, Proper to Hillside', id: '4645', cost: 80},
+  {name: 'Santos Tomas Proper to Gabriela Silang', id: '4666', cost: 60},
+  {name: 'Hillside to Asin Road', id: '4600', cost: 50},
+  {name: 'Fairview Village to Sanitary Camp, North', id: '4586', cost: 50},
+  {name: 'Asin Road to Fairview Village', id: '4553', cost: 48},
+  {name: 'Dominican Hill-Mirador to Lourdes Subdivision Extension', id: '4582', cost: 42}
+];
+
+export const LOWEST_COSTS = [
+  {name: 'Dept. of Public Services Area to Outlook Drive', id: '4584', cost: 10},
+  {name: 'Bayan Park West (Bayan Park) to Irisan', id: '4565', cost: 10},
+  {name: 'Hillside to Santo Tomas Proper', id: '4600', cost: 11},
+  {name: 'Padre Burgos to Gabriel Silang', id: '4636', cost: 11},
+  {name: 'Lourdes Subdivision, Lower to Lourdes Subdivision Extension', id: '4617', cost: 15},
+  {name: 'Lourdes Subdivision Extension to Holy Ghost Proper', id: '4616', cost: 20},
+  {name: 'Holy Ghost Proper to Gabriela Silang', id: '4602', cost: 20},
+  {name: 'Lourdes Subdivision, Proper to Sanitary Camp North', id: '4618', cost: 20},
+  {name: 'Gabriela Silang to Fairview Village', id: '4589', cost: 20},
+  {name: 'Sanitary Camp, North to Lourdes Subdivision Extension', id: '4662', cost: 25}
+];
+
+export const CITY_FLOODING = [
+  {name: 'Yes', rate: 0.2},
+  {name: 'No', rate: 0.8}
+];
+
 // 'Male'
 // 'Female'
 // 'Other'
