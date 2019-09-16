@@ -50,7 +50,9 @@ const PCWrapper = styled.div`
   align-items: center;
   width: ${props => props.width - 50}px;
   background-color: ${props => props.theme.sidePanelBg};
-
+  position: relative;
+  right: 100px;
+  
   .header {
     position: sticky;
     top: 0;

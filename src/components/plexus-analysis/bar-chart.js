@@ -183,7 +183,7 @@ export class BarChart extends Component {
           x: d.count,
           y: d.name,
           label: d.count,
-          // xOffset: 20,
+          xOffset: 20,
           yOffset: 5,
           style: {fill: '#6A7485'}
         }));
@@ -250,6 +250,7 @@ export class BarChart extends Component {
             !d.hasOwnProperty('display') ? true : d.display
           )}
           barWidth={0.5}
+          color={'#1fb9d5'}
         />
       );
       // console.error('non stacked bar chart DONE');
@@ -294,10 +295,10 @@ export class BarChart extends Component {
             display: 'block',
             textAlign: 'end',
             cursor: 'pointer',
-            ":hover": {
-              textDecoration: 'underline',
-              color: 'white',
-            }
+            // ":hover": {
+            //   textDecoration: 'underline',
+            //   color: 'white',
+            // }
           }}
         >
           {/* <text>{value}</text> */}

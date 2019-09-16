@@ -97,7 +97,7 @@ export const DEFAULT_EXPORT_DATA = {
 export const DEFAULT_NOTIFICATIONS = [];
 
 // export const DEFAULT_ACTIVE_ANALYSIS = 'profile';
-export const DEFAULT_BOTTOM_TAB = 'default';
+export const DEFAULT_BOTTOM_TAB = 'profile';
 
 export const INITIAL_UI_STATE = {
   readOnly: false,

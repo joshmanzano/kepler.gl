@@ -420,16 +420,18 @@ export default function BottomWidgetFactory(
         });
       }
       if (visState.activeBarangay) {
+        const ind = INDICATORS.map((d)=>{return d.value});
+
         // format active barangay data
         bgy = visState.activeBarangay.map((d, idx) => ({
           x: d,
           label: datasets.barangays.fields[idx].name,
           display:
-            datasets.barangays.fields[idx].name != '_geojson' &&
-            datasets.barangays.fields[idx].name != 'latitude' &&
-            datasets.barangays.fields[idx].name != 'longitude' &&
-            datasets.barangays.fields[idx].name != 'id'
+            ind.includes(datasets.barangays.fields[idx].name)
         }));
+
+        // ind.append('_geojson')
+        // bgy = bgy.filter((d)=>(ind.contains(d.label)));
 
         bgy = bgy.map((d, idx) => ({
           ...d,

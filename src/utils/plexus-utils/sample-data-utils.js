@@ -4117,7 +4117,7 @@ export const M_AGE = [
   }
 ];
 
-export const TRANSPORT_MODES = [
+export const TRANSPORT_MODES_SAMPLE = [
   'privateVehicle',
   'jeepney',
   'uvExpress',
@@ -4128,15 +4128,23 @@ export const TRANSPORT_MODES = [
   'others'
 ];
 
-export const TRANSPORT_MODES_LABELS = {
+export const TRANSPORT_MODES = [
+  'jeep', 'train', 'uv', 'taxi', 'car','other',
+]
+
+export const TRANSPORT_MODES_LABELS_SAMPLE = {
   'privateVehicle':'Private Vehicle',
+  'car':'Car',
   'jeepney': 'Jeepney',
+  'jeep': 'Jeepney',
+  'uv': 'UV Express',
   'uvExpress': 'UV Express',
   'bus': 'Bus',
   'taxi': 'Taxi',
   'tricycle': 'Jeepney',
   'train': 'Train',
   'others': 'Others',
+  'other': 'Other',
 };
 
 export function subDivideDestinationData() {

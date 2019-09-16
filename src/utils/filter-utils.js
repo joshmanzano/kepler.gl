@@ -101,13 +101,21 @@ export const TIME_ANIMATION_SPEED = [
 
 export const ANALYSIS_TABS_DEF = {
   "profile" : {
-    label: 'Profile',
+    label: 'City Profile',
     value: 'profile'
   },
-  "transportDesirability" : {
-    label: 'Transport Desirability',
-    value: 'transportDesirability'
+  "dataStory" : {
+    label: 'Data Story',
+    value: 'dataStory'
   },
+  // "profile" : {
+  //   label: 'Profile',
+  //   value: 'profile'
+  // },
+  // "transportDesirability" : {
+  //   label: 'Transport Desirability',
+  //   value: 'transportDesirability'
+  // },
   // "nonTransportMode" : {
   //   label: 'Non-transport Mode',
   //   value: 'nonTransportMode'
@@ -187,6 +195,64 @@ export const BGY_DATA_DISPLAY = [
     idx: 16, 
   },
 ];
+
+export const BGY_DATA_TRAVEL_DATA = [
+  {
+    id: 'max_dist',
+    idx: 17, 
+  },
+  {
+    id: 'min_dist',
+    idx: 18, 
+  },
+  {
+    id: 'avg_dist',
+    idx: 19, 
+  },
+  {
+    id: 'max_time',
+    idx: 20, 
+  },
+  {
+    id: 'min_time',
+    idx: 21, 
+  },
+  {
+    id: 'avg_time',
+    idx: 22, 
+  },
+];
+
+export const BGY_DATA_MS = [
+  {
+    id: 'car',
+    idx: 23, 
+  },
+  {
+    id: 'uv',
+    idx: 24, 
+  },
+  {
+    id: 'taxi',
+    idx: 25, 
+  },
+  {
+    id: 'train',
+    idx: 26, 
+  },
+  {
+    id: 'jeep',
+    idx: 27, 
+  },
+  {
+    id: 'bus',
+    idx: 28, 
+  },
+  {
+    id: 'other',
+    idx: 29, 
+  },
+]
 
 export const AMENITY_DATA_INDICES = {
   'name': 0,

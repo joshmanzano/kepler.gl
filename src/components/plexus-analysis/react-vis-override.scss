@@ -22,6 +22,14 @@
     padding: 0 10px 10px 0;//    width: 80px;
 }
 
+.rv-discrete-color-legend.vertical {
+    display: grid;
+    grid-template-rows: 30px 30px 30px 30px 30px 30px;
+    grid-template-columns: 1fr 1fr;
+    /* background-color: white; */
+    grid-auto-flow: column;
+}
+
 .rv-discrete-color-legend-item.horizontal span.rv-discrete-color-legend-item__title {
     margin-left: 8px;
     display: inline;
