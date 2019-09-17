@@ -8,12 +8,22 @@ color: #C3C9C5;
 padding-top: 10px;
 max-width: 800px;
 line-height: 1.3em;
+
+b {
+  color: white;
+  font-weight: 500;
+}
 `;
 
 export const PBlock = styled.div`
 color: ${props => props.theme.labelColor};
 float: left;
 margin-top: 20px;
+
+b {
+  color: white;
+  font-weight: 500;
+}
 `;
 
 export const VisRow = styled.div`
@@ -33,8 +43,8 @@ margin-bottom: 15px;
 export const BoldBlock = styled.div`
 font-size: 2.5em;
 font-weight: 900;
-color: #C3C9C5;
-width: 150px;
+color: white;
+width: 90px;
 line-height: 1.3em;
 `;
 
@@ -87,6 +97,13 @@ export const ContentWrapper = styled.div`
   height: 100vh;   
   width: 100%; 
 
+  b {
+    color: white;
+    font-weight: 500;
+  }
+li{
+  margin-bottom: 10px;
+}
   .content-block {
     // padding: 40px 32px;
     padding: 50px 112px;
@@ -94,7 +111,7 @@ export const ContentWrapper = styled.div`
   }
 
   .content-block--dark {
-      background-color: #141e2c;
+      background-color: #080e25;
   }
 
   .content-block__title {

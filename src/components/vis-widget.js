@@ -70,25 +70,31 @@ const propTypes = {
 };
 
 
-const AnalysisSectionToggle = ({ activeTab, update }) => (
-  <Tabs>
+const AnalysisSectionToggle = ({ activeTab, update, isOpen }) => (
+  <Tabs isOpen={isOpen}>
     {
       Object.keys(ANALYSIS_TABS_DEF).map((e) => (
         <Tab key={ANALYSIS_TABS_DEF[e].value} active={ANALYSIS_TABS_DEF[e].value === activeTab}
-          onClick={() => { update(ANALYSIS_TABS_DEF[e].value); console.log(ANALYSIS_TABS_DEF[e].label + " " + ANALYSIS_TABS_DEF[e].value); }}>{ANALYSIS_TABS_DEF[e].label}</Tab>
+          onClick={() => { update(ANALYSIS_TABS_DEF[e].value); console.log(ANALYSIS_TABS_DEF[e].label + " " + ANALYSIS_TABS_DEF[e].value); }}>
+          <p>{ANALYSIS_TABS_DEF[e].label}</p>
+          </Tab>
       ))}
   </Tabs>
 );
 
 const Tabs = styled.div`
-  padding-right: 76px;
+  // padding-right: 76px;
+  width: 100%;
+    display: ${props => (props.isOpen ? 'flex' : 'none')};
+    background-color: #18273e;
+    justify-content: center;
 `;
 
 const Tab = styled.div`
-  border-bottom: 1px solid
-    ${props => (props.active ? props.theme.textColorHl : 'transparent')};
+  // border-bottom: 1px solid
+  //   ${props => (props.active ? props.theme.textColorHl : 'transparent')};
   color: ${props =>
-    props.active ? props.theme.textColorHl : props.theme.labelColor};
+    props.active ? '#1fbad6' : props.theme.labelColor};
   display: inline-block;
   font-size: 12px;
   height: 24px;
@@ -97,6 +103,17 @@ const Tab = styled.div`
   // width: 24px;
   line-height: 24px;
   padding: 0px 12px;
+  height: auto;
+  
+  p {
+    padding: 5px 12px;
+    border-bottom: 1.5px solid
+    
+    ${props => (props.active ? '#1fbad6' : 'transparent')};
+    // ${props => (props.active ? props.theme.textColorHl : 'transparent')};
+    margin: 0;
+  }
+
   :hover {
     cursor: pointer;
   }
@@ -433,7 +450,7 @@ export default function VisWidgetFactory(
           </ControlPanel>
           <AnalysisSectionToggle
             update={(activeAnalysisTab) => { uiStateActions.setBottomTab(activeAnalysisTab) }}
-            activeTab={uiState.bottomTab} />
+            activeTab={uiState.bottomTab} isOpen={isOpen} />
           {isOpen ?
             (uiState.bottomTab == 'profile' ?
               // <DataSummary
