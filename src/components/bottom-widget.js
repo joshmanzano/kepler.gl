@@ -41,7 +41,13 @@ import {
 } from 'utils/filter-utils';
 import {
   SEGMENTED_DESTINATIONS,
-  TRANSPORT_MODES
+  TRANSPORT_MODES,
+  AVE_AMENITIES,
+  LONGEST_TRAVEL_TIMES,
+  SHORTEST_TRAVEL_TIMES,
+  HIGHEST_COSTS,
+  LOWEST_COSTS,
+  CITY_FLOODING
 } from 'utils/plexus-utils/sample-data-utils';
 import {scaleLinear} from 'd3-scale';
 
@@ -50,6 +56,7 @@ import ParallelCoordinatesKFactory from './plexus-analysis/parallel-coordinates'
 import DonutChartFactory from './plexus-analysis/donut-chart';
 import StackedBarChartFactory from './plexus-analysis/stacked-bar';
 import PaginatedRankingFactory from './plexus-analysis/paginated-ranking';
+import StackedBarGroupFactory from './plexus-analysis/stacked-bar-group';
 
 import {RadialChart} from 'react-vis';
 import {SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER} from 'constants';
@@ -79,7 +86,8 @@ BottomWidgetFactory.deps = [
   ParallelCoordinatesKFactory,
   DonutChartFactory,
   StackedBarChartFactory,
-  PaginatedRankingFactory
+  PaginatedRankingFactory,
+  StackedBarGroupFactory,
 ];
 
 const AnalysisSectionToggle = ({activeTab, update, barangay}) => (
@@ -339,6 +347,58 @@ const StyledTitle = CenterFlexbox.extend`
   }
 `;
 
+const IndicatorInfo = styled.div`
+  font-size: 1.8em;
+  font-weight: 600;
+  color: #C3C9C5;
+  margin-top: 20px;
+  margin-bottom: -25px;
+  color: ${props => props.theme.labelColor};
+`;
+
+const RelatedIndWrapper = styled.div`
+  color: ${props => props.theme.labelColor};
+  font-size: 1em;
+  font-weight: 500;
+  margin-bottom: 20px;
+`;
+
+const RelatedIndItemWrapper = styled.div`
+  display: flex;
+  flex: row;
+`;
+
+const RelatedIndItem = styled.div`
+  font-size: 0.9em;
+  background-color: #18273e;
+  color: ${props => props.theme.labelColor};
+  padding: 8px;
+  margin: 3px;
+  border-radius: 10px;
+  cursor: pointer;
+  :hover {
+    opacity: 0.7;
+  }
+`;
+
+const PhysInd = styled.div`
+  color: ${props => props.theme.labelColor};
+  font-size: 1em;
+  font-weight: 500;
+  margin-left: 5px;
+  display: flex;
+`;
+
+const PercentPhys = styled.div`
+  font-size: 1.4em;
+  background-color: ${props => props.theme.activeColor};;
+  padding: 5px;
+  border-radius: 10px;
+  width: 20%;
+  text-align-last: center;
+  margin-right: 10px;
+`;
+
 export default function BottomWidgetFactory(
   TimeWidget,
   BarChart,
@@ -346,6 +406,7 @@ export default function BottomWidgetFactory(
   DonutChart,
   StackedBarChart,
   PaginatedRanking,
+  StackedBarGroup,
 ) {
   const BottomWidget = props => {
     const {
@@ -787,6 +848,293 @@ export default function BottomWidgetFactory(
                     analysisRankingPage={visState.analysisRankingPage}
                   /> */}
                 </div>
+              ) : null}
+
+              {/* Spatial Indicator */}
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Spatial' ? (
+                <div className = "breakdown-analysis__section">
+                  <BarChart
+                    listSize={9}
+                    data={AVE_AMENITIES}
+                    xKey={'average'}
+                    yKey={'name'}
+                    title={'Average Count of City Amenities'}
+                    height={250}
+                  />
+                </div> 
+              ) : null}
+
+            {console.log('sample data for travel time')}
+            {console.log(LONGEST_TRAVEL_TIMES)}
+            {console.log(SHORTEST_TRAVEL_TIMES)}
+            {/* Temporal Indicator */}
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Temporal' ? (
+                <div className = "breakdown-analysis__section">
+                  <PaginatedRanking
+                    // floatFormat
+                    listSize={LONGEST_TRAVEL_TIMES.length}
+                    maxBar={10}
+                    data={LONGEST_TRAVEL_TIMES}
+                    xKey={'time'}
+                    yKey={'name'}
+                    title={'Longest Ave. Travel Times (in mins)'}
+                    onLabelClick={changeBarangay}
+                    paginationFunc={visStateActions.changeOriPage}
+                    reverseFunc={visStateActions.sortOriReverse}
+                    analysisRankingReverse={visState.oriReverse}
+                    analysisRankingPage={visState.oriPage}
+                  />
+                </div> 
+              ) : null}
+
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Temporal' ? (
+                <div className = "breakdown-analysis__section">
+                  <PaginatedRanking
+                    // floatFormat
+                    listSize={SHORTEST_TRAVEL_TIMES.length}
+                    maxBar={10}
+                    data={SHORTEST_TRAVEL_TIMES}
+                    xKey={'time'}
+                    yKey={'name'}
+                    title={'Shortest Ave. Travel Times (in mins)'}
+                    onLabelClick={changeBarangay}
+                    paginationFunc={visStateActions.changeOriPage}
+                    reverseFunc={visStateActions.sortOriReverse}
+                    analysisRankingReverse={visState.oriReverse}
+                    analysisRankingPage={visState.oriPage}
+                  />
+                </div> 
+              ) : null}
+
+            {/* Economic Indicator */}
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Economic' ? (
+                <div className = "breakdown-analysis__section">
+                  
+                </div> 
+              ) : null}
+
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Economic' ? (
+                <div className = "breakdown-analysis__section">
+                  <PaginatedRanking
+                    // floatFormat
+                    listSize={HIGHEST_COSTS.length}
+                    maxBar={10}
+                    data={HIGHEST_COSTS}
+                    xKey={'cost'}
+                    yKey={'name'}
+                    title={'Highest Travel Costs (in pesos)'}
+                    onLabelClick={changeBarangay}
+                    paginationFunc={visStateActions.changeOriPage}
+                    reverseFunc={visStateActions.sortOriReverse}
+                    analysisRankingReverse={visState.oriReverse}
+                    analysisRankingPage={visState.oriPage}
+                  />
+                </div> 
+              ) : null}
+
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Economic' ? (
+                <div className = "breakdown-analysis__section">
+                  <PaginatedRanking
+                    // floatFormat
+                    listSize={LOWEST_COSTS.length}
+                    maxBar={10}
+                    data={LOWEST_COSTS}
+                    xKey={'cost'}
+                    yKey={'name'}
+                    title={'Lowest Travel Costs (in pesos)'}
+                    onLabelClick={changeBarangay}
+                    paginationFunc={visStateActions.changeOriPage}
+                    reverseFunc={visStateActions.sortOriReverse}
+                    analysisRankingReverse={visState.oriReverse}
+                    analysisRankingPage={visState.oriPage}
+                  />
+                </div> 
+              ) : null}
+
+            {/* Physical Indicator */}
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Physical' ? (
+                <div className = "breakdown-analysis__section">
+                  <PaginatedRanking
+                    floatFormat
+                    listSize={10}
+                    maxBar={10}
+                    data={bgyIncl}
+                    xKey={selected}
+                    yKey={'name'}
+                    title={'% of Respondents Flooded per Barangay'}
+                    onLabelClick={changeBarangay}
+                    paginationFunc={visStateActions.changeAnalysisRankPage}
+                    reverseFunc={visStateActions.sortAnalysisReverse}
+                    analysisRankingReverse={visState.analysisRankingReverse}
+                    analysisRankingPage={visState.analysisRankingPage}
+                    legends={legends}
+                  />
+                </div> 
+              ) : null}
+
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Physical' ? (
+                <div className = "breakdown-analysis__section">
+                  <PhysInd>
+                    <PercentPhys>33%</PercentPhys> of respondents from the city will cancel their trips during flooding
+                  </PhysInd>
+                </div> 
+              ) : null}
+
+            {/* {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Physical' ? (
+                <div className = "breakdown-analysis__section">
+                  {console.log('city flooding')}
+                  {console.log(CITY_FLOODING.name)}
+                  {console.log(CITY_FLOODING.rate)}
+                  <StackedBarChart
+                    title={'For Baguio'}
+                    values={[0.33, 0.67]}
+                    legendLabels={['Yes', 'No']}
+                    showLegend
+                    // xKeyArr={CITY_FLOODING}
+                    // showLegend
+                  />
+                </div> 
+              ) : null} */}
+
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Physical' ? (
+                <div className = "breakdown-analysis__section">
+                  <PaginatedRanking
+                    floatFormat
+                    listSize={bgyIncl.length}
+                    maxBar={10}
+                    data={bgyIncl}
+                    xKey={selected}
+                    yKey={'name'}
+                    title={'% of Respondents Who Will Cancel their Trips During Flooding'}
+                    onLabelClick={changeBarangay}
+                    paginationFunc={visStateActions.changeAnalysisRankPage}
+                    reverseFunc={visStateActions.sortAnalysisReverse}
+                    analysisRankingReverse={visState.analysisRankingReverse}
+                    analysisRankingPage={visState.analysisRankingPage}
+                    legends={legends}
+                  />
+                </div> 
+              ) : null} 
+
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Physical' ? (
+                <div className = "breakdown-analysis__section">
+                  <PhysInd>
+                    Additional Travel Cost
+                  </PhysInd>
+                </div> 
+              ) : null}
+
+            {/* Psychological Indicator */}
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Psychological' ? (
+                <div className = "breakdown-analysis__section">
+                  
+                </div> 
+              ) : null}
+
+            {/* Physiological Indicator */}
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Physiological' ? (
+                <div className = "breakdown-analysis__section">
+                  
+                </div> 
+              ) : null}
+
+            {/* Sustainability Indicator */}
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Sustainability' ? (
+                <div className = "breakdown-analysis__section">
+                  <PhysInd>
+                    Breakdown
+                  </PhysInd>
+                </div> 
+              ) : null}
+
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Sustainability' ? (
+                <div className = "breakdown-analysis__section">
+                  <PhysInd>
+                    Energy Use
+                  </PhysInd>
+                </div> 
+              ) : null}
+
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Sustainability' ? (
+                <div className = "breakdown-analysis__section">
+                  <PhysInd>
+                    Health Contribution
+                  </PhysInd>
+                </div> 
+              ) : null}
+
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Sustainability' ? (
+                <div className = "breakdown-analysis__section">
+                  <PhysInd>
+                    GHG Social Cost Contribution
+                  </PhysInd>
+                </div> 
+              ) : null}
+
+            {/* Performance Indicator */}
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Performance' ? (
+                <div className = "breakdown-analysis__section">
+                  
+                </div> 
+              ) : null}
+
+            {/* Fairness Indicator */}
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl && ACTIVE_INDICATOR_LABEL == 'Fairness' ? (
+                <div className = "breakdown-analysis__section">
+                  
+                </div> 
+              ) : null}
+
+            {!visState.activeBarangay &&
+              visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
+              bgyIncl ? (
+                <div className = "breakdown-analysis__section">
+                  <RelatedIndWrapper>
+                    Related Indicators
+                    <RelatedIndItemWrapper>
+                      <RelatedIndItem>Spatial</RelatedIndItem>
+                      <RelatedIndItem>Temporal</RelatedIndItem>
+                    </RelatedIndItemWrapper>
+                  </RelatedIndWrapper>
+                </div> 
               ) : null}
             </BreakdownAnalysis>
           </AnalysisSectionWrapper>
