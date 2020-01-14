@@ -1,6 +1,6 @@
 {
   "name": "kepler.gl",
-  "author": "Shan He <shan@uber.com>",
+  "author": "",
   "version": "0.2.1",
   "description": "kepler.gl is a webgl based application to visualize large scale location data in the browser",
   "license": "MIT",
@@ -20,7 +20,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/uber/kepler.gl.git"
+    "url": "https://github.com/dlsucomet/kepler.gl.git"
   },
   "scripts": {
     "install:example": "cd examples/demo-app && yarn --ignore-engines",
@@ -36,7 +36,7 @@
     "start:open-modal": "npm run install-and-start -- examples/open-modal start-local",
     "start:custom-reducer": "npm run install-and-start -- examples/custom-reducer start-local",
     "start:web": "npm run install-and-start -- website start",
-    "build": "rimraf dist && uber-licence && babel src --out-dir dist --source-maps inline",
+    "build": "rm -fr dist && uber-licence && babel src --out-dir dist --source-maps inline",
     "lint": "eslint src examples/**/src website/src",
     "check-licence": "uber-licence --dry",
     "add-licence": "uber-licence",
@@ -44,7 +44,7 @@
     "web": "(yarn && yarn install:web && yarn start:web)",
     "deploy": "yarn clean && yarn && yarn install:web && (cd website && yarn build && git checkout gh-pages && cp dist/* .. && git add .. && git commit -m 'Update website' && git push origin gh-pages && git checkout master)",
     "deploy:test": "yarn clean && yarn && yarn install:web && (cd website && yarn build && git checkout -B gh-pages-test gh-pages && cp dist/* .. && git add .. && git commit -m 'Update website' && git push -f test gh-pages-test:master)",
-    "clean": "rimraf node_modules examples/**/node_modules website/node_modules"
+    "clean": "rm -rf node_modules examples/**/node_modules website/node_modules"
   },
   "files": [
     "dist",
@@ -206,7 +206,5 @@
     ]
   },
   "maintainers": [
-    "Shan He <heshan0131@gmail.com>",
-    "Giuseppe Macri <gmacri@uber.com>"
   ]
 }
