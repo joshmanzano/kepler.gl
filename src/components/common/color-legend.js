@@ -43,8 +43,8 @@ const StyledLegend = styled.div`
 
   svg {
     text {
-      font-size: 9px;
-      fill: ${props => props.theme.textColor};
+      font-size: 12px;
+      fill: ${props => props.theme.labelColor};
     }
   }
 `;
@@ -118,10 +118,11 @@ export default class ColorLegend extends Component {
     (domain, range, scaleType, labelFormat, fieldType) => {
       const scaleFunction = SCALE_FUNC[scaleType];
       // color scale can only be quantize, quantile or ordinal
+      // console.error(domain);
+      // console.error(range);
       const scale = scaleFunction()
         .domain(domain)
         .range(range);
-
       if (scaleType === SCALE_TYPES.ordinal) {
         return getOrdinalLegends(scale);
       }
@@ -142,16 +143,16 @@ export default class ColorLegend extends Component {
 
     const legends = this.legendsSelector(this.props);
     const height = legends.data.length * (ROW_H + GAP);
-
     return (
       <StyledLegend>
         <svg width={width - 24} height={height}>
           {legends.data.map((color, idx) => (
             <LegendRow
               key={idx}
-              label={legends.labels[idx]}
+              label={legends.labels[legends.labels.length - 1 - idx]}
               displayLabel={displayLabel}
-              color={color}
+              // color={color}
+              color={legends.data[legends.data.length - 1 - idx]}
               idx={idx}
             />
           ))}

@@ -23,6 +23,7 @@ import classnames from 'classnames';
 import styled, {ThemeProvider} from 'styled-components';
 import PropTypes from 'prop-types';
 import {FileUpload} from 'kepler.gl/components';
+import {ItemSelector} from 'kepler.gl/components';
 import {LoadingSpinner} from 'kepler.gl/components';
 import {themeLT} from 'kepler.gl/styles';
 import {Icons} from 'kepler.gl/components/';
@@ -31,18 +32,24 @@ import {LOADING_METHODS, ASSETS_URL, LOADING_METHODS_NAMES} from '../../constant
 
 import SampleMapGallery from './sample-data-viewer';
 import LoadRemoteMap from './load-remote-map';
+import SelectCity from './select-city';
 
 const propTypes = {
   // query options
   loadingMethod: PropTypes.object.isRequired,
-  currentOption: PropTypes.object.isRequired,
+  // currentOption: PropTypes.object.isRequired,
   sampleMaps: PropTypes.arrayOf(PropTypes.object).isRequired,
+  activeCities: PropTypes.arrayOf(PropTypes.object).isRequired,
 
   // call backs
   onFileUpload: PropTypes.func.isRequired,
   onLoadRemoteMap: PropTypes.func.isRequired,
   onLoadSample: PropTypes.func.isRequired,
-  onSwitchToLoadingMethod: PropTypes.func.isRequired
+  onSelectCity: PropTypes.func.isRequired,
+  onSwitchToLoadingMethod: PropTypes.func.isRequired,
+
+  // PLEXUS
+  onSwitchToLoadingMethodCity: PropTypes.func.isRequired
 };
 
 const ModalTab = styled.div`
@@ -139,9 +146,10 @@ class LoadDataModal extends Component {
     const {
       loadingMethod, currentOption, previousMethod,
       sampleMaps, isMapLoading, onSwitchToLoadingMethod,
-      error
+      error, activeCities, onSwitchToLoadingMethodCity, selectedCity, onChangeCity
     } = this.props;
-
+    // console.log("LOAD DATA MODAL");
+    // console.log(this.props);
     return (
       <ThemeProvider theme={themeLT}>
         <div className="load-data-modal">
@@ -151,7 +159,7 @@ class LoadDataModal extends Component {
             </StyledSpinner>
             ) : (
               <div>
-                {loadingMethod.id !== 'sample' ? (
+                {loadingMethod.id !== 'sample' && loadingMethod.id !== 'select' ? (
                   <Tabs
                     method={loadingMethod.id}
                     toggleMethod={this.props.onSwitchToLoadingMethod}
@@ -175,6 +183,16 @@ class LoadDataModal extends Component {
                     onLoadSample={this.props.onLoadSample}
                     error={error} />
                 ) : null}
+                {loadingMethod.id === 'select' && activeCities ? (
+                  <SelectCity
+                    selectedCity={this.props.selectedCity}
+                    onSelectCity={this.props.onSelectCity}
+                    // option={this.props.currentOption}
+                    error={this.props.error}
+                    activeCities={activeCities}
+                    onChangeCity={onChangeCity}
+                  />
+                ) : null}
               </div>)
           }
         </div>
@@ -182,6 +200,10 @@ class LoadDataModal extends Component {
     );
   }
 }
+
+const Selection = () => (
+  <div></div>
+);
 
 const Tabs = ({method, toggleMethod}) => (
   <ModalTab className="load-data-modal__tab">

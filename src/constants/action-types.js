@@ -56,6 +56,12 @@ const ActionTypes = keyMirror({
   SET_FILTER_PLOT: null,
   LOAD_FILES: null,
   LOAD_FILES_ERR: null,
+  /* PLEXUS-SPECIFIC */
+  SET_ACTIVE_BARANGAY: null,
+
+  //PLEXUS
+  PROCESS_DATA: null,
+  SET_SELECTED_INDICATOR: null,
 
   // mapState
   UPDATE_MAP: null,
@@ -83,7 +89,19 @@ const ActionTypes = keyMirror({
   TOGGLE_MAP_CONTROL: null,
   ADD_NOTIFICATION: null,
   REMOVE_NOTIFICATION: null,
-
+  /* PLEXUS-SPECIFIC */
+  TOGGLE_ACTIVE_ANALYSIS: null,
+  TOGGLE_ACTIVE_BOTTOM: null,
+  CHANGE_ANALYSIS_RANK_PAGE: null,
+  SORT_ANALYSIS_REVERSE: null,
+  CHANGE_TD_RANK_PAGE: null,
+  SORT_TD_REVERSE: null,
+  SORT_ORI_REVERSE: null,
+  SORT_DEST_REVERSE: null,
+  CHANGE_ORI_PAGE: null,
+  CHANGE_DEST_PAGE: null,
+  SET_BOTTOM_TAB: null,
+  
   // uiState > export image
   SET_RATIO: null,
   SET_RESOLUTION: null,

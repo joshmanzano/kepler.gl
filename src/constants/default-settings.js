@@ -41,7 +41,7 @@ import {
   CursorClick
 } from 'components/common/icons';
 
-export const KEPLER_GL_NAME = 'kepler.gl';
+export const KEPLER_GL_NAME = 'PLEXUS';
 export const KEPLER_GL_VERSION = 'v1.0';
 export const KEPLER_GL_WEBSITE = 'http://kepler.gl/';
 
@@ -49,7 +49,7 @@ export const DIMENSIONS = {
   sidePanel: {
     width: 300,
     margin: {top: 20, left: 20, bottom: 30, right: 20},
-    headerHeight: 96
+    headerHeight: 80
   },
   mapControl: {
     width: 204,
@@ -59,15 +59,20 @@ export const DIMENSIONS = {
 
 export const PANELS = [
   {
-    id: 'layer',
-    label: 'Layers',
+    id: 'overview',
+    label: 'Overview',
     iconComponent: Layers
   },
   {
-    id: 'filter',
-    label: 'Filters',
-    iconComponent: FilterFunnel
+    id: 'indicators',
+    label: 'Indicators',
+    iconComponent: Layers
   },
+  {
+    id: 'qualities',
+    label: 'Qualities',
+    iconComponent: FilterFunnel
+  }/*,
   {
     id: 'interaction',
     label: 'Interactions',
@@ -77,7 +82,7 @@ export const PANELS = [
     id: 'map',
     label: 'Base map',
     iconComponent: Settings
-  }
+  }*/
 ];
 
 export const PANELS_FOOTER = [
@@ -603,3 +608,101 @@ export const DEFAULT_NOTIFICATION_TOPICS = keyMirror({
   global: null,
   file: null
 });
+
+// PLEXUS
+
+export const INDICATORS = [
+  // Desirability
+  {
+    id: 'desirability',
+    label: 'Transport Desirability',
+    description: 'Transport desirability is a framework that shows how desirable an area is based on accessibility of amenities and transport modes, travel cost and travel time, and the experiences of residents during flooding and using transportation. The higher the transport desirability score, the more desirable. A transport desirability score of 70% is acceptable.'
+  },
+
+  // Non transport mode
+  {
+    id: 'spatial',
+    label: 'Spatial',
+    description: 'Spatial indicator refers to how accessible different types of amenities are (e.g. hospitals, schools) in an area. The lower the score of a barangay, the lesser the access to different amenities.'
+  },
+  {
+    id: 'temporal',
+    label: 'Temporal',
+    description: 'Temporal indicator considers the travel time and distance from an origin to its residents’ destinations. Colored barangays on the map are origins and clicking on a barangay shows its destinations. The lower the score of a barangay, the longer the travel time is for residents in that barangay. It could be due to far destinations or bad transportation infrastructure or modes.'
+  },
+  {
+    id: 'economic',
+    label: 'Economic',
+    description: 'Economic indicator consists of residents’ household income and the monetary cost spent by barangay residents going to their destinations. The lower the score of the barangay, the more costly the transport going to the residents’ destinations. It could be due to far destinations andmore expensive modes.'
+  },
+  {
+    id: 'physical',
+    label: 'Physical',
+    description: 'Physical indicator considers the effects of flooding in terms of additional travel time, additional travel cost, and the continuation of trips. The lower the score of the barangay, the greater the effect of flooding to travel time, travel cost, and trip continuation. This could be an effect of transport mode or infrastructure problems.'
+  },
+
+  // Transport indicator
+  {
+    id: 'psychological',
+    label: 'Psychological',
+    description: 'Psychological indicator considers security, accidents, and privacy of per transport mode in that area. When the score of the barangay is low, the barangay may lack security and privacy in its available transport modes. Also, these transport modes may be accident prone.'
+  },
+  {
+    id: 'physiological',
+    label: 'Physiological',
+    description: 'Physiological indicator considers the comfort and convenience of transport modes in that area. When the score of the barangay is low, available transport modes in that area may be uncomfortable and inconvenient. Transport modes may be far from residents and may not be able to supply demand.'
+  },
+  {
+    id: 'sustainability',
+    label: 'Sustainability',
+    description: 'Sustainability indicator considers energy use, health cost, and greenhouse gas social cost of per transport mode in the area. When the score of the barangay is low, available transport modes in that area are less eco-friendly and may cause harmful effects to residents’ health and the environment.'
+  },
+  {
+    id: 'performance',
+    label: 'Performance',
+    description: 'Performance indicator considers the efficiency, resilience, connectivity, orderliness, and service reliability of the transport mode. When the score of the barangay is low, available transport modes in that area may be less accessible and less reliable to residents. Improving the operations and distances of transport modes may lead to a higher score.'
+  },
+  {
+    id: 'fairness',
+    label: 'Fairness',
+    description: 'Fairness indicator considers how accessible transport modes in that area are to different demographics (e.g. PWDs, children, adults) and genders When the score of the barangay is low, available transport modes may be hard to reach for some demographic or gender.'
+  }
+]
+
+export const TRANSPORT_DESIRABILITY = {
+  label: 'Transport Desirability Score',
+  indicators: [
+    INDICATORS[0]
+  ]
+}
+
+export const NON_TRANSPORT_MODE = {
+  label: 'Non-Transport Mode Indicators',
+  indicators: INDICATORS.slice(1,5)
+}
+
+export const TRANSPORT_MODE = {
+  label: 'Transport Mode Indicators',
+  indicators: INDICATORS.slice(5,10)
+}
+
+export const NON_GOVERNMENT_MODE = {
+  label: 'Non-Government Mode Indicators',
+  indicator: [
+    INDICATORS[1],
+    INDICATORS[2],
+    INDICATORS[3],
+    INDICATORS[4],
+    INDICATORS[5],
+    INDICATORS[6]
+  ]
+}
+
+export const GOVERNMENT_MODE = {
+  label: 'Government Mode Indicators',
+  indicator: [
+    INDICATORS[7],
+    INDICATORS[8],
+    INDICATORS[9]
+  ]
+}

@@ -29,7 +29,7 @@ import ClickOutsideCloseDropdown from 'components/side-panel/panel-dropdown';
 const StyledPanelHeader = styled.div.attrs({
   className: 'side-side-panel__header'
 })`
-  background-color: ${props => props.theme.sidePanelHeaderBg};
+  background-color: #18273e;
   padding: 12px 16px 0 16px;
 `;
 
@@ -38,7 +38,7 @@ const StyledPanelHeaderTop = styled.div.attrs({
 })`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 16px;
+  // margin-bottom: 16px;
   width: 100%;
 `;
 
@@ -240,8 +240,8 @@ function PanelHeaderFactory() {
       return (
         <StyledPanelHeader className="side-panel__panel-header">
           <StyledPanelHeaderTop className="side-panel__panel-header__top">
-            <this.props.logoComponent appName={appName} version={version}/>
-            <StyledPanelTopActions>
+            <this.props.logoComponent appName={appName}/>
+            {/* <StyledPanelTopActions>
               {actionItems.map(item => (
                 <div className="side-panel__panel-header__right"
                      key={item.id} style={{position: 'relative'}}>
@@ -266,7 +266,7 @@ function PanelHeaderFactory() {
                   ) : null}
                 </div>
               ))}
-            </StyledPanelTopActions>
+            </StyledPanelTopActions> */}
           </StyledPanelHeaderTop>
         </StyledPanelHeader>
       );

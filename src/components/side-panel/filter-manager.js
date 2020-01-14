@@ -29,13 +29,14 @@ import {
 import {Add} from 'components/common/icons';
 import SourceDataCatalogFactory from './source-data-catalog';
 import FilterPanelFactory from './filter-panel/filter-panel';
+import AmenityFilterPanelFactory from './filter-panel/amenity-filter-panel';
 
 FilterManagerFactory.deps = [
   SourceDataCatalogFactory,
-  FilterPanelFactory
+  AmenityFilterPanelFactory
 ];
 
-function FilterManagerFactory(SourceDataCatalog, FilterPanel) {
+function FilterManagerFactory(SourceDataCatalog, AmenityFilterPanel) {
   return class FilterManager extends Component {
     static propTypes = {
       datasets: PropTypes.object,
@@ -73,17 +74,19 @@ function FilterManagerFactory(SourceDataCatalog, FilterPanel) {
 
       return (
         <div className="filter-manager">
-          <SourceDataCatalog
+          {/* <SourceDataCatalog
             datasets={datasets}
             showDatasetTable={this.props.showDatasetTable}
-          />
-          <SidePanelDivider />
+          /> */}
+          {/* <SidePanelDivider /> */}
           <SidePanelSection>
             {filters &&
               filters.map((filter, idx) => (
-                <FilterPanel
+                filter.id == "amenities_filter" ?
+                <AmenityFilterPanel
                   key={`${filter.id}-${idx}`}
                   idx={idx}
+                  label='Spatial Amenities'
                   filters={filters}
                   filter={filter}
                   datasets={datasets}
@@ -92,16 +95,17 @@ function FilterManagerFactory(SourceDataCatalog, FilterPanel) {
                   enlargeFilter={() => this.props.enlargeFilter(idx)}
                   toggleAnimation={() => this.props.toggleAnimation(idx)}
                   setFilter={this.props.setFilter}
-                />
+                /> 
+                : null
               ))}
           </SidePanelSection>
-          <Button
+          {/* <Button
             inactive={hadEmptyFilter || !hadDataset}
             width="105px"
             onClick={this._addFilter}
           >
             <Add height="12px" />Add Filter
-          </Button>
+          </Button> */}
         </div>
       );
     }

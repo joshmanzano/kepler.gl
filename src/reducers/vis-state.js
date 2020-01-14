@@ -36,6 +36,10 @@ import {
   resetMapConfigVisStateUpdater,
   loadFilesUpdater,
   loadFilesErrUpdater,
+  // PLEXUS
+  processDataUpdater,
+  selectedIndicatorUpdater,
+  
   updateVisDataUpdater,
   removeDatasetUpdater,
   removeFilterUpdater,
@@ -52,7 +56,19 @@ import {
   setVisibleLayersForMapUpdater,
   toggleLayerForMapUpdater,
   layerVisConfigChangeUpdater,
-  layerVisualChannelChangeUpdater
+  layerVisualChannelChangeUpdater,
+  /* PLEXUS-SPECIFIC */
+  setActiveBarangay,
+  updateActiveAnalysisTabUpdater,
+  updateActiveBottomPanelUpdater,
+  changeAnalysisRankPage,
+  changeOriPage,
+  changeDestPage,
+  setAnalysisReverse,
+  setOriReverse,
+  setDestReverse,
+  changeTDRankPage,
+  setTDReverse,
 } from './vis-state-updaters';
 
 const actionHandler = {
@@ -79,6 +95,11 @@ const actionHandler = {
   [ActionTypes.LOAD_FILES]: loadFilesUpdater,
 
   [ActionTypes.LOAD_FILES_ERR]: loadFilesErrUpdater,
+
+  // PLEXUS
+  [ActionTypes.PROCESS_DATA]: processDataUpdater,
+  
+  [ActionTypes.SET_SELECTED_INDICATOR]: selectedIndicatorUpdater,
 
   [ActionTypes.MAP_CLICK]: mapClickUpdater,
 
@@ -114,7 +135,20 @@ const actionHandler = {
 
   // currently not used
   // but may be useful if users import vist state reducer
-  [ActionTypes.UPDATE_VIS_DATA]: updateVisDataUpdater
+  [ActionTypes.UPDATE_VIS_DATA]: updateVisDataUpdater,
+
+  /* PLEXUS-SPECIFIC */
+  [ActionTypes.SET_ACTIVE_BARANGAY]: setActiveBarangay,  
+  [ActionTypes.TOGGLE_ACTIVE_ANALYSIS]: updateActiveAnalysisTabUpdater,
+  [ActionTypes.TOGGLE_ACTIVE_BOTTOM]: updateActiveBottomPanelUpdater,
+  [ActionTypes.CHANGE_ANALYSIS_RANK_PAGE]: changeAnalysisRankPage,
+  [ActionTypes.CHANGE_ORI_PAGE]: changeOriPage,
+  [ActionTypes.CHANGE_DEST_PAGE]: changeDestPage,
+  [ActionTypes.SORT_ANALYSIS_REVERSE]: setAnalysisReverse,
+  [ActionTypes.SORT_ORI_REVERSE]: setOriReverse,
+  [ActionTypes.SORT_DEST_REVERSE]: setDestReverse,
+  [ActionTypes.CHANGE_TD_RANK_PAGE]: changeTDRankPage,
+  [ActionTypes.SORT_TD_REVERSE]: setTDReverse,
 };
 
 // construct vis-state reducer

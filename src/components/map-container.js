@@ -86,7 +86,10 @@ export default function MapContainerFactory(MapPopover, MapControl) {
       mapLayers: PropTypes.object,
       onMapToggleLayer: PropTypes.func,
       onMapStyleLoaded: PropTypes.func,
-      onMapRender: PropTypes.func
+      onMapRender: PropTypes.func,
+
+      // plexus
+      activeBarangay: PropTypes.array,
     };
 
     static defaultProps = {
@@ -202,11 +205,14 @@ export default function MapContainerFactory(MapPopover, MapControl) {
         datasets,
         interactionConfig,
         layers,
-        mapLayers
+        mapLayers,
+        activeBarangay,
+        visStateActions
       } = this.props;
 
       // if clicked something, ignore hover behavior
-      const objectInfo = clicked || hoverInfo;
+      // const objectInfo = clicked || hoverInfo;
+      const objectInfo = hoverInfo;
       if (
         !interactionConfig.tooltip.enabled ||
         !objectInfo ||
@@ -248,7 +254,8 @@ export default function MapContainerFactory(MapPopover, MapControl) {
         isVisible: true,
         x,
         y,
-        freezed: Boolean(clicked),
+        // freezed: Boolean(clicked),
+        freezed: false,
         onClose: this._onCloseMapPopover,
         mapState
       };
@@ -292,6 +299,7 @@ export default function MapContainerFactory(MapPopover, MapControl) {
         mousePosition
       };
 
+      // const objectHovered = hoverInfo;
       const objectHovered = clicked || hoverInfo;
       const layerCallbacks = {
         onSetLayerDomain: val => this._onLayerSetDomain(idx, val)
@@ -408,6 +416,9 @@ export default function MapContainerFactory(MapPopover, MapControl) {
         transformRequest
       };
 
+      // console.log('mcontain layers');
+      // console.log(layers);
+      // console.log(mapLayers);
       return (
         <StyledMapContainer style={MAP_STYLE.container} onMouseMove={this._onMouseMove}>
           <MapControl
@@ -426,6 +437,8 @@ export default function MapContainerFactory(MapPopover, MapControl) {
             onMapToggleLayer={this._handleMapToggleLayer}
             onToggleFullScreen={mapStateActions.toggleFullScreen}
             onToggleMapControl={toggleMapControl}
+            activeBarangay={this.props.activeBarangay}
+            selected={this.props.selected}
           />
           <MapComponent
             {...mapProps}

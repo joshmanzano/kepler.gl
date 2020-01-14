@@ -37,11 +37,13 @@ import {EXPORT_IMAGE_ID, DIMENSIONS,
 import SidePanelFactory from './side-panel';
 import MapContainerFactory from './map-container';
 import BottomWidgetFactory from './bottom-widget';
+import VisWidgetFactory from './vis-widget';
 import ModalContainerFactory from './modal-container';
 import PlotContainerFactory from './plot-container';
 import NotificationPanelFactory from './notification-panel';
 
 import {generateHashId} from 'utils/utils';
+import {getLegends} from 'utils/plexus-utils/map-utils';
 
 import {theme} from 'styles/base';
 
@@ -78,6 +80,7 @@ const GlobalStyle = styled.div`
 
 KeplerGlFactory.deps = [
   BottomWidgetFactory,
+  VisWidgetFactory,
   MapContainerFactory,
   ModalContainerFactory,
   SidePanelFactory,
@@ -87,6 +90,7 @@ KeplerGlFactory.deps = [
 
 function KeplerGlFactory(
   BottomWidget,
+  VisWidget,
   MapContainer,
   ModalWrapper,
   SidePanel,
@@ -162,6 +166,10 @@ function KeplerGlFactory(
         if (error) {
           Console.warn(`Error loading map style ${url}`);
         } else {
+          result['center'] = [120.451,12.915];
+          result['bounds'] = [94.395, -0.571, // Southwest coordinates
+            146.514, 25.681]  // Northeast coordinates
+
           this.props.mapStyleActions.loadMapStyles({
             [id]: {...mapStyle, style: result}
           });
@@ -169,7 +177,12 @@ function KeplerGlFactory(
       });
     };
 
+    // let isOpen = false;
+
     render() {
+      // console.log("KEPLER");
+      // console.log(this.props);
+
       const {
         // props
         id,
@@ -179,6 +192,8 @@ function KeplerGlFactory(
         width,
         height,
         mapboxApiAccessToken,
+        activeCities,
+        selectedCity,
 
         // redux state
         mapStyle,
@@ -204,31 +219,16 @@ function KeplerGlFactory(
         datasets,
         layerData,
         hoverInfo,
-        clicked
+        clicked,
+        // PLEXUS
+        plexus,
+        activeBarangay,
+        activeBottomPanel
       } = visState;
 
       const notificationPanelFields = {
         removeNotification: uiStateActions.removeNotification,
         notifications: uiState.notifications
-      };
-
-      const sideFields = {
-        appName,
-        version,
-        datasets,
-        filters,
-        layers,
-        layerOrder,
-        layerClasses,
-        interactionConfig,
-        mapStyle,
-        layerBlending,
-        onSaveMap,
-        uiState,
-        mapStyleActions,
-        visStateActions,
-        uiStateActions,
-        width: DIMENSIONS.sidePanel.width
       };
 
       const mapFields = {
@@ -247,11 +247,42 @@ function KeplerGlFactory(
         toggleMapControl: uiStateActions.toggleMapControl,
         uiStateActions,
         visStateActions,
-        mapStateActions
+        mapStateActions,
+        // plexus
+        activeBarangay,
+        selected: plexus.selectedIndicator
       };
 
       const isSplit = splitMaps && splitMaps.length > 1;
       const containerW = mapState.width * (Number(isSplit) + 1);
+
+      const sideFields = {
+        appName,
+        activeCities,
+        selectedCity,
+        version,
+        datasets,
+        filters,
+        layers,
+        layerOrder,
+        layerClasses,
+        interactionConfig,
+        mapStyle,
+        layerBlending,
+        onSaveMap,
+        uiState,
+        visState,
+        mapStyleActions,
+        visStateActions,
+        uiStateActions,
+        width: DIMENSIONS.sidePanel.width,
+        // PLEXUS
+        scores: plexus.scores,
+        selectedIndicator: plexus.selectedIndicator,
+        legends:(layers===undefined || !layers ) ? null : getLegends(isSplit ? splitMaps[0].layers : null, layers)
+      };
+
+      
 
       const mapContainers = !isSplit
         ? [
@@ -288,7 +319,11 @@ function KeplerGlFactory(
             }}
           >
             <NotificationPanel {...notificationPanelFields} />
-            {!uiState.readOnly && <SidePanel {...sideFields} />}
+            {!uiState.readOnly && <SidePanel 
+              {...sideFields
+              }
+              // legends={(mapFields.layers===undefined) ? null : getLegends(isSplit ? splitMaps[0].layers : null, mapFields.layers)}
+              />}
             <div className="maps" style={{display: 'flex'}}>
               {mapContainers}
             </div>
@@ -304,13 +339,37 @@ function KeplerGlFactory(
             }
             <BottomWidget
               filters={filters}
+              selected={plexus.selectedIndicator}
               datasets={datasets}
+              visState={visState}
               uiState={uiState}
               visStateActions={visStateActions}
+              uiStateActions={uiStateActions}
               sidePanelWidth={
                 DIMENSIONS.sidePanel.width + DIMENSIONS.sidePanel.margin.left
               }
               containerW={containerW}
+              layers={mapFields.layers}
+              mapLayers={isSplit ? splitMaps[0].layers : null}
+              legends={(mapFields.layers===undefined) ? null : getLegends(isSplit ? splitMaps[0].layers : null, mapFields.layers)}
+            />
+            <VisWidget
+              filters={filters}
+              selected={plexus.selectedIndicator}
+              datasets={datasets}
+              visState={visState}
+              uiState={uiState}
+              visStateActions={visStateActions}
+              uiStateActions={uiStateActions}
+              width={containerW}
+              containerW={containerW}
+              sidePanelWidth={
+                uiState.readOnly ? 0 : this.props.sidePanelWidth + DIMENSIONS.sidePanel.margin.left
+              }
+              isOpen={activeBottomPanel}
+              toggleOpen={visStateActions.toggleActiveBottom}
+              // layers={mapFields.layers}
+              // mapLayers={isSplit ? splitMaps[0].layers : null}
             />
             <ModalWrapper
               mapStyle={mapStyle}

@@ -29,10 +29,7 @@ import {loadFilesErr} from 'actions/vis-state-actions';
 import {addDataToMap} from 'actions';
 
 // Utils
-import {
-  getDefaultInteraction,
-  findFieldsToShow
-} from 'utils/interaction-utils';
+import {getDefaultInteraction, findFieldsToShow} from 'utils/interaction-utils';
 import {
   getDefaultFilter,
   getFilterProps,
@@ -63,9 +60,14 @@ import {
 import {Layer, LayerClasses} from 'layers';
 import {processFileToLoad} from '/utils/file-utils';
 
+import {INDICATORS} from 'constants/default-settings';
+
 // react-palm
 // disable capture exception for react-palm call to withTask
 disableStackCapturing();
+
+const DEFAULT_ACTIVE_ANALYSIS = 'profile';
+const DEFAULT_ANALYSIS_RANKING_PAGE = 1;
 
 export const INITIAL_VIS_STATE = {
   // layers
@@ -109,7 +111,27 @@ export const INITIAL_VIS_STATE = {
   ],
 
   // defaults layer classes
-  layerClasses: LayerClasses
+  layerClasses: LayerClasses,
+
+  // PLEXUS
+  plexus: {
+    scores: undefined,
+    indicatorData: undefined,
+    selectedIndicator: 'desirability'
+  },
+  activeBarangay: null,
+  activeAnalysisTab: DEFAULT_ACTIVE_ANALYSIS,
+
+  analysisRankingPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+  tdRankingPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+  destPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+  oriPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+
+  destReverse: false,
+  oriReverse: false,
+  analysisRankingReverse: false,
+  tdRankingReverse: false,
+  activeBottomPanel: false
 };
 
 function updateStateWithLayerAndData(state, {layerData, layer, idx}) {
@@ -389,15 +411,15 @@ export const addFilterUpdater = (state, action) =>
 
 export const toggleFilterAnimationUpdater = (state, action) => ({
   ...state,
-  filters: state.filters.map(
-    (f, i) => (i === action.idx ? {...f, isAnimating: !f.isAnimating} : f)
+  filters: state.filters.map((f, i) =>
+    i === action.idx ? {...f, isAnimating: !f.isAnimating} : f
   )
 });
 
 export const updateAnimationSpeedUpdater = (state, action) => ({
   ...state,
-  filters: state.filters.map(
-    (f, i) => (i === action.idx ? {...f, speed: action.speed} : f)
+  filters: state.filters.map((f, i) =>
+    i === action.idx ? {...f, speed: action.speed} : f
   )
 });
 
@@ -456,10 +478,13 @@ export const addLayerUpdater = (state, action) => {
 };
 
 export const removeLayerUpdater = (state, {idx}) => {
-  const {layers, layerData, clicked, hoverInfo} = state;
+  const {layers, layerData, clicked, hoverInfo, activeBarangay} = state;
   const layerToRemove = state.layers[idx];
   const newMaps = removeLayerFromSplitMaps(state, layerToRemove);
 
+  if (layerToRemove.isLayerHovered(clicked)) {
+    console.error('HI');
+  }
   return {
     ...state,
     layers: [...layers.slice(0, idx), ...layers.slice(idx + 1, layers.length)],
@@ -472,7 +497,16 @@ export const removeLayerUpdater = (state, {idx}) => {
       .map(pid => (pid > idx ? pid - 1 : pid)),
     clicked: layerToRemove.isLayerHovered(clicked) ? undefined : clicked,
     hoverInfo: layerToRemove.isLayerHovered(hoverInfo) ? undefined : hoverInfo,
-    splitMaps: newMaps
+    splitMaps: newMaps,
+
+    activeBarangay: layerToRemove.isLayerHovered(clicked)
+      ? null
+      : activeBarangay,
+      destPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+      oriPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+    
+      destReverse: false,
+      oriReverse: false,
   };
 };
 
@@ -593,10 +627,88 @@ export const layerHoverUpdater = (state, action) => ({
   hoverInfo: action.info
 });
 
-export const layerClickUpdater = (state, action) => ({
-  ...state,
-  clicked: action.info && action.info.picked ? action.info : null
-});
+export const layerClickUpdater = (state, action) => {
+  console.error(action.info);
+  if(!action.info) {
+    let idx = 0;
+    if (state.layers[idx].config.isVisible) {
+      const isVisible = false;
+      state.layers[idx].updateLayerConfig({isVisible});
+    }
+    return {
+      ...state,
+      clicked: null,
+      activeBarangay: null
+    };
+  }
+  if (action.info.layer.id != 'barangays_layer') {
+    let idx = 0;
+    if (state.layers[idx].config.isVisible) {
+      const isVisible = false;
+      state.layers[idx].updateLayerConfig({isVisible});
+    }
+    return {
+      ...state,
+      clicked: null,
+      activeBarangay: null
+    };
+  }
+  // if(state.clicked == action.info) {
+  //   let idx = 0;
+  //   if (state.layers[idx].config.isVisible) {
+  //     const isVisible = false;
+  //     state.layers[idx].updateLayerConfig({isVisible});
+  //   }
+  //   return {
+  //     ...state,
+  //     clicked: null,
+  //     activeBarangay: null
+  //   };
+  // }
+  const layer = state.layers[action.info.layer.props.idx];
+  if (layer) {
+    const {
+      config: {dataId}
+    } = layer;
+    let {allData, fields} = state.datasets[dataId];
+    const data =
+      action.info && action.info.picked
+        ? layer.getHoverData(action.info.object, allData)
+        : null;
+    const idx = 2;
+    const value = [data[16]];
+    const prop = 'value';
+    let newState = setFilterUpdater(state, {idx, prop, value});
+    let layerIdx = 0;
+    if (!newState.layers[layerIdx].config.isVisible) {
+      const isVisible = true;
+
+      newState.layers[layerIdx].updateLayerConfig({isVisible});
+    }
+    else {
+      console.error("WTF ARE U DOING HERE");
+    }
+
+    console.error('NEW BGY');
+    console.error(data);
+    return {
+      ...newState,
+      clicked: action.info,
+      activeBarangay: data,
+      activeAnalysisTab: DEFAULT_ACTIVE_ANALYSIS,
+      destPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+  oriPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+
+  destReverse: false,
+  oriReverse: false,
+    };
+  }
+
+  return {
+    ...state,
+    clicked: action.info && action.info.picked ? action.info : null
+  };
+};
 
 export const mapClickUpdater = (state, action) => ({
   ...state,
@@ -938,16 +1050,19 @@ export const loadFilesUpdater = (state, action) => {
   const loadFileTasks = [
     Task.all(filesToLoad.map(LOAD_FILE_TASK)).bimap(
       results => {
-        const data = results.reduce((f, c) => ({
-          // using concat here because the current datasets could be an array or a single item
-          datasets: f.datasets.concat(c.datasets),
-          // we need to deep merge this thing unless we find a better solution
-          // this case will only happen if we allow to load multiple keplergl json files
-          config: {
-            ...f.config,
-            ...(c.config || {})
-          }
-        }), {datasets: [], config: {}, options: {centerMap: true}});
+        const data = results.reduce(
+          (f, c) => ({
+            // using concat here because the current datasets could be an array or a single item
+            datasets: f.datasets.concat(c.datasets),
+            // we need to deep merge this thing unless we find a better solution
+            // this case will only happen if we allow to load multiple keplergl json files
+            config: {
+              ...f.config,
+              ...(c.config || {})
+            }
+          }),
+          {datasets: [], config: {}, options: {centerMap: true}}
+        );
         return addDataToMap(data);
       },
       error => loadFilesErr(error)
@@ -961,6 +1076,184 @@ export const loadFilesUpdater = (state, action) => {
     },
     loadFileTasks
   );
+};
+
+// PLEXUS
+export const processDataUpdater = (state, action) => {
+  const {allData, fields} = state.datasets.barangays;
+  var scores = {};
+  var indicatorData = {};
+
+  INDICATORS.map((indicator, i) => {
+    // Compute scores
+    const field = fields.find(op => op.id === indicator.id);
+    const column = field.tableFieldIndex - 1;
+    scores[indicator.id] =
+      allData.reduce((p, c) => p + c[column], 0) / allData.length;
+    scores[indicator.id] = Math.round(scores[indicator.id] * 100) / 100;
+    // const data = [...allData];
+    // // Get top 10 and bottom 10
+    // var arr = data.sort(function(a, b) {
+    //   return a[column] - b[column];
+    // });
+
+    // indicatorData[indicator.id] = {
+    //   top: arr.slice(0, 10),
+    //   bottom: arr.slice(arr.length - 10, arr.length)
+    // };
+  });
+  // const idx = 3;
+  // const oldLayerData = state.layerData[idx];
+  // const {layerData, layer} = calculateLayerData(
+  //   state.layers[2],
+  //   state,
+  //   oldLayerData,
+  //   {sameData: true}
+  // );
+  // const newState = updateStateWithLayerAndData(state, {layerData, layer, idx});
+  const layerData = allData.map(x => x[0]);
+
+  return {
+    ...state,
+    datasets: {
+      ...state.datasets,
+      outline: {
+        ...state.datasets.outline,
+        allData: layerData
+      }
+    },
+    layerData: layerData
+      ? state.layerData.map((d, i) =>
+          i === 4 ? {...state.layerData[4], data: layerData} : d
+        )
+      : state.layerData,
+    plexus: {
+      ...state.plexus,
+      scores,
+      indicatorData
+    }
+  };
+};
+
+export const selectedIndicatorUpdater = (state, action) => {
+  const {indicator} = action;
+  const {fields, allData} = state.datasets.barangays;
+  let field = fields.find(op => op.id === indicator);
+  //console.error(field);
+  // const idx = state.layers.findIndex(op => op.config.dataId === 'barangays');
+  const idx = 3;
+  const oldLayer = state.layers[idx];
+  const config = {
+    colorField: field
+  };
+
+
+  const newLayer = oldLayer.updateLayerConfig(config);
+  // console.error(newLayer);
+  newLayer.updateLayerVisualChannel(state.datasets.barangays, 'color');
+  const oldLayerData = state.layerData[idx];
+  const {layerData, layer} = calculateLayerData(newLayer, state, oldLayerData, {
+    sameData: true
+  });
+  let newState = updateStateWithLayerAndData(state, {layerData, layer, idx});
+  // const newState = updateStateWithLayerAndData(state, {layer: newLayer, idx});
+
+  // filter
+  let newFilter = {
+    ...state.filters[0],
+    name: indicator
+  };
+
+  // find the field
+  const fieldIdx = fields.findIndex(op => op.id === indicator);
+  // let field = fields[fieldIdx];
+
+  if (!field.filterProp) {
+    // get filter domain from field
+    // save filterProps: {domain, steps, value} to field, avoid recalculate
+    field = {
+      ...field,
+      filterProp: getFilterProps(allData, field)
+    };
+  }
+
+  newFilter = {
+    ...newFilter,
+    ...field.filterProp,
+    name: field.name,
+    // can't edit dataId once name is selected
+    freeze: true,
+    fieldIdx
+  };
+  const enlargedFilterIdx = state.filters.findIndex(f => f.enlarged);
+  if (enlargedFilterIdx > -1 && enlargedFilterIdx !== idx) {
+    // there should be only one enlarged filter
+    newFilter.enlarged = false;
+  }
+
+  newState = {
+    ...newState,
+    datasets: {
+      ...newState.datasets,
+      barangays: {
+        ...newState.datasets.barangays,
+        fields: fields.map((d, i) => (i === fieldIdx ? field : d))
+      }
+    }
+  };
+
+  // save new filters to newState
+  newState = {
+    ...newState,
+    filters: state.filters.map((f, i) => (i === 0 ? newFilter : f))
+  };
+
+  // filter data
+  newState = {
+    ...newState,
+    datasets: {
+      ...newState.datasets,
+      barangays: {
+        ...newState.datasets.barangays,
+        ...filterData(allData, 'barangays', newState.filters)
+      }
+    }
+  };
+
+  newState = updateAllLayerDomainData(newState, 'barangays', newFilter);
+
+  return {
+    ...newState,
+    // layers: [
+    //   state.layers[0],
+    //   state.layers[1],
+    //   newLayer
+    // ],
+    interactionConfig: {
+      ...newState.interactionConfig,
+      tooltip: {
+        ...newState.interactionConfig.tooltip,
+        config: {
+          ...newState.interactionConfig.tooltip.config,
+          fieldsToShow: {
+            ...newState.interactionConfig.tooltip.config.fieldsToShow,
+            barangays: ['name', indicator]
+          }
+        }
+      }
+    },
+    // datasets: {
+    //   ...newState.datasets,
+    //   barangays: {
+    //     ...newState.datasets.barangays,
+    //     ...filterData(allData, "barangays", newState.filters)
+    //   }
+    // },
+    plexus: {
+      ...newState.plexus,
+      selectedIndicator: indicator
+    }
+  };
 };
 
 export const loadFilesErrUpdater = (state, {error}) => ({
@@ -1067,3 +1360,88 @@ export function updateAllLayerDomainData(state, dataId, newFilter) {
     layerData: newLayerDatas
   };
 }
+
+/* PLEXUS-SPECIFIC UPDATERS */
+export const updateActiveAnalysisTabUpdater = (state, action) => {
+  return {
+    ...state,
+    activeAnalysisTab: action.info,
+  };
+};
+
+export const updateActiveBottomPanelUpdater = (state, action) => {
+  return {
+    ...state,
+    activeBottomPanel: action.info,
+  };
+};
+
+export const setActiveBarangay = (state, action) => {
+  return {
+    ...state,
+    activeBarangay: action.info,
+    clicked: null,
+    destPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+  oriPage: DEFAULT_ANALYSIS_RANKING_PAGE,
+
+  destReverse: false,
+  oriReverse: false,
+      // activeBarangay: null
+  };
+};
+
+export const changeAnalysisRankPage = (state, action) => {
+  return {
+    ...state,
+    analysisRankingPage: action.info,
+  };
+};
+
+export const changeOriPage = (state, action) => {
+  return {
+    ...state,
+    oriPage: action.info,
+  };
+};
+
+export const changeDestPage = (state, action) => {
+  return {
+    ...state,
+    destPage: action.info,
+  };
+};
+
+export const setAnalysisReverse = (state, action) => {
+  return {
+    ...state,
+    analysisRankingReverse: action.info,
+  };
+};
+
+export const setOriReverse = (state, action) => {
+  return {
+    ...state,
+    oriReverse: action.info,
+  };
+};
+
+export const setDestReverse = (state, action) => {
+  return {
+    ...state,
+    destReverse: action.info,
+  };
+};
+
+export const changeTDRankPage = (state, action) => {
+  return {
+    ...state,
+    tdRankingPage: action.info,
+  };
+};
+
+export const setTDReverse = (state, action) => {
+  return {
+    ...state,
+    tdRankingReverse: action.info,
+  };
+};

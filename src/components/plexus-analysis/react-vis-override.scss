@@ -1,0 +1,36 @@
+
+@import "~react-vis/dist/style";
+
+.rv-discrete-color-legend-item__title {
+    color: #c3c9c5,
+}
+
+.rv-discrete-color-legend-item {
+    padding: 0px;
+}
+
+.rv-discrete-color-legend.horizontal {
+    display: grid;
+    /* width: 260px; */
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 0;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.rv-discrete-color-legend-item.horizontal {
+    padding: 0 10px 10px 0;//    width: 80px;
+}
+
+.rv-discrete-color-legend.vertical {
+    display: grid;
+    grid-template-rows: 30px 30px 30px 30px 30px 30px;
+    grid-template-columns: 1fr 1fr;
+    /* background-color: white; */
+    grid-auto-flow: column;
+}
+
+.rv-discrete-color-legend-item.horizontal span.rv-discrete-color-legend-item__title {
+    margin-left: 8px;
+    display: inline;
+}

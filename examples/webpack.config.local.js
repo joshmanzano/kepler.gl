@@ -64,7 +64,22 @@ function makeLocalDevConfig(EXAMPLE_DIR = LIB_DIR) {
             /node_modules\/react-palm/,
             /node_modules\/react-data-grid/
           ]
+        },
+        {
+          test: /\.scss$/,
+          use: [
+              "style-loader", // creates style nodes from JS strings
+              "css-loader", // translates CSS into CommonJS
+              "sass-loader" // compiles Sass to CSS, using Node Sass by default
+          ]
+        },
+        {
+          // Preprocess your css files
+          // you can add additional loaders here (e.g. sass/less etc.)
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader'],
         }
+        
       ]
     },
     // Optional: Enables reading mapbox token from environment variable

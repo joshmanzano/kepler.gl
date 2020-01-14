@@ -99,6 +99,305 @@ export const TIME_ANIMATION_SPEED = [
   }
 ];
 
+export const ANALYSIS_TABS_DEF = {
+  "profile" : {
+    label: 'City Profile',
+    value: 'profile'
+  },
+  "dataStory" : {
+    label: 'Data Story',
+    value: 'dataStory'
+  },
+  // "profile" : {
+  //   label: 'Profile',
+  //   value: 'profile'
+  // },
+  // "transportDesirability" : {
+  //   label: 'Transport Desirability',
+  //   value: 'transportDesirability'
+  // },
+  // "nonTransportMode" : {
+  //   label: 'Non-transport Mode',
+  //   value: 'nonTransportMode'
+  // },
+  // "transportMode" : {
+  //   label: 'Transport Mode',
+  //   value: 'transportMode'
+  // },
+  // "comparison" : {
+  //   label: 'Comparison',
+  //   value: 'comparison'
+  // },
+};
+
+export const ANALYSIS_TABS_BGY = {
+  "profile" : {
+    label: 'Barangay Profile',
+    value: 'profile'
+  },
+};
+
+export const BGY_DATA_DISPLAY = [
+  {
+    id: 'name',
+    idx: 1,
+  },
+  {
+    id: 'income',
+    idx: 2,    
+  },
+  {
+    id: 'population',
+    idx: 3,    
+  },
+  {
+    id: 'desirability',
+    idx: 6, 
+  },
+  {
+    id: 'spatial',
+    idx: 7, 
+  },
+  {
+    id: 'temporal',
+    idx: 8, 
+  },
+  {
+    id: 'economic',
+    idx: 9, 
+  },
+  {
+    id: 'physical',
+    idx: 10, 
+  },
+  {
+    id: 'psychological',
+    idx: 11, 
+  },
+  {
+    id: 'physiological',
+    idx: 12, 
+  },
+  {
+    id: 'sustainability',
+    idx: 13, 
+  },
+  {
+    id: 'performance',
+    idx: 14, 
+  },
+  {
+    id: 'fairness',
+    idx: 15, 
+  },
+  {
+    id: 'id',
+    idx: 16, 
+  },
+];
+
+export const BGY_DATA_TRAVEL_DATA = [
+  {
+    id: 'max_dist',
+    idx: 17, 
+  },
+  {
+    id: 'min_dist',
+    idx: 18, 
+  },
+  {
+    id: 'avg_dist',
+    idx: 19, 
+  },
+  {
+    id: 'max_time',
+    idx: 20, 
+  },
+  {
+    id: 'min_time',
+    idx: 21, 
+  },
+  {
+    id: 'avg_time',
+    idx: 22, 
+  },
+];
+
+export const BGY_DATA_MS = [
+  {
+    id: 'car',
+    idx: 23, 
+  },
+  {
+    id: 'uv',
+    idx: 24, 
+  },
+  {
+    id: 'taxi',
+    idx: 25, 
+  },
+  {
+    id: 'train',
+    idx: 26, 
+  },
+  {
+    id: 'jeep',
+    idx: 27, 
+  },
+  {
+    id: 'bus',
+    idx: 28, 
+  },
+  {
+    id: 'other',
+    idx: 29, 
+  },
+]
+
+export const AMENITY_DATA_INDICES = {
+  'name': 0,
+  'barangay': 3,
+  'class': 5,
+}
+
+export const OD_DATA_INDICES = {
+  'o_id': 0,
+  'd_id': 3,
+  'count': 6,
+}
+  // {
+  //   id: 'name',
+  //   idx: 0,
+  // },
+  // {
+  //   id: 'barangay',
+  //   idx: 3,    
+  // },
+  // {
+  //   id: 'class',
+  //   idx: 5,    
+  // },
+// ];
+
+export const INDICATORS = [
+  {
+    label: 'Transport Desirability',
+    value: 'desirability'
+  },
+  {
+    label: 'Spatial',
+    value: 'spatial'
+  },
+  {
+    label: 'Temporal',
+    value: 'temporal'
+  },
+  {
+    label: 'Economic',
+    value: 'economic'
+  },
+  {
+    label: 'Physical',
+    value: 'physical'
+  },
+  {
+    label: 'Psychological',
+    value: 'psychological'
+  },
+  {
+    label: 'Physiological',
+    value: 'physiological'
+  },
+  {
+    label: 'Performance',
+    value: 'performance'
+  },
+  {
+    label: 'Sustainability',
+    value: 'sustainability'
+  },
+  {
+    label: 'Fairness',
+    value: 'fairness'
+  },
+];
+
+export const SAMPLE_DATA_AMENITIES = [
+  {
+    label: 'Education',
+    count: 21
+  },
+  {label:'Security',
+  count: 14},
+  {label:'Entertainment',
+  count: 109},
+  {label:'Food and Drink',
+  count: 82},
+  {label:'Healthcare',
+  count: 39},
+];
+
+export const SAMPLE_DEMOGRAPHICS_SEX = [
+  {
+    name: 'Male',
+    count: 2554
+  },{
+    name: 'Female',
+    count: 2571
+  },{
+    name: 'Other',
+    count: 18
+  },
+];
+
+export const SAMPLE_DEMOGRAPHICS_AGE = [
+  {
+    name: '< 7',
+    count: 591
+  },{
+    name: '8-17',
+    count: 1412
+  },{
+    name: '18-25',
+    count: 2557
+  },{
+    name: '26-35',
+    count: 1277
+  },{
+    name: '36-45',
+    count: 718,
+  },{
+    name: '46-59',
+    count: 274,
+  },{
+    name: '>= 60',
+    count: 102,
+  },
+];
+
+export const SAMPLE_MODE_SHARE = [
+  {
+    name: 'Jeepney',
+    count: 3922,
+  },
+  {
+    name: 'Train',
+    count: 3922,
+  },
+  {
+    name: 'Private Car',
+    count: 3922,
+  },
+  {
+    name: 'Tricycle',
+    count: 3922,
+  },
+  {
+    name: 'Jeepney',
+    count: 3922,
+  },
+]
+
 export function getDefaultFilter(dataId) {
   return {
     // link to dataset Id

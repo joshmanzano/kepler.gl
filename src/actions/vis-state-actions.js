@@ -173,6 +173,11 @@ export function onLayerHover(info) {
 }
 
 export function onLayerClick(info) {
+  console.log("ONLAYERCLICK");  
+  console.log(info);
+  if(info) {
+    console.log(info.layer.id);
+  }
   return {
     type: ActionTypes.LAYER_CLICK,
     info
@@ -180,6 +185,7 @@ export function onLayerClick(info) {
 }
 
 export function onMapClick() {
+  console.log("ONMAPCLICK");
   return {
     type: ActionTypes.MAP_CLICK
   };
@@ -234,3 +240,108 @@ export function loadFilesErr(error) {
     error
   };
 }
+
+// PLEXUS
+export function processData() {
+  return {
+    type: ActionTypes.PROCESS_DATA
+  };
+}
+
+export function setSelectedIndicator(indicator) {
+  return {
+    type: ActionTypes.SET_SELECTED_INDICATOR,
+    indicator
+  };
+}
+
+export function setActiveBarangay(info) {
+  console.log("SETACTIVEBGY");  
+  console.log(info);
+  return {
+    type: ActionTypes.SET_ACTIVE_BARANGAY,
+    info
+  };
+}
+
+export function toggleActiveAnalysis(info) {
+  console.log("VISSTATEACTIVEANALYSIS")
+  return {
+    type: ActionTypes.TOGGLE_ACTIVE_ANALYSIS,
+    info
+  };
+}
+
+export function toggleActiveBottom(info) {
+  console.log("VISSTATEACTIVEBOTTOM")
+  return {
+    type: ActionTypes.TOGGLE_ACTIVE_BOTTOM,
+    info
+  };
+}
+
+export function changeAnalysisRankPage(info) {
+  console.log("CHANGEANARANKPAGE");
+  console.log(info);
+  return {
+    type: ActionTypes.CHANGE_ANALYSIS_RANK_PAGE,
+    info
+  };
+}
+
+export function sortAnalysisReverse(info) {
+  console.log("SORTANALYSISREVERSE");
+  console.log(info);
+  return {
+    type: ActionTypes.SORT_ANALYSIS_REVERSE,
+    info
+  };
+} 
+
+export function changeTDRankPage(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.CHANGE_TD_RANK_PAGE,
+    info
+  };
+}
+
+export function changeOriPage(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.CHANGE_ORI_PAGE,
+    info
+  };
+}
+
+export function changeDestPage(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.CHANGE_DEST_PAGE,
+    info
+  };
+}
+
+export function sortTDReverse(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.SORT_TD_REVERSE,
+    info
+  };
+} 
+
+export function sortOriReverse(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.SORT_ORI_REVERSE,
+    info
+  };
+} 
+
+export function sortDestReverse(info) {
+  console.log(info);
+  return {
+    type: ActionTypes.SORT_DEST_REVERSE,
+    info
+  };
+} 

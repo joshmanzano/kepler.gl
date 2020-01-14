@@ -178,3 +178,19 @@ export const removeNotificationUpdater = (state, {payload}) => ({
   ...state,
   notifications: state.notifications.filter(n => n.id !== payload)
 });
+
+/* PLEXUS-SPECIFIC UPDATERS */
+export const updateActiveAnalysisTabUpdater = (state, action) => {
+  return {
+    ...state,
+    activeAnalysisTab: action.payload,
+  };
+};
+
+export const setBottomTabUpdater = (state, action) => {
+  return {
+    ...state,
+    bottomTab: action.payload,
+  };
+  
+};
