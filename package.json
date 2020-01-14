@@ -205,6 +205,5 @@
       "test/**/*.js"
     ]
   },
-  "maintainers": [
-  ]
+  "maintainers": []
 }
