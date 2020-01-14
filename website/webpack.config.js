@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Uber Technologies, Inc.
+// Copyright (c) 2020 Uber Technologies, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -117,7 +117,7 @@ const COMMON_CONFIG = {
       //       loader: require.resolve('css-loader'),
       //       options: {
       //         importLoaders: 1,
-      //         modules: true, // Add this option 
+      //         modules: true, // Add this option
       //         localIdentName: '[name]__[local]__[hash:base64:5]' // Add this option
       //       },
       //     },
@@ -142,7 +142,7 @@ const COMMON_CONFIG = {
       //       },
       //     },
       //     // Add 'sass-loader' with includePaths
-      //     { 
+      //     {
       //       loader: require.resolve('sass-loader'),
       //       options: {
       //         includePaths: [path.styles]
@@ -150,24 +150,25 @@ const COMMON_CONFIG = {
       //     }
       //   ],
       // },
-      {
-        test: /\.css$/,
-        use: [
-          { loader: ['style-loader'](/loaders/style-loader) },
-          {
-            loader: ['css-loader'](/loaders/css-loader),
-            options: {
-              modules: true
-            }
-          },
-          { loader: ['sass-loader'](/loaders/sass-loader) }
-        ]
-      },
+      // {
+      //   test: /\.css$/,
+      //   use: [
+      //     { loader: ['style-loader'](/loaders/style-loader) },
+      //     {
+      //       loader: ['css-loader'](/loaders/css-loader),
+      //       options: {
+      //         modules: true
+      //       }
+      //     },
+      //     { loader: ['sass-loader'](/loaders/sass-loader) }
+      //   ]
+      // },
       {
         // Preprocess your css files
         // you can add additional loaders here (e.g. sass/less etc.)
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        // test: /\.css$/,
+        test: /\.s[ac]ss$/i,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
       }
     ]
   },
