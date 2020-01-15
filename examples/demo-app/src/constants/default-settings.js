@@ -114,5 +114,6 @@ export const DEFAULT_FEATURE_FLAGS = {
 };
 
 // PLEXUS
-export const ACTIVE_CITIES_URL = 'http://127.0.0.1:8000/get_active_cities/';
+// export const ACTIVE_CITIES_URL = 'http://127.0.0.1:8000/get_active_cities/';
+export const ACTIVE_CITIES_URL = 'https://raw.githubusercontent.com/hkittylover/Files/master/get_active_cities.txt';
 // export const ACTIVE_CITIES_URL = 'https://github.com/hkittylover/Files/blob/master/get_active_cities';

@@ -200,7 +200,8 @@ class SelectCity extends Component {
     //   return;
     // }
     // var dataUrl = 'http://127.0.0.1:8000/barangays/'+selectedCity+'/geo.json';
-    var dataUrl = 'http://127.0.0.1:8000/config/' + e + '/config.json';
+    // var dataUrl = 'http://127.0.0.1:8000/config/' + e + '/config.json';
+    var dataUrl = 'https://raw.githubusercontent.com/hkittylover/Files/master/203config.json';
     this.props.onSelectCity({dataUrl});
     // console.log('HEKE');
   };
@@ -234,7 +235,7 @@ class SelectCity extends Component {
               displayOption={op => op.name}
               placeholder="Select a city..."
             />
-            
+
             <div style={{padding: '10px'}} />
             <Button onClick={this.onSelectCity} width="70px">
               Select
