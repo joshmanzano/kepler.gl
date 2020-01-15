@@ -86,7 +86,7 @@ export default class Home extends PureComponent {
           </Banner>
           <Header/>
           <Hero />
-          {SECTIONS.map(
+          {/* {SECTIONS.map(
             ({id, title, description, icon, isDark, background}, i) => {
               const SectionContent = SECTION_CONTENT[id];
               return (
@@ -102,7 +102,7 @@ export default class Home extends PureComponent {
                 </Section>
               );
             }
-          )}
+          )} */}
           <Footer />
         </div>
       </ThemeProvider>

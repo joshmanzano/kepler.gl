@@ -190,7 +190,7 @@ export default class Hero extends PureComponent {
           <Logo src={cdnUrl('icons/kepler.gl-logo.png')} />
           <StyledCaption>
             <div className="kg-home__caption__subtitle">
-              Make an impact with your location data
+              Transport Desirability Application
             </div>
             <div className="kg-home__caption__description">
               <span>Kepler.gl is a powerful </span>
@@ -203,10 +203,13 @@ export default class Hero extends PureComponent {
               <LinkButton large href={DEMO_LINK}>
                 Get Started
               </LinkButton>
+              <LinkButton large href="https://github.com/dlsucomet/kepler.gl/wiki/User-Manual">
+                Tutorial
+              </LinkButton>
               <LinkButton
                 large
                 outlineDark
-                href="https://github.com/uber/kepler.gl"
+                href="https://github.com/krzchiu/kepler.gl"
                 style={{marginLeft: '5px'}}
               >
                 <img src={cdnUrl('icons/github.svg')} /> Github
