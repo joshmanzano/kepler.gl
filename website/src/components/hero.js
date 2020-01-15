@@ -200,10 +200,10 @@ export default class Hero extends PureComponent {
               <span>data sets.</span>
             </div>
             <ButtonContainer>
-              <LinkButton large href={DEMO_LINK}>
+              <LinkButton large href={DEMO_LINK} target="_blank">
                 Get Started
               </LinkButton>
-              <LinkButton large href="https://github.com/dlsucomet/kepler.gl/wiki/User-Manual">
+              <LinkButton large href="https://github.com/dlsucomet/kepler.gl/wiki/User-Manual" target="_blank">
                 Tutorial
               </LinkButton>
               <LinkButton
@@ -211,6 +211,7 @@ export default class Hero extends PureComponent {
                 outlineDark
                 href="https://github.com/krzchiu/kepler.gl"
                 style={{marginLeft: '5px'}}
+                target="_blank"
               >
                 <img src={cdnUrl('icons/github.svg')} /> Github
               </LinkButton>
