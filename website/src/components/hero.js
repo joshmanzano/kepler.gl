@@ -193,11 +193,16 @@ export default class Hero extends PureComponent {
               Transport Desirability Application
             </div>
             <div className="kg-home__caption__description">
-              <span>Kepler.gl is a powerful </span>
+              {/* <span>Kepler.gl is a powerful </span>
               <span className="t-bold"> open source </span>
               <span>geospatial analysis tool&nbsp;for </span>
               <span className="t-bold">large-scale&nbsp;</span>
-              <span>data sets.</span>
+              <span>data sets.</span> */}
+              <span>Plexus is an </span>
+              <span className="t-bold">interactive visual analytics tool </span>
+              <span>that allows users to assess key indicators in transport systems for urban transport planning. It was extended from </span>
+              <span className="t-bold">Kepler.gl </span>
+              <span>, an existing high performance and web-based geospatial toolbox that contains design elements that have been refined by Uber.</span>
             </div>
             <ButtonContainer>
               <LinkButton large href={DEMO_LINK} target="_blank">
