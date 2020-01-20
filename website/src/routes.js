@@ -59,7 +59,7 @@ function onEnter(nextState, replace, callback) {
    * we redirect to '/demo/.../
    **/
   if (isOldUrl(nextState.location)) {
-    replace(location.hash.substring(1))
+    // replace(location.hash.substring(1))
   }
   callback();
 }
