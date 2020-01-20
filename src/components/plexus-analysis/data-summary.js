@@ -203,13 +203,13 @@ export default class DataSummary extends Component {
                             {visBlockDescr.overview.desc}
                         </div>
                     </div>
-                    {barangays ? (
+                    {barangays && (
                         <ParallelCoordinatesD3
                             data={barangays}
                             selected={selected}
                             width={widthParallelCoordinates}
                         />
-                    ) : null}
+                    )}
 
                     <PBlock><i>* Income is represented as peso and is the average income of the barangay.</i></PBlock>
                 </div>
