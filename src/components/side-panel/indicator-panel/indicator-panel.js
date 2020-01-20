@@ -27,7 +27,9 @@ import IndicatorFactory from './indicator';
 import {
   TRANSPORT_DESIRABILITY,
   NON_TRANSPORT_MODE,
-  TRANSPORT_MODE
+  TRANSPORT_MODE,
+  USER_PERSPECTIVE,
+  GOVERNMENT_PERSPECTIVE
 } from 'constants/default-settings';
 import { RangeFilter } from '../../filters';
 
@@ -101,7 +103,7 @@ function IndicatorPanelFactory(Indicator) {
           </StyledIndicatorSection>
           <div style={{padding: '5px'}} />
           <StyledIndicatorContent className="indicator-panel__content">
-            {NON_TRANSPORT_MODE.indicators.map(indicator => (
+            {USER_PERSPECTIVE.indicators.map(indicator => (
               <div>
               <Indicator
                 id={indicator.id}
@@ -135,7 +137,7 @@ function IndicatorPanelFactory(Indicator) {
           </StyledIndicatorSection>
           <div style={{padding: '5px'}} />
           <StyledIndicatorContent className="indicator-panel__content">
-            {TRANSPORT_MODE.indicators.map(indicator => (
+            {GOVERNMENT_PERSPECTIVE.indicators.map(indicator => (
               <div>
               <Indicator
                 id={indicator.id}

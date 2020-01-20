@@ -687,9 +687,9 @@ export const TRANSPORT_MODE = {
   indicators: INDICATORS.slice(5,10)
 }
 
-export const NON_GOVERNMENT_MODE = {
-  label: 'Non-Government Mode Indicators',
-  indicator: [
+export const USER_PERSPECTIVE = {
+  label: 'User Perspective Indicators',
+  indicators: [
     INDICATORS[1],
     INDICATORS[2],
     INDICATORS[3],
@@ -699,9 +699,9 @@ export const NON_GOVERNMENT_MODE = {
   ]
 }
 
-export const GOVERNMENT_MODE = {
-  label: 'Government Mode Indicators',
-  indicator: [
+export const GOVERNMENT_PERSPECTIVE = {
+  label: 'Government Perspective Indicators',
+  indicators: [
     INDICATORS[7],
     INDICATORS[8],
     INDICATORS[9]
