@@ -97,9 +97,8 @@ function IndicatorPanelFactory(Indicator) {
           </StyledIndicatorContent>
 
           <SidePanelDivider /> */}
-          {      console.error('INDICATOR MANAGER START')}
           <StyledIndicatorSection className="indicator-panel__section">
-            {NON_TRANSPORT_MODE.label}
+            {USER_PERSPECTIVE.label}
           </StyledIndicatorSection>
           <div style={{padding: '5px'}} />
           <StyledIndicatorContent className="indicator-panel__content">
@@ -133,7 +132,7 @@ function IndicatorPanelFactory(Indicator) {
           <SidePanelDivider />
 
           <StyledIndicatorSection className="indicator-panel__section">
-            {TRANSPORT_MODE.label}
+            {GOVERNMENT_PERSPECTIVE.label}
           </StyledIndicatorSection>
           <div style={{padding: '5px'}} />
           <StyledIndicatorContent className="indicator-panel__content">
