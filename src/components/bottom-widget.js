@@ -257,7 +257,7 @@ const WidgetContainer = styled.div`
   // padding-top: ${props => props.theme.sidePanel.margin.top}px;
   // padding-right: ${props => props.theme.sidePanel.margin.right}px;
   // padding-bottom: ${props => props.theme.sidePanel.margin.bottom}px;
-  padding-left: ${props => props.theme.sidePanel.margin.left}px;  
+  padding-left: ${props => props.theme.sidePanel.margin.left}px;
   top: 0;
   right: 0;
   z-index: 5;
@@ -267,7 +267,7 @@ const WidgetContainer = styled.div`
   width: 340px;
   // ${props => props.theme.sidePanelScrollBar};
   display: ${props => (props.display ? 'flex' : 'none')};
-   
+
   // overflow-y: scroll;
   overflow-x: hidden;
 
@@ -276,8 +276,8 @@ const WidgetContainer = styled.div`
     // padding: 10px ${innerPdSide}px;
     padding: 0.95em;
     position: relative;
-    // height: 220px; 
-    height: 100vh;   
+    // height: 220px;
+    height: 100vh;
     overflow-x: hidden;
   }
 `;
@@ -301,12 +301,12 @@ const TopSectionWrapper = styled.div`
   .bottom-widget--close {
     display: none;
   }
-  
+
   .bottom-widget__y-axis {
     flex-grow: 1;
     margin-left: 20px;
   }
-  
+
   .bottom-widget__field-select {
     width: 160px;
     display: inline-block;
@@ -444,7 +444,7 @@ export default function BottomWidgetFactory(
 
     if (datasets.barangays) {
       if (datasets.barangays.data) {
-        
+
         maxListSize = Math.min(DEFAULT_LIST, datasets.barangays.data.length);
 
         // formatted barangay data
@@ -506,7 +506,6 @@ export default function BottomWidgetFactory(
         // TODO get bgy ranking by id
         ranking =
           bgyIncl.findIndex(b => b['name'] == visState.activeBarangay[1]) + 1;
-          
 
         // amenities
         let inserted = {};
@@ -807,7 +806,7 @@ export default function BottomWidgetFactory(
                   {/* <DonutChart
                     title={ACTIVE_INDICATOR_LABEL + ' Proportion'}
                     displayLabel
-                    activeIndicator={selected} 
+                    activeIndicator={selected}
                     data={bgyIncl}
                     legends={legends}
                      /> */}
@@ -863,35 +862,37 @@ export default function BottomWidgetFactory(
                     title={'Average Count of City Amenities'}
                     height={250}
                   />
-                </div> 
+                </div>
               ) : null}
 
             {console.log('sample data for travel time')}
             {console.log(LONGEST_TRAVEL_TIMES)}
             {console.log(SHORTEST_TRAVEL_TIMES)}
+
             {/* Temporal Indicator */}
             {!visState.activeBarangay &&
               visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
               bgyIncl && ACTIVE_INDICATOR_LABEL == 'Temporal' ? (
                 <div className = "breakdown-analysis__section">
+                  {console.log(datasets.barangays.allData)}
                   <PaginatedRanking
                     // floatFormat
-                    listSize={LONGEST_TRAVEL_TIMES.length}
+                    listSize={datasets.barangays.allData.length}
                     maxBar={10}
-                    data={LONGEST_TRAVEL_TIMES}
-                    xKey={'time'}
-                    yKey={'name'}
-                    title={'Longest Ave. Travel Times (in mins)'}
+                    data={[...datasets.barangays.allData].sort((a, b) => a[22] - b[22])}
+                    xKey={22}
+                    yKey={1}
+                    title={'Ave. Travel Times (in mins)'}
                     onLabelClick={changeBarangay}
                     paginationFunc={visStateActions.changeOriPage}
                     reverseFunc={visStateActions.sortOriReverse}
                     analysisRankingReverse={visState.oriReverse}
                     analysisRankingPage={visState.oriPage}
                   />
-                </div> 
+                </div>
               ) : null}
 
-            {!visState.activeBarangay &&
+            {/* {!visState.activeBarangay &&
               visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
               bgyIncl && ACTIVE_INDICATOR_LABEL == 'Temporal' ? (
                 <div className = "breakdown-analysis__section">
@@ -909,16 +910,16 @@ export default function BottomWidgetFactory(
                     analysisRankingReverse={visState.oriReverse}
                     analysisRankingPage={visState.oriPage}
                   />
-                </div> 
-              ) : null}
+                </div>
+              ) : null} */}
 
             {/* Economic Indicator */}
             {!visState.activeBarangay &&
               visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
               bgyIncl && ACTIVE_INDICATOR_LABEL == 'Economic' ? (
                 <div className = "breakdown-analysis__section">
-                  
-                </div> 
+
+                </div>
               ) : null}
 
             {!visState.activeBarangay &&
@@ -939,7 +940,7 @@ export default function BottomWidgetFactory(
                     analysisRankingReverse={visState.oriReverse}
                     analysisRankingPage={visState.oriPage}
                   />
-                </div> 
+                </div>
               ) : null}
 
             {!visState.activeBarangay &&
@@ -960,7 +961,7 @@ export default function BottomWidgetFactory(
                     analysisRankingReverse={visState.oriReverse}
                     analysisRankingPage={visState.oriPage}
                   />
-                </div> 
+                </div>
               ) : null}
 
             {/* Physical Indicator */}
@@ -983,7 +984,7 @@ export default function BottomWidgetFactory(
                     analysisRankingPage={visState.analysisRankingPage}
                     legends={legends}
                   />
-                </div> 
+                </div>
               ) : null}
 
             {!visState.activeBarangay &&
@@ -993,7 +994,7 @@ export default function BottomWidgetFactory(
                   <PhysInd>
                     <PercentPhys>33%</PercentPhys> of respondents from the city will cancel their trips during flooding
                   </PhysInd>
-                </div> 
+                </div>
               ) : null}
 
             {/* {!visState.activeBarangay &&
@@ -1011,7 +1012,7 @@ export default function BottomWidgetFactory(
                     // xKeyArr={CITY_FLOODING}
                     // showLegend
                   />
-                </div> 
+                </div>
               ) : null} */}
 
             {!visState.activeBarangay &&
@@ -1033,8 +1034,8 @@ export default function BottomWidgetFactory(
                     analysisRankingPage={visState.analysisRankingPage}
                     legends={legends}
                   />
-                </div> 
-              ) : null} 
+                </div>
+              ) : null}
 
             {!visState.activeBarangay &&
               visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
@@ -1043,7 +1044,7 @@ export default function BottomWidgetFactory(
                   <PhysInd>
                     Additional Travel Cost
                   </PhysInd>
-                </div> 
+                </div>
               ) : null}
 
             {/* Psychological Indicator */}
@@ -1051,8 +1052,8 @@ export default function BottomWidgetFactory(
               visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
               bgyIncl && ACTIVE_INDICATOR_LABEL == 'Psychological' ? (
                 <div className = "breakdown-analysis__section">
-                  
-                </div> 
+
+                </div>
               ) : null}
 
             {/* Physiological Indicator */}
@@ -1060,8 +1061,8 @@ export default function BottomWidgetFactory(
               visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
               bgyIncl && ACTIVE_INDICATOR_LABEL == 'Physiological' ? (
                 <div className = "breakdown-analysis__section">
-                  
-                </div> 
+
+                </div>
               ) : null}
 
             {/* Sustainability Indicator */}
@@ -1072,7 +1073,7 @@ export default function BottomWidgetFactory(
                   <PhysInd>
                     Breakdown
                   </PhysInd>
-                </div> 
+                </div>
               ) : null}
 
             {!visState.activeBarangay &&
@@ -1082,7 +1083,7 @@ export default function BottomWidgetFactory(
                   <PhysInd>
                     Energy Use
                   </PhysInd>
-                </div> 
+                </div>
               ) : null}
 
             {!visState.activeBarangay &&
@@ -1092,7 +1093,7 @@ export default function BottomWidgetFactory(
                   <PhysInd>
                     Health Contribution
                   </PhysInd>
-                </div> 
+                </div>
               ) : null}
 
             {!visState.activeBarangay &&
@@ -1102,7 +1103,7 @@ export default function BottomWidgetFactory(
                   <PhysInd>
                     GHG Social Cost Contribution
                   </PhysInd>
-                </div> 
+                </div>
               ) : null}
 
             {/* Performance Indicator */}
@@ -1110,8 +1111,8 @@ export default function BottomWidgetFactory(
               visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
               bgyIncl && ACTIVE_INDICATOR_LABEL == 'Performance' ? (
                 <div className = "breakdown-analysis__section">
-                  
-                </div> 
+
+                </div>
               ) : null}
 
             {/* Fairness Indicator */}
@@ -1119,8 +1120,8 @@ export default function BottomWidgetFactory(
               visState.activeAnalysisTab == ANALYSIS_TABS_DEF.profile.value &&
               bgyIncl && ACTIVE_INDICATOR_LABEL == 'Fairness' ? (
                 <div className = "breakdown-analysis__section">
-                  
-                </div> 
+
+                </div>
               ) : null}
 
             {!visState.activeBarangay &&
@@ -1134,7 +1135,7 @@ export default function BottomWidgetFactory(
                       <RelatedIndItem>Temporal</RelatedIndItem>
                     </RelatedIndItemWrapper>
                   </RelatedIndWrapper>
-                </div> 
+                </div>
               ) : null}
             </BreakdownAnalysis>
           </AnalysisSectionWrapper>
